@@ -1534,7 +1534,10 @@ return;
 }
 if(list)list.innerHTML=rows.map(r=>
 '<div class="team-item">'
-+'<div><div class="team-item-name">'+escapeHtml(r.name||'Client')+'</div><div class="team-item-date">Joined '+new Date(r.joined_at).toLocaleDateString()+'</div></div>'
++'<div><div class="team-item-name">'+escapeHtml(r.name||'Client')+'</div>'
++'<div class="team-item-date">Joined '+new Date(r.joined_at).toLocaleDateString()+'</div>'
++'<div class="team-item-earn">Deposited $'+Number(r.total_deposited||0).toFixed(2)+' · Commission $'+Number(r.commission_earned||0).toFixed(2)+'</div>'
++'</div>'
 +'<span class="tx-status '+(r.deposit_approved?'status-approved':'status-pending')+'">'+(r.deposit_approved?'Deposited':'No deposit yet')+'</span>'
 +'</div>'
 ).join('');
