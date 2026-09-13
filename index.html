@@ -400,7 +400,7 @@ For account, deposit, withdrawal, or general support questions, please use the c
 <div class="wrap">
 
 <div class="dash-topbar">
-<div class="dash-welcome">
+<div class="dash-welcome" onclick="toggleAccountMenu()" role="button" tabindex="0" aria-label="Open account menu">
 <div class="dash-avatar" id="dashAvatar">C</div>
 <div>
 <div class="dash-hi">Welcome back</div>
@@ -438,6 +438,87 @@ For account, deposit, withdrawal, or general support questions, please use the c
 </div>
 </div>
 <button type="button" class="logout" onclick="logout()">Logout</button>
+</div>
+</div>
+
+<!-- ==================== ACCOUNT MENU (opened by clicking the avatar/name) ====================
+     Small centered popup, same pattern as the notification popup: dim
+     overlay + fixed centered panel + explicit × close. Each row below
+     closes this menu and opens its own dedicated modal (or, for
+     Invite Members, scrolls to the existing Refer & Earn card). -->
+<div class="menu-overlay" id="accountMenuOverlay" onclick="closeAccountMenu()"></div>
+<div class="menu-popup" id="accountMenuPopup">
+
+<div class="menu-head">
+<div class="menu-head-avatar" id="menuHeadAvatar">C</div>
+<div class="menu-head-info">
+<div class="menu-head-name" id="menuHeadName">Client</div>
+<div class="menu-head-sub">Client account</div>
+</div>
+<button type="button" class="notif-close" onclick="closeAccountMenu()" aria-label="Close menu">×</button>
+</div>
+
+<div class="menu-list">
+<button type="button" class="menu-item" onclick="openViewProfile()">👤 View Profile</button>
+<button type="button" class="menu-item" onclick="openSettings()">⚙️ Settings</button>
+<div class="menu-divider"></div>
+<button type="button" class="menu-item" onclick="openTeam()">👥 Team</button>
+<button type="button" class="menu-item" onclick="openInviteMembers()">➕ Invite Members</button>
+<div class="menu-divider"></div>
+<button type="button" class="menu-item" onclick="openSupport()">🎧 Support</button>
+<div class="menu-divider"></div>
+<button type="button" class="menu-item menu-item-danger" onclick="logout()">🚪 Sign Out</button>
+</div>
+
+</div>
+
+<!-- ==================== VIEW PROFILE MODAL (read-only) ==================== -->
+<div class="request-modal" id="viewProfileModal">
+<div class="request-box">
+<button type="button" class="request-close" onclick="closeViewProfile()">×</button>
+<h2>Your Profile</h2>
+<p class="auth-sub">Your saved account details.</p>
+<div class="profile-view-list" id="profileViewList"></div>
+</div>
+</div>
+
+<!-- ==================== TEAM MODAL (clients referred by this client) ==================== -->
+<div class="request-modal" id="teamModal">
+<div class="request-box">
+<button type="button" class="request-close" onclick="closeTeam()">×</button>
+<h2>Your Team</h2>
+<p class="auth-sub">Clients who joined using your referral link.</p>
+<div id="teamList"><div class="tx-empty">Loading...</div></div>
+</div>
+</div>
+
+<!-- ==================== SUPPORT MODAL ==================== -->
+<div class="request-modal" id="supportModal">
+<div class="request-box">
+<button type="button" class="request-close" onclick="closeSupport()">×</button>
+<h2>Contact Support</h2>
+<p class="auth-sub">Send a message to the PipZoNe support team.</p>
+<div class="msg" id="supportMsg"></div>
+
+<div class="form-group">
+<label>Subject</label>
+<input id="supportSubject" type="text" placeholder="What can we help with?">
+</div>
+
+<div class="form-group">
+<label>Message</label>
+<textarea id="supportMessage" placeholder="Describe your issue..."></textarea>
+</div>
+
+<div class="form-group">
+<label>Attachment <span style="color:var(--muted2);font-weight:400">(optional, image or PDF, under 5MB)</span></label>
+<input id="supportAttachment" type="file" accept="image/*,.pdf" style="padding:8px">
+<div id="supportAttachmentName" style="font-size:12px;color:var(--muted2);margin-top:6px"></div>
+</div>
+
+<div class="form-actions">
+<button type="button" class="btn btn-gold" onclick="submitSupportMessage()">Send message</button>
+</div>
 </div>
 </div>
 
