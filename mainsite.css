@@ -603,6 +603,7 @@ font-family:'IBM Plex Mono',monospace
 .team-item:last-child{border-bottom:0}
 .team-item-name{font-weight:600}
 .team-item-date{color:var(--muted2);font-size:11.5px;margin-top:2px}
+.team-item-earn{color:var(--gold);font-size:12px;margin-top:4px}
 
 /* -- Invite Members lives in its own modal (#inviteModal) now, opened
    from the account menu — see JS section 21.5. */
