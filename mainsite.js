@@ -22,6 +22,7 @@
     19. Submit withdrawal request
     20. Recent transactions list
     21. Notification bell + popup (server-synced read state, incl. per-item read)
+    21.5 Account menu (avatar/name click) + View Profile / Settings / Team / Invite / Support
     22. Contact form submission
     23. Logout
     24. Profit-split calculator (homepage widget)
@@ -1424,6 +1425,188 @@ if(badge)badge.style.display='none';
 document.querySelectorAll('.notif-item.unread').forEach(el=>el.classList.remove('unread'));
 }
 
+/* -------------------------- 21.5 Account menu (avatar/name click) + its sub-views -------------------------- */
+
+/*
+Opened by clicking the avatar/name block in the dashboard topbar.
+- View Profile  → read-only summary, built straight from currentProfile.
+- Settings      → re-opens the existing profile-completion form
+                  (#completeProfileModal / openCompleteProfile()), just
+                  with no pending deposit to resume and a settings-
+                  appropriate subtitle instead of the "before you can
+                  deposit" one.
+- Team          → list of clients this client referred, fetched via the
+                  get_referred_clients() RPC (SQL side).
+- Invite Members→ no separate modal; scrolls to + briefly highlights the
+                  existing "Refer & Earn" dashboard card, since that
+                  already has the link, Copy/Share buttons and stats.
+- Support       → a message form that inserts into contact_messages,
+                  same table the public Contact page uses, with the
+                  client's name/email filled in automatically.
+- Sign Out      → reuses the existing logout().
+*/
+
+function toggleAccountMenu(){
+const popup=$('accountMenuPopup');
+const overlay=$('accountMenuOverlay');
+if(!popup)return;
+const willShow=!popup.classList.contains('show');
+if(willShow){
+const name=$('welcomeName')?.textContent||'Client';
+const headName=$('menuHeadName'); if(headName)headName.textContent=name;
+const headAvatar=$('menuHeadAvatar'); if(headAvatar)headAvatar.textContent=(name.trim().charAt(0)||'C').toUpperCase();
+}
+popup.classList.toggle('show',willShow);
+overlay?.classList.toggle('show',willShow);
+document.body.classList.toggle('modal-open',willShow);
+}
+
+function closeAccountMenu(){
+$('accountMenuPopup')?.classList.remove('show');
+$('accountMenuOverlay')?.classList.remove('show');
+document.body.classList.remove('modal-open');
+}
+
+/* Small helper — every value rendered into these popups comes from data
+   the client themselves typed in (name, address, message text, etc), so
+   it's escaped before being inserted via innerHTML. */
+function escapeHtml(str){
+return String(str).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ---- View Profile ---- */
+function openViewProfile(){
+closeAccountMenu();
+const rows=[
+['First name',currentProfile?.first_name],
+['Last name',currentProfile?.last_name],
+['Phone / WhatsApp',currentProfile?.phone],
+['Address',currentProfile?.address],
+['City',currentProfile?.city],
+['Postal code',currentProfile?.postal_code],
+['State',currentProfile?.state],
+['TRC20 wallet',currentProfile?.wallet_address],
+['BEP20 wallet',currentProfile?.wallet_address_bep20]
+];
+const list=$('profileViewList');
+if(list){
+list.innerHTML=rows.map(([label,value])=>
+'<div class="profile-view-row"><span class="profile-view-label">'+label+'</span><span class="profile-view-value">'+(value?escapeHtml(value):'—')+'</span></div>'
+).join('');
+}
+$('viewProfileModal')?.classList.add('show');
+document.body.classList.add('modal-open');
+}
+
+function closeViewProfile(){
+$('viewProfileModal')?.classList.remove('show');
+document.body.classList.remove('modal-open');
+}
+
+/* ---- Settings (mobile number / wallets / other profile details) ---- */
+function openSettings(){
+closeAccountMenu();
+openCompleteProfile(null);
+const sub=$('completeProfileModal')?.querySelector('.auth-sub');
+if(sub)sub.textContent='Update your mobile number, wallets, or other profile details.';
+}
+
+/* ---- Team ---- */
+async function openTeam(){
+closeAccountMenu();
+$('teamModal')?.classList.add('show');
+document.body.classList.add('modal-open');
+const list=$('teamList');
+if(list)list.innerHTML=skeletonRowsHtml(3);
+if(!supabaseReady)return;
+try{
+const {data,error}=await supabaseClient.rpc('get_referred_clients');
+if(error){
+console.error('Team load error:',error);
+if(list)list.innerHTML='<div class="tx-empty">Unable to load your team right now.</div>';
+return;
+}
+const rows=data||[];
+if(!rows.length){
+if(list)list.innerHTML='<div class="tx-empty">No referrals yet — share your link from Invite Members.</div>';
+return;
+}
+if(list)list.innerHTML=rows.map(r=>
+'<div class="team-item">'
++'<div><div class="team-item-name">'+escapeHtml(r.name||'Client')+'</div><div class="team-item-date">Joined '+new Date(r.joined_at).toLocaleDateString()+'</div></div>'
++'<span class="tx-status '+(r.deposit_approved?'status-approved':'status-pending')+'">'+(r.deposit_approved?'Deposited':'No deposit yet')+'</span>'
++'</div>'
+).join('');
+}catch(err){
+console.error('Team load error:',err);
+if(list)list.innerHTML='<div class="tx-empty">Unable to load your team right now.</div>';
+}
+}
+
+function closeTeam(){
+$('teamModal')?.classList.remove('show');
+document.body.classList.remove('modal-open');
+}
+
+/* ---- Invite Members ---- */
+function openInviteMembers(){
+closeAccountMenu();
+const card=$('referralCard');
+if(!card)return;
+card.scrollIntoView({behavior:'smooth',block:'center'});
+card.classList.remove('highlight');
+void card.offsetWidth; /* restart the animation if clicked twice in a row */
+card.classList.add('highlight');
+}
+
+/* ---- Support ---- */
+function openSupport(){
+closeAccountMenu();
+$('supportMsg')?.classList.remove('show');
+$('supportModal')?.classList.add('show');
+document.body.classList.add('modal-open');
+}
+
+function closeSupport(){
+$('supportModal')?.classList.remove('show');
+document.body.classList.remove('modal-open');
+}
+
+async function submitSupportMessage(){
+if(!supabaseReady){showMsg('supportMsg','Connection is not ready. Please refresh the page and try again.');return}
+if(!currentUser){showMsg('supportMsg','Please login again.');return}
+const subject=$('supportSubject').value.trim();
+const message=$('supportMessage').value.trim();
+const attachmentFile=$('supportAttachment')?.files?.[0]||null;
+if(!subject||!message){showMsg('supportMsg','Please fill both subject and message.');return}
+if(attachmentFile&&attachmentFile.size>5*1024*1024){showMsg('supportMsg','Attachment must be under 5MB.');return}
+const btn=$('supportModal').querySelector('.form-actions .btn');
+if(btn){btn.disabled=true;btn.textContent='Sending...'}
+try{
+let attachmentUrl=null;
+if(attachmentFile){
+const ext=attachmentFile.name.split('.').pop();
+const path='contact/'+Date.now()+'-'+Math.random().toString(36).slice(2)+'.'+ext;
+const {error:uploadError}=await supabaseClient.storage.from('contact-attachments').upload(path,attachmentFile);
+if(uploadError){console.error(uploadError);showMsg('supportMsg','Attachment upload failed: '+uploadError.message);return}
+const {data:urlData}=supabaseClient.storage.from('contact-attachments').getPublicUrl(path);
+attachmentUrl=urlData?.publicUrl||null;
+}
+const displayName=$('welcomeName')?.textContent||'Client';
+const {error}=await supabaseClient.from('contact_messages').insert({
+name:displayName,email:currentUser.email,subject,message,attachment_url:attachmentUrl,status:'new'
+});
+if(error){console.error(error);showMsg('supportMsg',error.message);return}
+showMsg('supportMsg','Your message has been sent to our support team.',false);
+$('supportSubject').value='';
+$('supportMessage').value='';
+$('supportAttachment').value='';
+$('supportAttachmentName').textContent='';
+setTimeout(()=>closeSupport(),1400);
+}catch(err){console.error(err);showMsg('supportMsg','Unable to send your message right now.')}
+finally{if(btn){btn.disabled=false;btn.textContent='Send message'}}
+}
+
 /* -------------------------- 22. Contact form submission -------------------------- */
 /* CONTACT FORM — direct Supabase submission with optional attachment */
 async function submitContact(event){
@@ -1665,6 +1848,12 @@ const f=attachmentInput.files?.[0];
 $('contactAttachmentName').textContent=f?f.name:'';
 });
 
+const supportAttachmentInput=$('supportAttachment');
+if(supportAttachmentInput)supportAttachmentInput.addEventListener('change',()=>{
+const f=supportAttachmentInput.files?.[0];
+$('supportAttachmentName').textContent=f?f.name:'';
+});
+
 const wAmtInput=$('withdrawalAmount');
 const signupPasswordInput=$('signupPassword');
 if(signupPasswordInput)signupPasswordInput.addEventListener('input',()=>{
@@ -1696,6 +1885,10 @@ if(modal.classList.contains('show'))closeAuth();
 if($('depositModal')?.classList.contains('show'))closeRequest('deposit');
 if($('withdrawalModal')?.classList.contains('show'))closeRequest('withdrawal');
 if($('completeProfileModal')?.classList.contains('show'))closeCompleteProfile();
+if($('accountMenuPopup')?.classList.contains('show'))closeAccountMenu();
+if($('viewProfileModal')?.classList.contains('show'))closeViewProfile();
+if($('teamModal')?.classList.contains('show'))closeTeam();
+if($('supportModal')?.classList.contains('show'))closeSupport();
 if($('notifDetailModal')?.classList.contains('show')){closeNotifDetail()}
 else{closeNotifications()}
 }
@@ -1707,6 +1900,9 @@ if(m.id==='authModal')closeAuth();
 if(m.id==='depositModal')closeRequest('deposit');
 if(m.id==='withdrawalModal')closeRequest('withdrawal');
 if(m.id==='completeProfileModal')closeCompleteProfile();
+if(m.id==='viewProfileModal')closeViewProfile();
+if(m.id==='teamModal')closeTeam();
+if(m.id==='supportModal')closeSupport();
 }));
 
 try{
