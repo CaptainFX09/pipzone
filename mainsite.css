@@ -323,21 +323,6 @@ footer{padding:56px 0 40px}
 .status-approved{color:var(--profit)}
 .status-rejected{color:var(--loss)}
 
-/* Profile-incomplete reminder banner, shown above the referral card
-   until first_name/last_name/phone/address/city/postal_code/state and at
-   least one wallet are all filled in (see isProfileComplete() in
-   mainsite.js). Amber/loss accent instead of the gold used elsewhere on
-   the dashboard, so it visually reads as "action needed" rather than as
-   another stat card. */
-.profile-alert{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:rgba(242,115,94,.08);border:1px solid rgba(242,115,94,.3);border-radius:8px;padding:16px 20px;margin-bottom:22px}
-.profile-alert-text{color:var(--text);font-size:13.5px;line-height:1.5}
-
-/* Two-column pairing (First/Last name, City/Postal code) inside the
-   profile-completion modal — falls back to a single column on narrow
-   screens via the existing .request-box max-width, no extra media query
-   needed since the modal itself is already capped at 500px. */
-.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
-
 /* -------------------------- 26. Notification bell + dropdown --------------------------
    Notification popup is a small, fixed, CENTERED popup (like a modal) instead of an
    absolutely-positioned dropdown anchored to the bell. This fixes the old mobile bug
