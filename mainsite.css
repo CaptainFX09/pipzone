@@ -413,6 +413,10 @@ body.modal-open{overflow:hidden}
 .referral-stat-value{font:22px Fraunces;color:var(--text);margin-top:6px}
 .referral-stat-value.gold{color:var(--gold)}
 
+.referral-terms{margin-top:22px;padding-top:18px;border-top:1px solid var(--soft)}
+.referral-terms h3{font:15px Fraunces;color:var(--gold);margin-bottom:8px}
+.referral-terms p{color:var(--muted);font-size:12.5px;line-height:1.7}
+
 @media(max-width:640px){
 .referral-stats{grid-template-columns:1fr}
 .referral-link-row{flex-direction:column}
@@ -600,10 +604,8 @@ font-family:'IBM Plex Mono',monospace
 .team-item-name{font-weight:600}
 .team-item-date{color:var(--muted2);font-size:11.5px;margin-top:2px}
 
-/* -- Invite Members: rather than a separate modal, this briefly
-   highlights the existing Refer & Earn card after scrolling to it -- */
-.referral-card.highlight{animation:pz-highlight 1.4s ease}
-@keyframes pz-highlight{0%{box-shadow:0 0 0 0 rgba(47,191,131,.5)}70%{box-shadow:0 0 0 14px rgba(47,191,131,0)}100%{box-shadow:0 0 0 0 rgba(47,191,131,0)}}
+/* -- Invite Members lives in its own modal (#inviteModal) now, opened
+   from the account menu — see JS section 21.5. */
 
 @media(max-width:640px){
 .menu-popup{width:92vw}
