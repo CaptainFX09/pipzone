@@ -573,7 +573,7 @@ showDashboardSkeleton();
    follow the client across devices and browsers. */
 const {data:profile,error:profileError}=await supabaseClient
 .from('profiles')
-.select('full_name,phone,wallet_address,wallet_address_bep20,notifications_seen_at,read_notification_keys')
+.select('full_name,first_name,last_name,phone,address,city,postal_code,state,wallet_address,wallet_address_bep20,notifications_seen_at,read_notification_keys')
 .eq('id',user.id)
 .maybeSingle();
 
@@ -645,7 +645,7 @@ console.error('Profile sync error:',syncError);
 
 const {data:updatedProfile}=await supabaseClient
 .from('profiles')
-.select('full_name,phone,wallet_address,wallet_address_bep20,notifications_seen_at,read_notification_keys')
+.select('full_name,first_name,last_name,phone,address,city,postal_code,state,wallet_address,wallet_address_bep20,notifications_seen_at,read_notification_keys')
 .eq('id',user.id)
 .maybeSingle();
 
@@ -666,6 +666,10 @@ console.error('Profile safety sync error:',syncErr);
 }
 
 }
+
+/* Show/hide the "complete your profile" banner based on the profile we
+   just loaded (and possibly safety-synced) above. */
+refreshProfileGateUI();
 
 /* ================= ACCOUNT ================= */
 
@@ -836,6 +840,11 @@ calc.style.display='block';
 /* -------------------------- 17. Deposit / Withdrawal request modals (open/close) -------------------------- */
 async function openRequest(type){
 clearRequestMessages();
+if(type==='deposit'&&!isProfileComplete(currentProfile)){
+openProfileModal();
+showMsg('profileMsg','Please complete your profile before making a deposit.');
+return;
+}
 const id=type==='deposit'?'depositModal':'withdrawalModal';
 const m=$(id);
 if(!m)return;
@@ -878,6 +887,113 @@ function clearRequestMessages(){
 const e=$(id);
 if(e)e.classList.remove('show');
 });
+}
+
+/* ---- Profile completion (gates Deposit) ----
+   A client must fill in first/last name, phone, address, city, postal
+   code, state, and at least one withdrawal wallet before their first
+   deposit. isProfileComplete() is the single source of truth for that
+   check — used both to show/hide the dashboard banner and to decide
+   whether openRequest('deposit') is allowed to open the deposit modal
+   or has to redirect into the profile modal instead. */
+function isProfileComplete(profile){
+if(!profile)return false;
+const required=[profile.first_name,profile.last_name,profile.phone,profile.address,profile.city,profile.postal_code,profile.state];
+const allFilled=required.every(v=>String(v||'').trim().length>0);
+const hasWallet=!!(String(profile.wallet_address||'').trim()||String(profile.wallet_address_bep20||'').trim());
+return allFilled&&hasWallet;
+}
+
+function refreshProfileGateUI(){
+const banner=$('profileAlert');
+if(!banner)return;
+banner.style.display=isProfileComplete(currentProfile)?'none':'flex';
+}
+
+function openProfileModal(){
+clearRequestMessages();
+const m=$('profileModal');
+if(!m)return;
+/* Prefill with whatever is already saved, so a client only has to add
+   what's missing rather than retype everything each time this reopens. */
+if($('profileFirstName'))$('profileFirstName').value=currentProfile?.first_name||'';
+if($('profileLastName'))$('profileLastName').value=currentProfile?.last_name||'';
+if($('profilePhone'))$('profilePhone').value=currentProfile?.phone||'';
+if($('profileAddress'))$('profileAddress').value=currentProfile?.address||'';
+if($('profileCity'))$('profileCity').value=currentProfile?.city||'';
+if($('profilePostalCode'))$('profilePostalCode').value=currentProfile?.postal_code||'';
+if($('profileState'))$('profileState').value=currentProfile?.state||'';
+if($('profileWalletTrc20'))$('profileWalletTrc20').value=currentProfile?.wallet_address||'';
+if($('profileWalletBep20'))$('profileWalletBep20').value=currentProfile?.wallet_address_bep20||'';
+m.classList.add('show');
+document.body.classList.add('modal-open');
+}
+
+function closeProfileModal(){
+$('profileModal')?.classList.remove('show');
+document.body.classList.remove('modal-open');
+}
+
+async function submitProfile(){
+clearRequestMessages();
+if(!supabaseReady){showMsg('profileMsg','Connection is not ready. Please refresh the page and try again.');return}
+if(!currentUser){showMsg('profileMsg','Please login again.');return}
+
+const firstName=$('profileFirstName').value.trim();
+const lastName=$('profileLastName').value.trim();
+const phone=$('profilePhone').value.trim();
+const address=$('profileAddress').value.trim();
+const city=$('profileCity').value.trim();
+const postalCode=$('profilePostalCode').value.trim();
+const state=$('profileState').value.trim();
+const walletTrc20=$('profileWalletTrc20').value.trim();
+const walletBep20=$('profileWalletBep20').value.trim();
+
+if(!firstName||!lastName||!phone||!address||!city||!postalCode||!state){
+showMsg('profileMsg','Please fill in every field.');
+return;
+}
+if(!walletTrc20&&!walletBep20){
+showMsg('profileMsg','Please provide at least one withdrawal wallet address (TRC20 or BEP20).');
+return;
+}
+if(walletTrc20&&!validWallet(walletTrc20)){
+showMsg('profileMsg','Please enter a valid TRC20 wallet address starting with T, or leave it blank.');
+return;
+}
+if(walletBep20&&!validBep20Wallet(walletBep20)){
+showMsg('profileMsg','Please enter a valid BEP20 wallet address starting with 0x, or leave it blank.');
+return;
+}
+
+const button=$('profileModal').querySelector('.form-actions .btn');
+if(button){button.disabled=true;button.textContent='Saving...'}
+try{
+const update={
+first_name:firstName,
+last_name:lastName,
+full_name:firstName+' '+lastName,
+phone,
+address,
+city,
+postal_code:postalCode,
+state,
+wallet_address:walletTrc20||null,
+wallet_address_bep20:walletBep20||null
+};
+const {error}=await supabaseClient.from('profiles').update(update).eq('id',currentUser.id);
+if(error){console.error(error);showMsg('profileMsg',friendlySignupError(error.message));return}
+
+currentProfile={...currentProfile,...update};
+$('welcomeName').textContent=update.full_name;
+const avatarEl=$('dashAvatar');
+if(avatarEl)avatarEl.textContent=(firstName.charAt(0)||'C').toUpperCase();
+
+showMsg('profileMsg','Profile saved.',false);
+refreshProfileGateUI();
+setTimeout(()=>closeProfileModal(),900);
+}catch(err){console.error(err);showMsg('profileMsg','Unable to save your profile right now. Please try again.')}
+finally{if(button){button.disabled=false;button.textContent='Save profile'}}
 }
 
 /* -------------------------- 18. Submit deposit request -------------------------- */
