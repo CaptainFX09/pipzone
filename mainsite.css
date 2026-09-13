@@ -555,3 +555,56 @@ margin-left:auto;
 color:var(--muted2);
 font-family:'IBM Plex Mono',monospace
 }
+
+/* -------------------------- 30. Account menu popup + its sub-modals --------------------------
+   Opened by clicking the avatar/name in the dashboard topbar. Same
+   overlay + fixed-centered-panel pattern as the notification popup
+   (section 26), generalized under .menu-* class names since it's used
+   for a different trigger. Its "Settings" row re-opens the existing
+   profile-completion form (#completeProfileModal); "View Profile",
+   "Team" and "Support" each get their own small .request-modal
+   (same pattern already used for deposit/withdrawal/complete-profile). */
+
+.dash-welcome{cursor:pointer}
+.dash-welcome:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:8px}
+
+.menu-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:89}
+.menu-overlay.show{display:block}
+
+.menu-popup{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(340px,90vw);max-height:80vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 20px 50px rgba(0,0,0,.5);z-index:90}
+.menu-popup.show{display:block}
+
+.menu-head{display:flex;align-items:center;gap:12px;padding:18px 40px 18px 16px;border-bottom:1px solid var(--soft);position:relative}
+.menu-head .notif-close{position:absolute;right:12px;top:14px}
+.menu-head-avatar{width:44px;height:44px;border-radius:50%;background:rgba(47,191,131,.12);border:1px solid rgba(47,191,131,.35);color:var(--gold);display:flex;align-items:center;justify-content:center;font:600 16px Fraunces;flex:none}
+.menu-head-info{flex:1;min-width:0}
+.menu-head-name{font:16px Fraunces;color:var(--text)}
+.menu-head-sub{font-size:12px;color:var(--muted2);margin-top:2px}
+
+.menu-list{padding:8px}
+.menu-item{width:100%;text-align:left;background:none;border:0;color:var(--text);font-size:14px;padding:12px 10px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:10px}
+.menu-item:hover{background:rgba(47,191,131,.06)}
+.menu-item-danger{color:var(--loss)}
+.menu-divider{height:1px;background:var(--soft);margin:6px 4px}
+
+/* -- View Profile modal: simple label/value rows -- */
+.profile-view-list{display:flex;flex-direction:column}
+.profile-view-row{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--soft);font-size:13px}
+.profile-view-row:last-child{border-bottom:0}
+.profile-view-label{color:var(--muted)}
+.profile-view-value{color:var(--text);text-align:right;word-break:break-word}
+
+/* -- Team modal: one row per referred client -- */
+.team-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--soft);font-size:13px}
+.team-item:last-child{border-bottom:0}
+.team-item-name{font-weight:600}
+.team-item-date{color:var(--muted2);font-size:11.5px;margin-top:2px}
+
+/* -- Invite Members: rather than a separate modal, this briefly
+   highlights the existing Refer & Earn card after scrolling to it -- */
+.referral-card.highlight{animation:pz-highlight 1.4s ease}
+@keyframes pz-highlight{0%{box-shadow:0 0 0 0 rgba(47,191,131,.5)}70%{box-shadow:0 0 0 14px rgba(47,191,131,0)}100%{box-shadow:0 0 0 0 rgba(47,191,131,0)}}
+
+@media(max-width:640px){
+.menu-popup{width:92vw}
+}
