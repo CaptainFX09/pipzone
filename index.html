@@ -441,17 +441,6 @@ For account, deposit, withdrawal, or general support questions, please use the c
 </div>
 </div>
 
-<!-- ==================== PROFILE-INCOMPLETE BANNER ====================
-     Shown/hidden by refreshProfileGateUI() in mainsite.js based on
-     isProfileComplete(currentProfile). Deposits are gated on this same
-     check (see openRequest('deposit')) ‚Äî clicking Deposit while the
-     profile is incomplete opens #profileModal instead of the deposit
-     modal, with an explanatory message. -->
-<div class="profile-alert" id="profileAlert" style="display:none">
-<div class="profile-alert-text">üìù Please complete your profile before making a deposit.</div>
-<button type="button" class="btn btn-gold" onclick="openProfileModal()">Complete Profile</button>
-</div>
-
 <!-- Balance hero card -->
 <div class="balance-hero">
 <div class="balance-label">Your current balance</div>
@@ -691,31 +680,28 @@ Your profit share can be withdrawn on demand, any time, with no minimum amount ‚
 </div>
 
 <!-- ==================== COMPLETE PROFILE MODAL ====================
-     Opened either from the dashboard banner (#profileAlert) or
-     automatically instead of the deposit modal when openRequest('deposit')
-     finds the profile incomplete (see isProfileComplete() in mainsite.js).
-     No skip/close-and-forget option is offered when it's opened FOR a
-     deposit attempt ‚Äî closing it just leaves the client back on the
-     dashboard with the banner still showing, and Deposit still gated. -->
-<div class="request-modal" id="profileModal">
+     Shown the FIRST time a client clicks "Deposit" if their profile is
+     still missing any required field (see isProfileComplete() /
+     openRequest('deposit') in mainsite.js). Saving here automatically
+     re-opens the deposit modal afterwards. -->
+<div class="request-modal" id="completeProfileModal">
 <div class="request-box">
 
-<button type="button" class="request-close" onclick="closeProfileModal()">√ó</button>
+<button type="button" class="request-close" onclick="closeCompleteProfile()">√ó</button>
 
 <h2>Complete your profile</h2>
-<p class="auth-sub">We need a few details before your first deposit.</p>
+<p class="auth-sub">Please complete your profile before making a deposit.</p>
 
 <div class="msg" id="profileMsg"></div>
 
-<div class="profile-grid">
 <div class="form-group">
 <label>First Name</label>
 <input id="profileFirstName" type="text" autocomplete="given-name">
 </div>
+
 <div class="form-group">
 <label>Last Name</label>
 <input id="profileLastName" type="text" autocomplete="family-name">
-</div>
 </div>
 
 <div class="form-group">
@@ -728,15 +714,14 @@ Your profit share can be withdrawn on demand, any time, with no minimum amount ‚
 <input id="profileAddress" type="text" autocomplete="street-address">
 </div>
 
-<div class="profile-grid">
 <div class="form-group">
 <label>City</label>
 <input id="profileCity" type="text" autocomplete="address-level2">
 </div>
+
 <div class="form-group">
 <label>Postal Code</label>
 <input id="profilePostalCode" type="text" autocomplete="postal-code">
-</div>
 </div>
 
 <div class="form-group">
@@ -745,18 +730,18 @@ Your profit share can be withdrawn on demand, any time, with no minimum amount ‚
 </div>
 
 <div class="form-group">
-<label>Withdrawal Address <span style="color:var(--gold)">(at least one required)</span></label>
+<label>Withdrawal Wallet <span style="color:var(--gold)">(at least one required)</span></label>
 <div class="note" style="margin:0 0 12px">Provide your TRC20 wallet, your BEP20 wallet, or both.</div>
 </div>
 
 <div class="form-group">
 <label>TRC20 Wallet <span style="color:var(--muted2);font-weight:400">(optional)</span></label>
-<input id="profileWalletTrc20" type="text" placeholder="T..." autocomplete="off">
+<input id="profileWalletTrc20" type="text" placeholder="T...">
 </div>
 
 <div class="form-group">
 <label>BEP20 Wallet <span style="color:var(--muted2);font-weight:400">(optional)</span></label>
-<input id="profileWalletBep20" type="text" placeholder="0x..." autocomplete="off">
+<input id="profileWalletBep20" type="text" placeholder="0x...">
 </div>
 
 <div class="form-actions">
