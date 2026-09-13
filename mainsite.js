@@ -1437,9 +1437,9 @@ Opened by clicking the avatar/name block in the dashboard topbar.
                   deposit" one.
 - Team          → list of clients this client referred, fetched via the
                   get_referred_clients() RPC (SQL side).
-- Invite Members→ no separate modal; scrolls to + briefly highlights the
-                  existing "Refer & Earn" dashboard card, since that
-                  already has the link, Copy/Share buttons and stats.
+- Invite Members→ opens #inviteModal, which holds the referral link,
+                  Copy/Share buttons, live stats and the referral
+                  program terms (moved here from the dashboard body).
 - Support       → a message form that inserts into contact_messages,
                   same table the public Contact page uses, with the
                   client's name/email filled in automatically.
@@ -1454,6 +1454,7 @@ const willShow=!popup.classList.contains('show');
 if(willShow){
 const name=$('welcomeName')?.textContent||'Client';
 const headName=$('menuHeadName'); if(headName)headName.textContent=name;
+const headEmail=$('menuHeadEmail'); if(headEmail)headEmail.textContent=currentUser?.email||'—';
 const headAvatar=$('menuHeadAvatar'); if(headAvatar)headAvatar.textContent=(name.trim().charAt(0)||'C').toUpperCase();
 }
 popup.classList.toggle('show',willShow);
@@ -1551,12 +1552,13 @@ document.body.classList.remove('modal-open');
 /* ---- Invite Members ---- */
 function openInviteMembers(){
 closeAccountMenu();
-const card=$('referralCard');
-if(!card)return;
-card.scrollIntoView({behavior:'smooth',block:'center'});
-card.classList.remove('highlight');
-void card.offsetWidth; /* restart the animation if clicked twice in a row */
-card.classList.add('highlight');
+$('inviteModal')?.classList.add('show');
+document.body.classList.add('modal-open');
+}
+
+function closeInviteMembers(){
+$('inviteModal')?.classList.remove('show');
+document.body.classList.remove('modal-open');
 }
 
 /* ---- Support ---- */
@@ -1888,6 +1890,7 @@ if($('completeProfileModal')?.classList.contains('show'))closeCompleteProfile();
 if($('accountMenuPopup')?.classList.contains('show'))closeAccountMenu();
 if($('viewProfileModal')?.classList.contains('show'))closeViewProfile();
 if($('teamModal')?.classList.contains('show'))closeTeam();
+if($('inviteModal')?.classList.contains('show'))closeInviteMembers();
 if($('supportModal')?.classList.contains('show'))closeSupport();
 if($('notifDetailModal')?.classList.contains('show')){closeNotifDetail()}
 else{closeNotifications()}
@@ -1902,6 +1905,7 @@ if(m.id==='withdrawalModal')closeRequest('withdrawal');
 if(m.id==='completeProfileModal')closeCompleteProfile();
 if(m.id==='viewProfileModal')closeViewProfile();
 if(m.id==='teamModal')closeTeam();
+if(m.id==='inviteModal')closeInviteMembers();
 if(m.id==='supportModal')closeSupport();
 }));
 
