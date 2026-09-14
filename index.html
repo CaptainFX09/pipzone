@@ -695,7 +695,13 @@ PipZoNe is a managed trading arrangement, not a bank or a regulated fund. Tradin
 </div>
 <div class="note" style="margin-top:8px">Once you pick a network the address above is locked to that network — send funds only to this exact address on the network shown.</div>
 </div>
-
+<!-- QR code for the currently-selected network — toggled by
+     selectDepositNetwork() in mainsite.js. Scanning it in a wallet app
+     fills in the address automatically, avoiding copy-paste mistakes. -->
+<div class="form-group" style="text-align:center">
+<label>Scan to Deposit</label>
+<img id="depositQrImage" src="qr-trc20.jpg" alt="Deposit QR code" style="width:180px;height:180px;border-radius:8px;border:1px solid var(--line);margin-top:6px">
+</div>
 <div class="form-group">
 <label>Amount (USDT)</label>
 <input id="depositAmount" type="number" min="100" step="0.01" placeholder="100">
