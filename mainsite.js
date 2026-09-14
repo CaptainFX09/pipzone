@@ -1892,7 +1892,6 @@ if(!initSupabase())return;
 captureReferralCodeFromUrl();
 updateCalculator();
 loadLiveStats();
-initMarketOverviewDemo();
 selectDepositNetwork('TRC20');
 
 const slider=$('amtSlider');
