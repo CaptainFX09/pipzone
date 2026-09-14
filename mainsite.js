@@ -61,6 +61,86 @@ const DEFAULT_REFERRAL_RATE=0.02;
    the signup form. */
 const REFERRAL_STORAGE_KEY='pz_referral_code';
 
+/* -------------------------- 28. Animated market overview card (hero, illustrative only) --------------------------
+   Purely decorative. Every price/percentage/chart point here is
+   generated in the browser by this function — never fetched from any
+   market data provider, never tied to a real trade or account. Exists
+   only to make the hero section feel "alive"; the disclaimer text next
+   to it in the HTML says as much explicitly so it's never mistaken for
+   a real quote, signal, or performance guarantee. */
+
+const MARKET_DEMO_SYMBOLS=[
+{symbol:'XAUUSD',base:2648.86,decimals:2},
+{symbol:'BTCUSD',base:64881.50,decimals:2},
+{symbol:'EURUSD',base:1.1080,decimals:4}
+];
+
+let marketDemoChartPoints=[];
+
+function formatMarketPrice(n,decimals){
+return Number(n).toLocaleString(undefined,{minimumFractionDigits:decimals,maximumFractionDigits:decimals});
+}
+
+function tickMarketTickers(){
+MARKET_DEMO_SYMBOLS.forEach(s=>{
+const priceEl=document.getElementById('tickerPrice-'+s.symbol);
+const chgEl=document.getElementById('tickerChg-'+s.symbol);
+if(!priceEl||!chgEl)return;
+
+const drift=(Math.random()-0.5)*s.base*0.0015;
+s.base=Math.max(0,s.base+drift);
+const pct=(drift/s.base)*100;
+const isUp=drift>=0;
+
+priceEl.textContent=formatMarketPrice(s.base,s.decimals);
+priceEl.style.color=isUp?'var(--profit)':'var(--loss)';
+setTimeout(()=>{priceEl.style.color='';},400);
+
+chgEl.textContent=(isUp?'+':'')+pct.toFixed(2)+'%';
+chgEl.classList.toggle('up',isUp);
+chgEl.classList.toggle('down',!isUp);
+});
+}
+
+function tickMarketChart(){
+const line=document.getElementById('marketChartLine');
+const fill=document.getElementById('marketChartFill');
+if(!line||!fill)return;
+
+const W=560,H=140,STEP=20,MAXPTS=Math.floor(W/STEP)+1;
+
+if(!marketDemoChartPoints.length){
+let y=H*0.65;
+for(let i=0;i<MAXPTS;i++){
+y+=(Math.random()-0.45)*14;
+y=Math.max(20,Math.min(H-10,y));
+marketDemoChartPoints.push(y);
+}
+}else{
+let y=marketDemoChartPoints[marketDemoChartPoints.length-1];
+y+=(Math.random()-0.45)*14;
+y=Math.max(20,Math.min(H-10,y));
+marketDemoChartPoints.push(y);
+if(marketDemoChartPoints.length>MAXPTS)marketDemoChartPoints.shift();
+}
+
+const pts=marketDemoChartPoints.map((y,i)=>(i*STEP)+','+y.toFixed(1));
+line.setAttribute('points',pts.join(' '));
+
+const fillPts=pts.slice();
+const lastX=(marketDemoChartPoints.length-1)*STEP;
+fillPts.push(lastX+','+H,'0,'+H);
+fill.setAttribute('points',fillPts.join(' '));
+}
+
+function initMarketOverviewDemo(){
+if(!document.getElementById('marketChartLine'))return;
+tickMarketTickers();
+for(let i=0;i<28;i++)tickMarketChart();
+setInterval(tickMarketTickers,2200);
+setInterval(tickMarketChart,1400);
+}
+
 /* -------------------------- 2. Global state -------------------------- */
 let selectedDepositNetwork='TRC20';
 let selectedWithdrawalNetwork='TRC20';
