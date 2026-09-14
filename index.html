@@ -62,72 +62,87 @@
      Sirf animation panel ko existing hero mein add karein
 ====================================================== -->
 
-<div class="market-animation-panel">
+<!-- ==================== LIVE MARKET CHART ==================== -->
+<div class="market-card live-market-card">
 
-  <div class="market-panel-header">
+  <div class="market-card-head">
     <div>
-      <span class="market-panel-label">LIVE MARKET</span>
-      <h3>Trading Overview</h3>
+      <div class="market-card-eyebrow">PIPZONE TRADING DESK</div>
+      <div class="market-card-title">Market overview</div>
     </div>
-    <span class="market-status">
-      <span class="status-dot"></span> DEMO
+
+    <span class="market-live-badge">
+      <span class="market-live-dot"></span>
+      Live market
     </span>
   </div>
 
+  <!-- Market selector -->
   <div class="market-tabs">
     <button class="market-tab active" data-market="gold">
-      <span class="asset-icon gold-icon">Au</span>
-      <span>
-        <strong>Gold</strong>
-        <small>XAUUSD</small>
-      </span>
+      <span class="market-tab-symbol">XAUUSD</span>
+      <span class="market-tab-name">Gold</span>
     </button>
 
     <button class="market-tab" data-market="btc">
-      <span class="asset-icon btc-icon">₿</span>
-      <span>
-        <strong>Bitcoin</strong>
-        <small>BTCUSD</small>
-      </span>
+      <span class="market-tab-symbol">BTCUSD</span>
+      <span class="market-tab-name">Bitcoin</span>
     </button>
   </div>
 
+  <!-- Price -->
   <div class="market-price-row">
     <div>
-      <span id="market-symbol">XAUUSD</span>
-      <div class="market-price" id="market-price">$2,650.00</div>
-      <span class="market-change positive" id="market-change">
-        +0.00%
+      <div class="market-symbol" id="market-symbol">XAUUSD</div>
+
+      <div class="market-price" id="market-price">
+        $2,650.00
+      </div>
+    </div>
+
+    <div class="market-change positive" id="market-change">
+      +0.00%
+    </div>
+  </div>
+
+  <!-- Candlestick chart -->
+  <div class="market-chart-wrap live-chart-wrap">
+
+    <div class="market-chart-head">
+      <span id="market-chart-label">XAUUSD · Gold</span>
+
+      <span class="market-chart-status">
+        <span class="market-live-dot small"></span>
+        Market data
       </span>
     </div>
-    <span class="market-timeframe">1m</span>
-  </div>
 
-  <div class="candlestick-chart-wrap">
-    <div class="chart-y-labels">
-      <span>HIGH</span>
-      <span>—</span>
-      <span>—</span>
-      <span>LOW</span>
+    <div class="candlestick-chart-container">
+      <canvas
+        id="candlestick-chart"
+        class="candlestick-chart"
+        aria-label="Live XAUUSD and BTCUSD candlestick chart">
+      </canvas>
     </div>
 
-    <canvas id="candlestick-chart"></canvas>
-
-    <div class="chart-bottom-labels">
-      <span>10:00</span>
-      <span>10:30</span>
-      <span>11:00</span>
-      <span>NOW</span>
+    <!-- Timeframes -->
+    <div class="market-timeframes">
+      <button class="market-timeframe">5m</button>
+      <button class="market-timeframe active">15m</button>
+      <button class="market-timeframe">1H</button>
+      <button class="market-timeframe">4H</button>
     </div>
+
   </div>
 
-  <div class="market-panel-footer">
-    <span><span class="legend-candle up"></span> Bullish</span>
-    <span><span class="legend-candle down"></span> Bearish</span>
-    <span class="chart-live-label">● Simulated movement</span>
+  <div class="market-card-disclaimer">
+    Market data is provided for informational display only.
+    Prices may be delayed and are not trading advice or a
+    performance guarantee.
   </div>
 
 </div>
+<!-- ==================== END LIVE MARKET CHART ==================== -->
 
 </div>
 </section>
