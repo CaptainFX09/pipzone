@@ -54,7 +54,7 @@ header{position:sticky;top:0;z-index:50;background:rgba(14,20,32,.9);backdrop-fi
 
 /* -------------------------- 3. Hero section -------------------------- */
 .hero{padding:96px 0 72px;border-bottom:1px solid var(--soft)}
-.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:64px;align-items:end}
+.hero-grid{display:grid;grid-template-columns:1fr 1.25fr;gap:56px;align-items:start}
 @media(max-width:860px){.navlinks{display:none}.hero-grid{grid-template-columns:1fr}}
 .eyebrow{color:var(--gold);font-size:13px;margin-bottom:22px}
 .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--profit);margin-right:8px}
@@ -70,6 +70,108 @@ h1 em{color:var(--gold)}
 .lc-value,.out-value{font:16px 'IBM Plex Mono'}
 .gold{color:var(--gold)}
 .note{color:var(--muted2);font-size:12px;margin-top:18px}
+
+/* ---- Hero trading-terminal mockup (decorative, animated) ----
+   Dark "trading desk" panel: topbar, left icon rail, chart + orders
+   table + buy/sell buttons in the middle, market-watch/sentiment on the
+   right. Candles use a subtle CSS scaleY "breathe" loop (staggered via
+   nth-child delays) instead of literally animating height, so the
+   layout never shifts. Sparklines use stroke-dash draw/undraw loops.
+   Everything here is inert (aria-hidden, tabindex="-1" on the fake
+   buttons) — see .tm-disclaimer at the bottom of the panel. */
+.tm-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.tm-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--soft);background:var(--bg2);flex-wrap:wrap}
+.tm-brand{display:flex;align-items:center;gap:8px;font:600 15px Fraunces}
+.tm-top-right{display:flex;align-items:center;gap:14px}
+.tm-bell{position:relative;font-size:14px}
+.tm-bell-dot{position:absolute;top:-3px;right:-3px;width:6px;height:6px;border-radius:50%;background:var(--loss)}
+.tm-user{display:flex;align-items:center;gap:8px}
+.tm-avatar{width:26px;height:26px;border-radius:50%;background:rgba(47,191,131,.15);color:var(--gold);display:flex;align-items:center;justify-content:center;font:600 11px Fraunces;flex:none}
+.tm-user-text{font-size:11px;color:var(--muted);line-height:1.35}
+.tm-user-text small{color:var(--muted2);font-size:10px}
+.tm-logout{border:1px solid var(--line);border-radius:6px;padding:5px 10px;font-size:11px;color:var(--muted);white-space:nowrap}
+
+.tm-body{display:grid;grid-template-columns:56px 1fr 210px}
+.tm-rail{background:var(--bg2);border-right:1px solid var(--soft);padding:14px 0;display:flex;flex-direction:column}
+.tm-rail-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 2px;color:var(--muted2);font-size:9px}
+.tm-rail-item span{font-size:16px}
+.tm-rail-item.active{color:var(--gold);background:rgba(47,191,131,.08);border-right:2px solid var(--gold)}
+
+.tm-main{padding:16px 18px;border-right:1px solid var(--soft);min-width:0}
+.tm-chart-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.tm-symbol{font:600 14px Fraunces}
+.tm-symbol-sub{color:var(--muted2);font-size:10.5px;margin-top:2px}
+.tm-price-block{text-align:right}
+.tm-price{font:600 16px 'IBM Plex Mono';color:var(--text)}
+.tm-price-change{font-size:11px;margin-top:2px}
+.tm-price-change.up{color:var(--profit)}
+.tm-tf{display:flex;gap:6px;font-size:10px;color:var(--muted2)}
+.tm-tf span{padding:3px 6px;border-radius:4px}
+.tm-tf span.active{background:rgba(47,191,131,.12);color:var(--gold)}
+
+.tm-chart{position:relative;height:150px;border:1px solid var(--soft);border-radius:6px;overflow:hidden;background:var(--bg2);margin-bottom:12px}
+.tm-candles{position:absolute;inset:8px;display:flex;align-items:flex-end;gap:3px}
+.tm-candle{position:relative;flex:1;min-width:3px;border-radius:1px;transform-origin:bottom;animation:tm-breathe 2.6s ease-in-out infinite alternate}
+.tm-candle::before{content:'';position:absolute;left:50%;top:-5px;bottom:-5px;width:1px;background:inherit;opacity:.55;transform:translateX(-50%)}
+.tm-candle.up{background:var(--profit)}
+.tm-candle.down{background:var(--loss)}
+.tm-candle:nth-child(3n){animation-delay:.2s}
+.tm-candle:nth-child(3n+1){animation-delay:.6s}
+.tm-candle:nth-child(3n+2){animation-delay:1s}
+@keyframes tm-breathe{from{transform:scaleY(.86)}to{transform:scaleY(1)}}
+
+.tm-scanline{position:absolute;top:0;bottom:0;width:2px;background:linear-gradient(var(--gold),transparent 85%);opacity:.55;animation:tm-scan 5s linear infinite}
+@keyframes tm-scan{0%{left:0}100%{left:100%}}
+
+.tm-tabs{display:flex;gap:16px;font-size:11px;color:var(--muted2);border-bottom:1px solid var(--soft);margin-bottom:8px}
+.tm-tabs span{padding-bottom:8px}
+.tm-tabs span.active{color:var(--gold);border-bottom:2px solid var(--gold)}
+
+.tm-table-wrap{overflow-x:auto;margin-bottom:14px}
+.tm-table{width:100%;font-size:10.5px;border-collapse:collapse;white-space:nowrap}
+.tm-table th{color:var(--muted2);text-align:left;font-weight:500;padding-bottom:6px}
+.tm-table td{padding:6px 10px 6px 0;color:var(--text)}
+.tm-buy-chip,.tm-sell-chip{padding:2px 6px;border-radius:4px;font-size:10px}
+.tm-buy-chip{color:var(--profit);background:rgba(94,234,176,.10)}
+.tm-sell-chip{color:var(--loss);background:rgba(242,115,94,.10)}
+.tm-table td.up{color:var(--profit)}
+.tm-table td.down{color:var(--loss)}
+
+.tm-actions{display:flex;align-items:center;gap:8px}
+.tm-buy-btn,.tm-sell-btn{flex:1;border:0;border-radius:6px;padding:9px;font-size:11px;font-weight:600;cursor:default}
+.tm-buy-btn{background:var(--gold);color:#161008}
+.tm-sell-btn{background:var(--loss);color:#1a0d0a}
+.tm-lot{font-size:10px;color:var(--muted2);white-space:nowrap}
+.tm-lot b{color:var(--text)}
+
+.tm-side{padding:16px 14px;background:var(--bg2);min-width:0}
+.tm-side-head{font-size:11px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.tm-watch-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--soft)}
+.tm-watch-row:last-child{border-bottom:0}
+.tm-watch-sym{font-size:10.5px;color:var(--text);flex:none}
+.tm-spark{width:44px;height:16px;flex:none}
+.tm-spark polyline{fill:none;stroke:var(--profit);stroke-width:1.5;stroke-dasharray:120;stroke-dashoffset:120;animation:tm-draw 2.6s ease-in-out infinite}
+.tm-watch-price{font-size:10.5px;color:var(--profit);text-align:right;flex:none}
+.tm-watch-price small{display:block;font-size:9px;color:var(--muted2)}
+
+.tm-sentiment{margin-top:16px;padding-top:14px;border-top:1px solid var(--soft)}
+.tm-bullish{color:var(--profit);font-size:10px}
+.tm-spark-lg{width:100%;height:44px;margin-top:8px;display:block}
+.tm-spark-lg polyline{fill:none;stroke:var(--gold);stroke-width:1.6;stroke-dasharray:320;stroke-dashoffset:320;animation:tm-draw-lg 4s ease-in-out infinite}
+
+@keyframes tm-draw{0%{stroke-dashoffset:120}55%{stroke-dashoffset:0}100%{stroke-dashoffset:-120}}
+@keyframes tm-draw-lg{0%{stroke-dashoffset:320}55%{stroke-dashoffset:0}100%{stroke-dashoffset:-320}}
+
+.tm-disclaimer{padding:8px 18px;font-size:10px;color:var(--muted2);border-top:1px solid var(--soft);background:var(--bg2)}
+
+@media(max-width:760px){
+.tm-body{grid-template-columns:1fr}
+.tm-rail{display:none}
+.tm-main{border-right:0;border-bottom:1px solid var(--soft)}
+}
+@media(max-width:480px){
+.tm-chart{height:120px}
+}
 
 /* -------------------------- 4. Stats strip -------------------------- */
 .stats{border-bottom:1px solid var(--soft)}
