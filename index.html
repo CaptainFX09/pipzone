@@ -63,8 +63,8 @@
 <div class="tm-top-right">
 <span class="tm-bell">🔔<span class="tm-bell-dot"></span></span>
 <div class="tm-user">
-<span class="tm-avatar">M</span>
-<span class="tm-user-text">Welcome, Trader<br><small>trader@pipzone.io</small></span>
+<span class="tm-avatar">👤</span>
+<span class="tm-user-text">Welcome, Muhammad Bilal<br><small>bilal@example.com</small></span>
 </div>
 <span class="tm-logout">Logout</span>
 </div>
@@ -84,7 +84,7 @@
 
 <div class="tm-chart-head">
 <div>
-<div class="tm-symbol">XAU/USD</div>
+<div class="tm-symbol">🥇 XAUUSD</div>
 <div class="tm-symbol-sub">Gold / US Dollar</div>
 </div>
 <div class="tm-price-block">
@@ -123,7 +123,37 @@
 <div class="tm-candle down" style="height:74%"></div>
 <div class="tm-candle up" style="height:88%"></div>
 </div>
+<div class="tm-vol">
+<div class="tm-vol-bar up" style="height:30%"></div>
+<div class="tm-vol-bar down" style="height:55%"></div>
+<div class="tm-vol-bar up" style="height:40%"></div>
+<div class="tm-vol-bar up" style="height:70%"></div>
+<div class="tm-vol-bar down" style="height:25%"></div>
+<div class="tm-vol-bar up" style="height:45%"></div>
+<div class="tm-vol-bar up" style="height:60%"></div>
+<div class="tm-vol-bar down" style="height:35%"></div>
+<div class="tm-vol-bar up" style="height:50%"></div>
+<div class="tm-vol-bar up" style="height:65%"></div>
+<div class="tm-vol-bar down" style="height:30%"></div>
+<div class="tm-vol-bar up" style="height:55%"></div>
+<div class="tm-vol-bar up" style="height:75%"></div>
+<div class="tm-vol-bar down" style="height:40%"></div>
+<div class="tm-vol-bar up" style="height:60%"></div>
+<div class="tm-vol-bar up" style="height:80%"></div>
+<div class="tm-vol-bar down" style="height:35%"></div>
+<div class="tm-vol-bar up" style="height:65%"></div>
+<div class="tm-vol-bar up" style="height:85%"></div>
+<div class="tm-vol-bar down" style="height:45%"></div>
+<div class="tm-vol-bar up" style="height:70%"></div>
+<div class="tm-vol-bar up" style="height:90%"></div>
+<div class="tm-vol-bar down" style="height:50%"></div>
+<div class="tm-vol-bar up" style="height:78%"></div>
+</div>
+<div class="tm-axis">
+<span>2,490.00</span><span>2,480.00</span><span>2,470.00</span><span>2,460.00</span><span>2,450.00</span>
+</div>
 <div class="tm-scanline"></div>
+<div class="tm-chart-logo">TV</div>
 </div>
 
 <div class="tm-tabs">
@@ -132,50 +162,65 @@
 
 <div class="tm-table-wrap">
 <table class="tm-table">
-<thead><tr><th>Symbol</th><th>Type</th><th>Lot</th><th>Price</th><th>P/L</th></tr></thead>
+<thead><tr><th>Symbol</th><th>Type</th><th>Lot</th><th>Price</th><th>SL / TP</th><th>P/L</th></tr></thead>
 <tbody>
-<tr><td>XAUUSD</td><td><span class="tm-buy-chip">Buy</span></td><td>0.10</td><td>2,486.32</td><td class="up">+24.50</td></tr>
-<tr><td>BTCUSD</td><td><span class="tm-sell-chip">Sell</span></td><td>0.05</td><td>68,421.00</td><td class="down">-8.20</td></tr>
+<tr><td>🥇 XAUUSD</td><td><span class="tm-buy-chip">Buy</span></td><td>0.10</td><td>2,486.32</td><td class="tm-sltp">2,460 / 2,520</td><td class="up">+24.50</td></tr>
+<tr><td>🪙 BTCUSD</td><td><span class="tm-sell-chip">Sell</span></td><td>0.05</td><td>68,421.00</td><td class="tm-sltp">69,200 / 66,800</td><td class="down">-8.20</td></tr>
 </tbody>
 </table>
+<div class="tm-view-all">View All →</div>
 </div>
 
 <div class="tm-actions">
 <button class="tm-buy-btn" type="button" tabindex="-1">Buy →</button>
 <button class="tm-sell-btn" type="button" tabindex="-1">Sell →</button>
-<div class="tm-lot">Lot Size <b>0.10</b></div>
+<div class="tm-lot">
+<span>Lot Size<br><b>0.10</b></span>
+<span class="tm-stepper"><button type="button" tabindex="-1">−</button><button type="button" tabindex="-1">+</button></span>
+<span class="tm-gear">⚙️</span>
+</div>
 </div>
 
 </div>
 
 <div class="tm-side">
-<div class="tm-side-head">Market Watch</div>
+<div class="tm-side-head">Market Watch<span class="tm-side-close">×</span></div>
+<div class="tm-watch-tabs">
+<span class="active">Forex</span><span>Crypto</span><span>Commodities</span>
+</div>
 <div class="tm-watch-list">
+<div class="tm-watch-head-row"><span>Symbol</span><span>Price</span><span>Change</span></div>
 <div class="tm-watch-row">
 <span class="tm-watch-sym">🥇 XAUUSD</span>
-<svg class="tm-spark" viewBox="0 0 60 20" preserveAspectRatio="none"><polyline points="0,14 8,12 16,15 24,9 32,11 40,6 48,8 60,3"/></svg>
-<span class="tm-watch-price up">2,486.32<small>+0.50%</small></span>
+<span class="tm-watch-p">2,486.32</span>
+<span class="tm-watch-chg up">+0.50%</span>
 </div>
 <div class="tm-watch-row">
 <span class="tm-watch-sym">💶 EURUSD</span>
-<svg class="tm-spark" viewBox="0 0 60 20" preserveAspectRatio="none"><polyline points="0,10 8,11 16,8 24,10 32,7 40,9 48,5 60,6"/></svg>
-<span class="tm-watch-price up">1.1054<small>+0.48%</small></span>
+<span class="tm-watch-p">1.1054</span>
+<span class="tm-watch-chg up">+0.48%</span>
+</div>
+<div class="tm-watch-row">
+<span class="tm-watch-sym">🇬🇧 GBPUSD</span>
+<span class="tm-watch-p">1.3126</span>
+<span class="tm-watch-chg up">+0.32%</span>
 </div>
 <div class="tm-watch-row">
 <span class="tm-watch-sym">🪙 BTCUSD</span>
-<svg class="tm-spark" viewBox="0 0 60 20" preserveAspectRatio="none"><polyline points="0,16 8,10 16,13 24,7 32,9 40,4 48,6 60,2"/></svg>
-<span class="tm-watch-price up">68,421<small>+1.24%</small></span>
+<span class="tm-watch-p">68,421.00</span>
+<span class="tm-watch-chg up">+1.24%</span>
 </div>
 <div class="tm-watch-row">
 <span class="tm-watch-sym">Ξ ETHUSD</span>
-<svg class="tm-spark" viewBox="0 0 60 20" preserveAspectRatio="none"><polyline points="0,12 8,13 16,9 24,11 32,8 40,10 48,6 60,7"/></svg>
-<span class="tm-watch-price up">2,612.35<small>+0.87%</small></span>
+<span class="tm-watch-p">2,612.35</span>
+<span class="tm-watch-chg up">+0.87%</span>
 </div>
 </div>
 
 <div class="tm-sentiment">
-<div class="tm-side-head">Market Sentiment <span class="tm-bullish">● Bullish</span></div>
+<div class="tm-side-head">Market Sentiment <span class="tm-bullish">Bullish</span></div>
 <svg class="tm-spark-lg" viewBox="0 0 220 50" preserveAspectRatio="none"><polyline points="0,40 20,36 40,38 60,30 80,32 100,24 120,26 140,18 160,20 180,12 200,14 220,8"/></svg>
+<div class="tm-sentiment-foot"><span>XAUUSD</span><span>2,486.32 <b class="up">+0.50%</b></span></div>
 </div>
 </div>
 
