@@ -41,12 +41,6 @@ const DEPOSIT_ADDRESSES={
   TRC20:'TZ1xrSedo6vPVqc6kY2fE7JDunsVoJZUT8',
   BEP20:'0xf4a61fbfc905b5b66077878e12ffa4566374d54d'
 };
-/* QR code image per network — swapped by selectDepositNetwork() below.
-   Scanning it in a wallet app avoids the address being mistyped. */
-const DEPOSIT_QR_IMAGES={
-  TRC20:'qr-trc20.jpg',
-  BEP20:'qr-bep20.jpg'
-};
 
 const PRINCIPAL_LOCK_DAYS=40;
 const WITHDRAWAL_FEE=2;
@@ -186,19 +180,11 @@ $('tab-TRC20').classList.toggle('active',net==='TRC20');
 $('tab-BEP20').classList.toggle('active',net==='BEP20');
 $('depositAddressField').value=DEPOSIT_ADDRESSES[net];
 $('depositNetworkLabel').textContent='('+net+')';
-const qrImg=$('depositQrImage');
-if(qrImg)qrImg.src=DEPOSIT_QR_IMAGES[net];
 }
 
 /* NETWORK SELECTOR FOR WITHDRAWAL
-   Prefills the saved wallet for the chosen network from the client's profile.
-   If a wallet is already saved for this network, the field is LOCKED
-   (readonly) — a client cannot type a different address into the
-   withdrawal form itself. Changing a saved wallet is only possible from
-   Settings (see submitProfile()/lockWalletFields() below), which is a
-   deliberate extra step so funds can't be silently redirected to a
-   different address by mistake or by someone else with access to the
-   session. */
+   Prefills the saved wallet for the chosen network from the client's profile,
+   so withdrawal network matches whichever wallet they registered for it. */
 function selectWithdrawalNetwork(net){
 selectedWithdrawalNetwork=net;
 $('wd-tab-TRC20').classList.toggle('active',net==='TRC20');
@@ -208,26 +194,23 @@ const label=$('withdrawalWalletLabel');
 const input=$('withdrawalWallet');
 const note=$('withdrawalWalletNote');
 
-const savedWallet=net==='TRC20'?currentProfile?.wallet_address:currentProfile?.wallet_address_bep20;
-
 if(net==='TRC20'){
 label.textContent='TRC20 Withdrawal Wallet';
 input.placeholder='T...';
+input.value=currentProfile?.wallet_address||'';
 }else{
 label.textContent='BEP20 Withdrawal Wallet';
 input.placeholder='0x...';
+input.value=currentProfile?.wallet_address_bep20||'';
 }
 
-input.value=savedWallet||'';
-
-if(savedWallet){
-input.readOnly=true;
-note.textContent='This wallet is locked to your account. To change it, go to Settings from your account menu.';
+if(input.value){
+note.textContent='This is the wallet saved on your account for '+net+'. You can edit it if needed.';
 }else{
-input.readOnly=false;
-note.textContent='No saved '+net+' wallet found on your account. Enter one below — it will be locked to your account once saved.';
+note.textContent='No saved '+net+' wallet found on your account. Enter one below, or contact support to add it to your profile.';
 }
 }
+
 /* -------------------------- 8. Auth modal open/close/switch helpers -------------------------- */
 function openAuth(mode){
 clearMessages();
@@ -746,30 +729,6 @@ p.address && p.city && p.postal_code && p.state &&
 (p.wallet_address || p.wallet_address_bep20)
 );
 }
-/* Locks (disables) a wallet input in the Complete Profile / Settings
-   form once that network's wallet already has a saved value — a client
-   can fill in the OTHER network's wallet later, but cannot overwrite one
-   that's already set. Called from openCompleteProfile() below. */
-function lockWalletFields(){
-const trc20Input=$('profileWalletTrc20');
-const bep20Input=$('profileWalletBep20');
-const trc20Note=trc20Input?.parentElement?.querySelector('.note')||null;
-
-if(trc20Input){
-if(currentProfile?.wallet_address){
-trc20Input.readOnly=true;
-}else{
-trc20Input.readOnly=false;
-}
-}
-if(bep20Input){
-if(currentProfile?.wallet_address_bep20){
-bep20Input.readOnly=true;
-}else{
-bep20Input.readOnly=false;
-}
-}
-}
 
 /* Remembers which action (currently only 'deposit') should resume
    automatically once the client finishes saving their profile. */
@@ -792,7 +751,6 @@ $('profileWalletTrc20').value=currentProfile?.wallet_address||'';
 $('profileWalletBep20').value=currentProfile?.wallet_address_bep20||'';
 $('completeProfileModal').classList.add('show');
 document.body.classList.add('modal-open');
-lockWalletFields();
 }
 
 function closeCompleteProfile(){
@@ -1963,117 +1921,3 @@ if(isRecovery&&data?.session){showNewPasswordForm()}
 else if(data?.session){await loadDashboard()}
 }catch(err){console.error('Session check error:',err)}
 });
-
-<script>
-/* =========================================================
-   PIPZONE HERO — LIVE PRICE MOTION
-   Sirf hero section ke animated prices ke liye.
-   Supabase / Dashboard / Login code ko touch nahi karta.
-   ========================================================= */
-
-(function(){
-
-  const root = document.querySelector('.pz-hero-visual');
-
-  if(!root) return;
-
-  const items = [
-
-    {
-      price: 'pzGoldPrice',
-      move: 'pzGoldMove',
-      base: 2648.20,
-      decimals: 2,
-      step: 0.85
-    },
-
-    {
-      price: 'pzBtcPrice',
-      move: 'pzBtcMove',
-      base: 64820,
-      decimals: 2,
-      step: 38
-    },
-
-    {
-      price: 'pzEurPrice',
-      move: 'pzEurMove',
-      base: 1.1082,
-      decimals: 4,
-      step: 0.0007
-    }
-
-  ];
-
-  const format = (number, decimals) => {
-
-    return number.toLocaleString('en-US', {
-      minimumFractionDigits: decimals,
-      maximumFractionDigits: decimals
-    });
-
-  };
-
-  function tick(){
-
-    items.forEach(item => {
-
-      const price = document.getElementById(item.price);
-      const move = document.getElementById(item.move);
-
-      if(!price || !move) return;
-
-      /* Price movement */
-
-      const delta =
-        (Math.random() - 0.42) * item.step;
-
-      item.base = Math.max(
-        0,
-        item.base + delta
-      );
-
-      /* Percentage movement */
-
-      const pct =
-        (Math.random() * 0.9 + 0.08) *
-        (Math.random() > 0.18 ? 1 : -1);
-
-      /* Update price */
-
-      price.textContent =
-        format(item.base, item.decimals);
-
-      /* Update percentage */
-
-      move.textContent =
-        (pct >= 0 ? '+' : '') +
-        pct.toFixed(2) +
-        '%';
-
-      /* Green / Red */
-
-      move.style.color =
-        pct >= 0
-          ? 'var(--profit)'
-          : 'var(--loss)';
-
-    });
-
-  }
-
-  /* Respect user's reduced-motion setting */
-
-  if(
-    !window.matchMedia ||
-    !window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    ).matches
-  ){
-
-    window.setInterval(tick, 2200);
-
-  }
-
-})();
-</script>
