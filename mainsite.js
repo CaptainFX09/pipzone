@@ -1963,3 +1963,117 @@ if(isRecovery&&data?.session){showNewPasswordForm()}
 else if(data?.session){await loadDashboard()}
 }catch(err){console.error('Session check error:',err)}
 });
+
+<script>
+/* =========================================================
+   PIPZONE HERO — LIVE PRICE MOTION
+   Sirf hero section ke animated prices ke liye.
+   Supabase / Dashboard / Login code ko touch nahi karta.
+   ========================================================= */
+
+(function(){
+
+  const root = document.querySelector('.pz-hero-visual');
+
+  if(!root) return;
+
+  const items = [
+
+    {
+      price: 'pzGoldPrice',
+      move: 'pzGoldMove',
+      base: 2648.20,
+      decimals: 2,
+      step: 0.85
+    },
+
+    {
+      price: 'pzBtcPrice',
+      move: 'pzBtcMove',
+      base: 64820,
+      decimals: 2,
+      step: 38
+    },
+
+    {
+      price: 'pzEurPrice',
+      move: 'pzEurMove',
+      base: 1.1082,
+      decimals: 4,
+      step: 0.0007
+    }
+
+  ];
+
+  const format = (number, decimals) => {
+
+    return number.toLocaleString('en-US', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals
+    });
+
+  };
+
+  function tick(){
+
+    items.forEach(item => {
+
+      const price = document.getElementById(item.price);
+      const move = document.getElementById(item.move);
+
+      if(!price || !move) return;
+
+      /* Price movement */
+
+      const delta =
+        (Math.random() - 0.42) * item.step;
+
+      item.base = Math.max(
+        0,
+        item.base + delta
+      );
+
+      /* Percentage movement */
+
+      const pct =
+        (Math.random() * 0.9 + 0.08) *
+        (Math.random() > 0.18 ? 1 : -1);
+
+      /* Update price */
+
+      price.textContent =
+        format(item.base, item.decimals);
+
+      /* Update percentage */
+
+      move.textContent =
+        (pct >= 0 ? '+' : '') +
+        pct.toFixed(2) +
+        '%';
+
+      /* Green / Red */
+
+      move.style.color =
+        pct >= 0
+          ? 'var(--profit)'
+          : 'var(--loss)';
+
+    });
+
+  }
+
+  /* Respect user's reduced-motion setting */
+
+  if(
+    !window.matchMedia ||
+    !window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches
+  ){
+
+    window.setInterval(tick, 2200);
+
+  }
+
+})();
+</script>
