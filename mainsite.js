@@ -191,8 +191,14 @@ if(qrImg)qrImg.src=DEPOSIT_QR_IMAGES[net];
 }
 
 /* NETWORK SELECTOR FOR WITHDRAWAL
-   Prefills the saved wallet for the chosen network from the client's profile,
-   so withdrawal network matches whichever wallet they registered for it. */
+   Prefills the saved wallet for the chosen network from the client's profile.
+   If a wallet is already saved for this network, the field is LOCKED
+   (readonly) — a client cannot type a different address into the
+   withdrawal form itself. Changing a saved wallet is only possible from
+   Settings (see submitProfile()/lockWalletFields() below), which is a
+   deliberate extra step so funds can't be silently redirected to a
+   different address by mistake or by someone else with access to the
+   session. */
 function selectWithdrawalNetwork(net){
 selectedWithdrawalNetwork=net;
 $('wd-tab-TRC20').classList.toggle('active',net==='TRC20');
@@ -202,23 +208,26 @@ const label=$('withdrawalWalletLabel');
 const input=$('withdrawalWallet');
 const note=$('withdrawalWalletNote');
 
+const savedWallet=net==='TRC20'?currentProfile?.wallet_address:currentProfile?.wallet_address_bep20;
+
 if(net==='TRC20'){
 label.textContent='TRC20 Withdrawal Wallet';
 input.placeholder='T...';
-input.value=currentProfile?.wallet_address||'';
 }else{
 label.textContent='BEP20 Withdrawal Wallet';
 input.placeholder='0x...';
-input.value=currentProfile?.wallet_address_bep20||'';
 }
 
-if(input.value){
-note.textContent='This is the wallet saved on your account for '+net+'. You can edit it if needed.';
+input.value=savedWallet||'';
+
+if(savedWallet){
+input.readOnly=true;
+note.textContent='This wallet is locked to your account. To change it, go to Settings from your account menu.';
 }else{
-note.textContent='No saved '+net+' wallet found on your account. Enter one below, or contact support to add it to your profile.';
+input.readOnly=false;
+note.textContent='No saved '+net+' wallet found on your account. Enter one below — it will be locked to your account once saved.';
 }
 }
-
 /* -------------------------- 8. Auth modal open/close/switch helpers -------------------------- */
 function openAuth(mode){
 clearMessages();
@@ -737,6 +746,30 @@ p.address && p.city && p.postal_code && p.state &&
 (p.wallet_address || p.wallet_address_bep20)
 );
 }
+/* Locks (disables) a wallet input in the Complete Profile / Settings
+   form once that network's wallet already has a saved value — a client
+   can fill in the OTHER network's wallet later, but cannot overwrite one
+   that's already set. Called from openCompleteProfile() below. */
+function lockWalletFields(){
+const trc20Input=$('profileWalletTrc20');
+const bep20Input=$('profileWalletBep20');
+const trc20Note=trc20Input?.parentElement?.querySelector('.note')||null;
+
+if(trc20Input){
+if(currentProfile?.wallet_address){
+trc20Input.readOnly=true;
+}else{
+trc20Input.readOnly=false;
+}
+}
+if(bep20Input){
+if(currentProfile?.wallet_address_bep20){
+bep20Input.readOnly=true;
+}else{
+bep20Input.readOnly=false;
+}
+}
+}
 
 /* Remembers which action (currently only 'deposit') should resume
    automatically once the client finishes saving their profile. */
@@ -759,6 +792,7 @@ $('profileWalletTrc20').value=currentProfile?.wallet_address||'';
 $('profileWalletBep20').value=currentProfile?.wallet_address_bep20||'';
 $('completeProfileModal').classList.add('show');
 document.body.classList.add('modal-open');
+lockWalletFields();
 }
 
 function closeCompleteProfile(){
