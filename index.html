@@ -57,52 +57,78 @@
      Never fed by any live market feed, never tied to a real account,
      and explicitly labelled "simulated" so it can't be mistaken for a
      real signal, quote, or performance guarantee. -->
-<div class="market-card">
-<div class="market-card-head">
-<div>
-<div class="market-card-eyebrow">PIPZONE TRADING DESK</div>
-<div class="market-card-title">Market overview</div>
-</div>
-<span class="market-live-badge"><span class="market-live-dot"></span>Live simulation</span>
+<!-- =====================================================
+     PIPZONE — GOLD & BTC CANDLESTICK ANIMATION
+     Sirf animation panel ko existing hero mein add karein
+====================================================== -->
+
+<div class="market-animation-panel">
+
+  <div class="market-panel-header">
+    <div>
+      <span class="market-panel-label">LIVE MARKET</span>
+      <h3>Trading Overview</h3>
+    </div>
+    <span class="market-status">
+      <span class="status-dot"></span> DEMO
+    </span>
+  </div>
+
+  <div class="market-tabs">
+    <button class="market-tab active" data-market="gold">
+      <span class="asset-icon gold-icon">Au</span>
+      <span>
+        <strong>Gold</strong>
+        <small>XAUUSD</small>
+      </span>
+    </button>
+
+    <button class="market-tab" data-market="btc">
+      <span class="asset-icon btc-icon">₿</span>
+      <span>
+        <strong>Bitcoin</strong>
+        <small>BTCUSD</small>
+      </span>
+    </button>
+  </div>
+
+  <div class="market-price-row">
+    <div>
+      <span id="market-symbol">XAUUSD</span>
+      <div class="market-price" id="market-price">$2,650.00</div>
+      <span class="market-change positive" id="market-change">
+        +0.00%
+      </span>
+    </div>
+    <span class="market-timeframe">1m</span>
+  </div>
+
+  <div class="candlestick-chart-wrap">
+    <div class="chart-y-labels">
+      <span>HIGH</span>
+      <span>—</span>
+      <span>—</span>
+      <span>LOW</span>
+    </div>
+
+    <canvas id="candlestick-chart"></canvas>
+
+    <div class="chart-bottom-labels">
+      <span>10:00</span>
+      <span>10:30</span>
+      <span>11:00</span>
+      <span>NOW</span>
+    </div>
+  </div>
+
+  <div class="market-panel-footer">
+    <span><span class="legend-candle up"></span> Bullish</span>
+    <span><span class="legend-candle down"></span> Bearish</span>
+    <span class="chart-live-label">● Simulated movement</span>
+  </div>
+
 </div>
 
-<div class="market-tickers" id="marketTickers">
-<div class="market-ticker">
-<div class="market-ticker-sym">XAUUSD</div>
-<div class="market-ticker-price" id="tickerPrice-XAUUSD">2,648.86</div>
-<div class="market-ticker-chg up" id="tickerChg-XAUUSD">+0.14%</div>
-</div>
-<div class="market-ticker">
-<div class="market-ticker-sym">BTCUSD</div>
-<div class="market-ticker-price" id="tickerPrice-BTCUSD">64,881.50</div>
-<div class="market-ticker-chg up" id="tickerChg-BTCUSD">+0.78%</div>
-</div>
-<div class="market-ticker">
-<div class="market-ticker-sym">EURUSD</div>
-<div class="market-ticker-price" id="tickerPrice-EURUSD">1.1080</div>
-<div class="market-ticker-chg up" id="tickerChg-EURUSD">+0.30%</div>
-</div>
-</div>
-
-<div class="market-chart-wrap">
-<div class="market-chart-head">
-<span>XAUUSD · Gold</span>
-<span class="market-chart-tf">15m <span class="market-live-dot small"></span></span>
-</div>
-<svg id="marketChartSvg" class="market-chart-svg" viewBox="0 0 560 140" preserveAspectRatio="none">
-<defs>
-<linearGradient id="marketChartGradient" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0%" stop-color="var(--profit)" stop-opacity="0.25"/>
-<stop offset="100%" stop-color="var(--profit)" stop-opacity="0"/>
-</linearGradient>
-</defs>
-<polygon id="marketChartFill" fill="url(#marketChartGradient)" stroke="none"></polygon>
-<polyline id="marketChartLine" fill="none" stroke="var(--profit)" stroke-width="2"></polyline>
-</svg>
-</div>
-
-<div class="market-card-disclaimer">*Visual market data and signals are simulated for presentation. They are not live prices, trading advice, or a performance guarantee.</div>
-</div>
 </div>
 </section>
 
