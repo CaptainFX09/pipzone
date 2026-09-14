@@ -685,6 +685,13 @@ PipZoNe is a managed trading arrangement, not a bank or a regulated fund. Tradin
 <div class="network-tab active" id="tab-TRC20" onclick="selectDepositNetwork('TRC20')">TRC20</div>
 <div class="network-tab" id="tab-BEP20" onclick="selectDepositNetwork('BEP20')">BEP20</div>
 </div>
+ <!-- QR code for the currently-selected network — toggled by
+ selectDepositNetwork() in mainsite.js. Scanning it in a wallet app
+fills in the address automatically, avoiding copy-paste mistakes. -->
+<div class="form-group" style="text-align:center">
+<label>Scan to Deposit</label>
+<img id="depositQrImage" src="qr-trc20.jpg" alt="Deposit QR code" style="width:180px;height:180px;border-radius:8px;border:1px solid var(--line);margin-top:6px">
+</div>
 </div>
 
 <div class="form-group">
