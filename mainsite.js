@@ -69,77 +69,334 @@ const REFERRAL_STORAGE_KEY='pz_referral_code';
    to it in the HTML says as much explicitly so it's never mistaken for
    a real quote, signal, or performance guarantee. */
 
-const MARKET_DEMO_SYMBOLS=[
-{symbol:'XAUUSD',base:2648.86,decimals:2},
-{symbol:'BTCUSD',base:64881.50,decimals:2},
-{symbol:'EURUSD',base:1.1080,decimals:4}
-];
 
-let marketDemoChartPoints=[];
+/* =====================================================
+   PIPZONE — ANIMATED CANDLESTICK ENGINE
+   Gold + Bitcoin demo market animation
+====================================================== */
 
-function formatMarketPrice(n,decimals){
-return Number(n).toLocaleString(undefined,{minimumFractionDigits:decimals,maximumFractionDigits:decimals});
-}
+(function () {
+  "use strict";
 
-function tickMarketTickers(){
-MARKET_DEMO_SYMBOLS.forEach(s=>{
-const priceEl=document.getElementById('tickerPrice-'+s.symbol);
-const chgEl=document.getElementById('tickerChg-'+s.symbol);
-if(!priceEl||!chgEl)return;
+  const canvas = document.getElementById("candlestick-chart");
+  if (!canvas) return;
 
-const drift=(Math.random()-0.5)*s.base*0.0015;
-s.base=Math.max(0,s.base+drift);
-const pct=(drift/s.base)*100;
-const isUp=drift>=0;
+  const ctx = canvas.getContext("2d");
 
-priceEl.textContent=formatMarketPrice(s.base,s.decimals);
-priceEl.style.color=isUp?'var(--profit)':'var(--loss)';
-setTimeout(()=>{priceEl.style.color='';},400);
+  const priceEl = document.getElementById("market-price");
+  const symbolEl = document.getElementById("market-symbol");
+  const changeEl = document.getElementById("market-change");
 
-chgEl.textContent=(isUp?'+':'')+pct.toFixed(2)+'%';
-chgEl.classList.toggle('up',isUp);
-chgEl.classList.toggle('down',!isUp);
-});
-}
+  const tabs = document.querySelectorAll(".market-tab");
 
-function tickMarketChart(){
-const line=document.getElementById('marketChartLine');
-const fill=document.getElementById('marketChartFill');
-if(!line||!fill)return;
+  const markets = {
+    gold: {
+      symbol: "XAUUSD",
+      basePrice: 2650,
+      decimals: 2,
+      volatility: 2.5
+    },
+    btc: {
+      symbol: "BTCUSD",
+      basePrice: 65000,
+      decimals: 2,
+      volatility: 110
+    }
+  };
 
-const W=560,H=140,STEP=20,MAXPTS=Math.floor(W/STEP)+1;
+  let currentMarket = "gold";
+  let candles = [];
+  let currentPrice = markets.gold.basePrice;
+  let lastPrice = currentPrice;
+  let animationFrame;
+  let lastTime = 0;
+  let elapsed = 0;
 
-if(!marketDemoChartPoints.length){
-let y=H*0.65;
-for(let i=0;i<MAXPTS;i++){
-y+=(Math.random()-0.45)*14;
-y=Math.max(20,Math.min(H-10,y));
-marketDemoChartPoints.push(y);
-}
-}else{
-let y=marketDemoChartPoints[marketDemoChartPoints.length-1];
-y+=(Math.random()-0.45)*14;
-y=Math.max(20,Math.min(H-10,y));
-marketDemoChartPoints.push(y);
-if(marketDemoChartPoints.length>MAXPTS)marketDemoChartPoints.shift();
-}
+  const candleCount = 42;
 
-const pts=marketDemoChartPoints.map((y,i)=>(i*STEP)+','+y.toFixed(1));
-line.setAttribute('points',pts.join(' '));
+  function randomBetween(min, max) {
+    return Math.random() * (max - min) + min;
+  }
 
-const fillPts=pts.slice();
-const lastX=(marketDemoChartPoints.length-1)*STEP;
-fillPts.push(lastX+','+H,'0,'+H);
-fill.setAttribute('points',fillPts.join(' '));
-}
+  function createCandles() {
+    const market = markets[currentMarket];
+    let price = market.basePrice;
 
-function initMarketOverviewDemo(){
-if(!document.getElementById('marketChartLine'))return;
-tickMarketTickers();
-for(let i=0;i<28;i++)tickMarketChart();
-setInterval(tickMarketTickers,2200);
-setInterval(tickMarketChart,1400);
-}
+    candles = [];
+
+    for (let i = 0; i < candleCount; i++) {
+      const open = price;
+      const movement = randomBetween(
+        -market.volatility,
+        market.volatility
+      );
+
+      const close = open + movement;
+      const high = Math.max(open, close) +
+        randomBetween(0, market.volatility * 0.8);
+
+      const low = Math.min(open, close) -
+        randomBetween(0, market.volatility * 0.8);
+
+      candles.push({ open, close, high, low });
+      price = close;
+    }
+
+    currentPrice = price;
+    lastPrice = price;
+  }
+
+  function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    canvas.width = Math.max(1, Math.round(rect.width * dpr));
+    canvas.height = Math.max(1, Math.round(rect.height * dpr));
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    drawChart();
+  }
+
+  function drawChart() {
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+
+    if (!width || !height || candles.length === 0) return;
+
+    ctx.clearRect(0, 0, width, height);
+
+    const plotLeft = 12;
+    const plotRight = width - 40;
+    const plotTop = 13;
+    const plotBottom = height - 27;
+
+    const plotWidth = plotRight - plotLeft;
+    const plotHeight = plotBottom - plotTop;
+
+    let minPrice = Infinity;
+    let maxPrice = -Infinity;
+
+    candles.forEach(candle => {
+      minPrice = Math.min(minPrice, candle.low);
+      maxPrice = Math.max(maxPrice, candle.high);
+    });
+
+    const padding = (maxPrice - minPrice) * 0.12 || 1;
+
+    minPrice -= padding;
+    maxPrice += padding;
+
+    function y(price) {
+      return plotBottom -
+        ((price - minPrice) / (maxPrice - minPrice)) *
+        plotHeight;
+    }
+
+    // Background grid
+    ctx.strokeStyle = "rgba(56, 91, 70, 0.25)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 5]);
+
+    for (let i = 0; i <= 4; i++) {
+      const gridY = plotTop + (plotHeight / 4) * i;
+
+      ctx.beginPath();
+      ctx.moveTo(plotLeft, gridY);
+      ctx.lineTo(plotRight, gridY);
+      ctx.stroke();
+    }
+
+    ctx.setLineDash([]);
+
+    const slotWidth = plotWidth / candles.length;
+    const bodyWidth = Math.max(3, slotWidth * 0.55);
+
+    candles.forEach((candle, index) => {
+      const x = plotLeft + index * slotWidth + slotWidth / 2;
+
+      const openY = y(candle.open);
+      const closeY = y(candle.close);
+      const highY = y(candle.high);
+      const lowY = y(candle.low);
+
+      const bullish = candle.close >= candle.open;
+      const candleColor = bullish ? "#2fbf83" : "#ef626f";
+
+      // Wick
+      ctx.beginPath();
+      ctx.strokeStyle = candleColor;
+      ctx.lineWidth = 1;
+      ctx.moveTo(x, highY);
+      ctx.lineTo(x, lowY);
+      ctx.stroke();
+
+      // Body
+      const bodyTop = Math.min(openY, closeY);
+      const bodyHeight = Math.max(2, Math.abs(openY - closeY));
+
+      ctx.fillStyle = candleColor;
+      ctx.fillRect(
+        x - bodyWidth / 2,
+        bodyTop,
+        bodyWidth,
+        bodyHeight
+      );
+
+      // Subtle glow
+      if (index === candles.length - 1) {
+        ctx.shadowColor = candleColor;
+        ctx.shadowBlur = 9;
+        ctx.fillRect(
+          x - bodyWidth / 2,
+          bodyTop,
+          bodyWidth,
+          bodyHeight
+        );
+        ctx.shadowBlur = 0;
+      }
+    });
+
+    // Current price line
+    const latest = candles[candles.length - 1].close;
+    const priceY = y(latest);
+
+    ctx.strokeStyle = "rgba(47, 191, 131, 0.65)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+
+    ctx.beginPath();
+    ctx.moveTo(plotLeft, priceY);
+    ctx.lineTo(plotRight, priceY);
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+  }
+
+  function updatePrice() {
+    const market = markets[currentMarket];
+    const latest = candles[candles.length - 1];
+
+    const movement = randomBetween(
+      -market.volatility * 0.22,
+      market.volatility * 0.22
+    );
+
+    latest.close += movement;
+    latest.high = Math.max(latest.high, latest.close);
+    latest.low = Math.min(latest.low, latest.close);
+
+    currentPrice = latest.close;
+
+    const change = ((currentPrice - lastPrice) / lastPrice) * 100;
+
+    priceEl.textContent = "$" + currentPrice.toLocaleString(
+      "en-US",
+      {
+        minimumFractionDigits: market.decimals,
+        maximumFractionDigits: market.decimals
+      }
+    );
+
+    changeEl.textContent =
+      (change >= 0 ? "+" : "") + change.toFixed(2) + "%";
+
+    changeEl.classList.toggle("positive", change >= 0);
+    changeEl.classList.toggle("negative", change < 0);
+
+    lastPrice = currentPrice;
+  }
+
+  function createNextCandle() {
+    const market = markets[currentMarket];
+    const open = candles[candles.length - 1].close;
+
+    const close = open + randomBetween(
+      -market.volatility,
+      market.volatility
+    );
+
+    const high = Math.max(open, close) +
+      randomBetween(0, market.volatility * 0.7);
+
+    const low = Math.min(open, close) -
+      randomBetween(0, market.volatility * 0.7);
+
+    candles.push({ open, close, high, low });
+
+    if (candles.length > candleCount) {
+      candles.shift();
+    }
+
+    currentPrice = close;
+    updatePrice();
+  }
+
+  function animate(timestamp) {
+    if (!lastTime) lastTime = timestamp;
+
+    const delta = timestamp - lastTime;
+    lastTime = timestamp;
+    elapsed += delta;
+
+    // Smoothly update the latest candle
+    if (elapsed > 850) {
+      elapsed = 0;
+      updatePrice();
+    }
+
+    drawChart();
+
+    animationFrame = requestAnimationFrame(animate);
+  }
+
+  function switchMarket(marketName) {
+    if (!markets[marketName]) return;
+
+    currentMarket = marketName;
+
+    const market = markets[currentMarket];
+
+    symbolEl.textContent = market.symbol;
+    priceEl.textContent = "$" + market.basePrice.toLocaleString(
+      "en-US",
+      {
+        minimumFractionDigits: market.decimals,
+        maximumFractionDigits: market.decimals
+      }
+    );
+
+    changeEl.textContent = "+0.00%";
+    changeEl.classList.remove("negative");
+    changeEl.classList.add("positive");
+
+    tabs.forEach(tab => {
+      tab.classList.toggle(
+        "active",
+        tab.dataset.market === marketName
+      );
+    });
+
+    createCandles();
+    resizeCanvas();
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", function () {
+      switchMarket(tab.dataset.market);
+    });
+  });
+
+  window.addEventListener("resize", resizeCanvas);
+
+  createCandles();
+  resizeCanvas();
+
+  // Start animation
+  animationFrame = requestAnimationFrame(animate);
+
+})();
 
 /* -------------------------- 2. Global state -------------------------- */
 let selectedDepositNetwork='TRC20';
