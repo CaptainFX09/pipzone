@@ -1,1180 +1,745 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>PipZoNe — Managed Forex &amp; Crypto Trading</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="this.onerror=null;this.src='https://unpkg.com/@supabase/supabase-js@2'"></script>
-
-<!-- MAINSITE STYLES: see mainsite.css for the full stylesheet (organized by section) -->
-<link rel="stylesheet" href="mainsite.css">
-</head>
-
-<body>
-
-<!-- ==================== HEADER / NAV ==================== -->
-<header>
-<div class="wrap nav">
-<div class="brand"><span class="mark">PZ</span><span class="gold">Pip</span>ZoNe</div>
-
-<nav class="navlinks">
-<a href="#how">How it works</a>
-<a href="#calculator">Calculator</a>
-<a href="#performance">Performance</a>
-<a href="#faq">FAQ</a>
-<a href="#contact">Contact</a>
-</nav>
-
-<div class="navcta">
-<button class="btn" onclick="openAuth('login')">Sign In</button>
-<button class="btn btn-gold" onclick="openAuth('signup')">Sign Up</button>
-</div>
-</div>
-</header>
-
-<div id="home">
-
-<!-- ==================== HERO SECTION ==================== -->
-<section class="hero">
-<div class="wrap hero-grid">
-<div>
-<div class="eyebrow"><span class="dot"></span>Trading desk open — September 2026 cycle</div>
-<h1>Your capital, our<br>desk, <em>one shared</em><br>outcome.</h1>
-<p class="hero-sub">PipZoNe uses client-provided capital for forex and crypto trading under an agreed 60/40 profit-sharing structure. Trading results depend on market conditions and actual performance. We do not charge flat management fees. Forex markets are closed on Saturdays and Sundays, so no trading result is recorded on those days.</p>
-
-<div class="hero-actions">
-<button class="btn btn-gold" onclick="openAuth('signup')">Create account</button>
-<a class="btn" href="#how">See how it works</a>
-</div>
-</div>
-
-<!-- ==================== HERO TRADING TERMINAL MOCKUP ====================
-     Purely decorative (aria-hidden, no real functionality/tabindex) —
-     an animated "trading desk" visual for the hero, inspired by the
-     TraderiseFX-style reference. Candles/sparklines are static SVG/CSS,
-     not live data; see the disclaimer strip at the bottom of the panel. -->
-<div class="tm-panel" aria-hidden="true">
-
-<div class="tm-topbar">
-<div class="tm-brand"><span class="mark">PZ</span>PipZoNe</div>
-<div class="tm-top-right">
-<span class="tm-bell">🔔<span class="tm-bell-dot"></span></span>
-<div class="tm-user">
-<span class="tm-avatar">👤</span>
-<span class="tm-user-text">Welcome, Muhammad Bilal<br><small>bilal@example.com</small></span>
-</div>
-<span class="tm-logout">Logout</span>
-</div>
-</div>
-
-<div class="tm-body">
-
-<div class="tm-rail">
-<div class="tm-rail-item active"><span>📈</span>Trade</div>
-<div class="tm-rail-item"><span>🌐</span>Markets</div>
-<div class="tm-rail-item"><span>💼</span>Portfolio</div>
-<div class="tm-rail-item"><span>🕒</span>History</div>
-<div class="tm-rail-item"><span>⚙️</span>Settings</div>
-</div>
-
-<div class="tm-main">
-
-<div class="tm-chart-head">
-<div>
-<div class="tm-symbol">🥇 XAUUSD</div>
-<div class="tm-symbol-sub">Gold / US Dollar</div>
-</div>
-<div class="tm-price-block">
-<div class="tm-price">2,486.32</div>
-<div class="tm-price-change up">+12.48 (+0.50%)</div>
-</div>
-<div class="tm-tf">
-<span>1m</span><span>5m</span><span>15m</span><span class="active">1h</span><span>4h</span><span>1D</span>
-</div>
-</div>
-
-<div class="tm-chart">
-<div class="tm-candles">
-<div class="tm-candle up" style="height:38%"></div>
-<div class="tm-candle down" style="height:52%"></div>
-<div class="tm-candle up" style="height:44%"></div>
-<div class="tm-candle up" style="height:60%"></div>
-<div class="tm-candle down" style="height:34%"></div>
-<div class="tm-candle up" style="height:48%"></div>
-<div class="tm-candle up" style="height:66%"></div>
-<div class="tm-candle down" style="height:40%"></div>
-<div class="tm-candle up" style="height:56%"></div>
-<div class="tm-candle up" style="height:72%"></div>
-<div class="tm-candle down" style="height:50%"></div>
-<div class="tm-candle up" style="height:64%"></div>
-<div class="tm-candle up" style="height:78%"></div>
-<div class="tm-candle down" style="height:58%"></div>
-<div class="tm-candle up" style="height:70%"></div>
-<div class="tm-candle up" style="height:84%"></div>
-<div class="tm-candle down" style="height:62%"></div>
-<div class="tm-candle up" style="height:76%"></div>
-<div class="tm-candle up" style="height:90%"></div>
-<div class="tm-candle down" style="height:68%"></div>
-<div class="tm-candle up" style="height:82%"></div>
-<div class="tm-candle up" style="height:94%"></div>
-<div class="tm-candle down" style="height:74%"></div>
-<div class="tm-candle up" style="height:88%"></div>
-</div>
-<div class="tm-vol">
-<div class="tm-vol-bar up" style="height:30%"></div>
-<div class="tm-vol-bar down" style="height:55%"></div>
-<div class="tm-vol-bar up" style="height:40%"></div>
-<div class="tm-vol-bar up" style="height:70%"></div>
-<div class="tm-vol-bar down" style="height:25%"></div>
-<div class="tm-vol-bar up" style="height:45%"></div>
-<div class="tm-vol-bar up" style="height:60%"></div>
-<div class="tm-vol-bar down" style="height:35%"></div>
-<div class="tm-vol-bar up" style="height:50%"></div>
-<div class="tm-vol-bar up" style="height:65%"></div>
-<div class="tm-vol-bar down" style="height:30%"></div>
-<div class="tm-vol-bar up" style="height:55%"></div>
-<div class="tm-vol-bar up" style="height:75%"></div>
-<div class="tm-vol-bar down" style="height:40%"></div>
-<div class="tm-vol-bar up" style="height:60%"></div>
-<div class="tm-vol-bar up" style="height:80%"></div>
-<div class="tm-vol-bar down" style="height:35%"></div>
-<div class="tm-vol-bar up" style="height:65%"></div>
-<div class="tm-vol-bar up" style="height:85%"></div>
-<div class="tm-vol-bar down" style="height:45%"></div>
-<div class="tm-vol-bar up" style="height:70%"></div>
-<div class="tm-vol-bar up" style="height:90%"></div>
-<div class="tm-vol-bar down" style="height:50%"></div>
-<div class="tm-vol-bar up" style="height:78%"></div>
-</div>
-<div class="tm-axis">
-<span>2,490.00</span><span>2,480.00</span><span>2,470.00</span><span>2,460.00</span><span>2,450.00</span>
-</div>
-<div class="tm-scanline"></div>
-<div class="tm-chart-logo">TV</div>
-</div>
-
-<div class="tm-tabs">
-<span class="active">Open Orders</span><span>Positions</span><span>Order History</span>
-</div>
-
-<div class="tm-table-wrap">
-<table class="tm-table">
-<thead><tr><th>Symbol</th><th>Type</th><th>Lot</th><th>Price</th><th>SL / TP</th><th>P/L</th></tr></thead>
-<tbody>
-<tr><td>🥇 XAUUSD</td><td><span class="tm-buy-chip">Buy</span></td><td>0.10</td><td>2,486.32</td><td class="tm-sltp">2,460 / 2,520</td><td class="up">+24.50</td></tr>
-<tr><td>🪙 BTCUSD</td><td><span class="tm-sell-chip">Sell</span></td><td>0.05</td><td>68,421.00</td><td class="tm-sltp">69,200 / 66,800</td><td class="down">-8.20</td></tr>
-</tbody>
-</table>
-<div class="tm-view-all">View All →</div>
-</div>
-
-<div class="tm-actions">
-<button class="tm-buy-btn" type="button" tabindex="-1">Buy →</button>
-<button class="tm-sell-btn" type="button" tabindex="-1">Sell →</button>
-<div class="tm-lot">
-<span>Lot Size<br><b>0.10</b></span>
-<span class="tm-stepper"><button type="button" tabindex="-1">−</button><button type="button" tabindex="-1">+</button></span>
-<span class="tm-gear">⚙️</span>
-</div>
-</div>
-
-</div>
-
-<div class="tm-side">
-<div class="tm-side-head">Market Watch<span class="tm-side-close">×</span></div>
-<div class="tm-watch-tabs">
-<span class="active">Forex</span><span>Crypto</span><span>Commodities</span>
-</div>
-<div class="tm-watch-list">
-<div class="tm-watch-head-row"><span>Symbol</span><span>Price</span><span>Change</span></div>
-<div class="tm-watch-row">
-<span class="tm-watch-sym">🥇 XAUUSD</span>
-<span class="tm-watch-p">2,486.32</span>
-<span class="tm-watch-chg up">+0.50%</span>
-</div>
-<div class="tm-watch-row">
-<span class="tm-watch-sym">💶 EURUSD</span>
-<span class="tm-watch-p">1.1054</span>
-<span class="tm-watch-chg up">+0.48%</span>
-</div>
-<div class="tm-watch-row">
-<span class="tm-watch-sym">🇬🇧 GBPUSD</span>
-<span class="tm-watch-p">1.3126</span>
-<span class="tm-watch-chg up">+0.32%</span>
-</div>
-<div class="tm-watch-row">
-<span class="tm-watch-sym">🪙 BTCUSD</span>
-<span class="tm-watch-p">68,421.00</span>
-<span class="tm-watch-chg up">+1.24%</span>
-</div>
-<div class="tm-watch-row">
-<span class="tm-watch-sym">Ξ ETHUSD</span>
-<span class="tm-watch-p">2,612.35</span>
-<span class="tm-watch-chg up">+0.87%</span>
-</div>
-</div>
-
-<div class="tm-sentiment">
-<div class="tm-side-head">Market Sentiment <span class="tm-bullish">Bullish</span></div>
-<svg class="tm-spark-lg" viewBox="0 0 220 50" preserveAspectRatio="none"><polyline points="0,40 20,36 40,38 60,30 80,32 100,24 120,26 140,18 160,20 180,12 200,14 220,8"/></svg>
-<div class="tm-sentiment-foot"><span>XAUUSD</span><span>2,486.32 <b class="up">+0.50%</b></span></div>
-</div>
-</div>
-
-</div>
-
-<div class="tm-disclaimer">Illustrative market data — not live prices, not a recommendation to trade.</div>
-
-</div>
-</div>
-</section>
-
-<!-- ==================== STATS STRIP ==================== -->
-<section class="stats" style="padding:0">
-<div class="wrap stats-row">
-<div class="stat"><div class="stat-num">$100</div><div class="stat-label">Minimum deposit</div></div>
-<div class="stat"><div class="stat-num">60%</div><div class="stat-label">Client profit share</div></div>
-<div class="stat"><div class="stat-num">Daily</div><div class="stat-label">Settlement cycle</div></div>
-</div>
-</section>
-
-<!-- ==================== LIVE STATS STRIP ==================== -->
-<section class="live-strip" style="padding:0">
-<div class="wrap live-row">
-<span class="live-dot"></span>
-<!--<span><b id="liveClients">—</b> clients onboarded</span>-->
-<span class="live-sep">·</span>
-<span><b id="liveDeposits">—</b> in verified deposits</span>
-<span class="live-sep">·</span>
-<span><b id="liveWithdrawals">—</b> Total Withdrawal</span>
-<span class="live-sep">·</span>
-<span>updated live from account records</span>
-</div>
-</section>
-
-<!-- ==================== HOW IT WORKS ==================== -->
-<section id="how">
-<div class="wrap">
-<div class="sec-head">
-<div class="sec-tag">How it <span>works</span></div>
-<div>
-<h2>From deposit to settlement, in four steps.</h2>
-<p class="sec-desc">Every account follows the same process. Trading results are recorded to your account based on actual trading performance.</p>
-</div>
-</div>
-
-<div class="steps">
-<div class="step"><div class="step-num">01</div><div class="step-title">Create your account</div><div class="step-desc">Register with your details and verify your email.</div></div>
-<div class="step"><div class="step-num">02</div><div class="step-title">Deposit capital</div><div class="step-desc">Send a minimum of $100 in USDT via TRC20 or BEP20 to your account's deposit address. Funds are credited after confirmation.</div></div>
-<div class="step"><div class="step-num">03</div><div class="step-title">Capital is traded</div><div class="step-desc">Client-provided capital is used for forex and crypto trading under the agreed trading structure. Trading can result in both profits and losses.</div></div>
-<div class="step"><div class="step-num">04</div><div class="step-title">Daily settlement</div><div class="step-desc">Each day's actual trading result is calculated according to the agreed 60/40 profit-sharing structure. When a profit is generated, your applicable profit share may be requested for withdrawal according to the withdrawal terms. Your original deposit unlocks 40 days after it is credited. Forex markets are closed on Saturdays and Sundays, so no result is recorded on those two days each week.</div></div>
-</div>
-</div>
-</section>
-
-<!-- ==================== PROFIT SPLIT CALCULATOR ==================== -->
-<section id="calculator">
-<div class="wrap">
-<div class="sec-head">
-<div class="sec-tag">Profit <span>split</span></div>
-<div>
-<h2>See how a result would split.</h2>
-<p class="sec-desc">Move the slider to model a trading result. This does not predict or guarantee any outcome.</p>
-</div>
-</div>
-
-<div class="calc">
-<div class="calc-in">
-<div class="field-label">Modeled monthly trading result</div>
-<div class="amount-display">$<span id="amtOut">100</span></div>
-<input type="range" id="amtSlider" min="-200" max="1000" step="10" value="100">
-<div class="calc-scale"><span>-$200</span><span>$1,000</span></div>
-<div class="split-bar"><div class="split-client"></div><div class="split-mgr"></div></div>
-<div class="split-legend"><span style="color:var(--gold)">Client · 60%</span><span>Desk · 40%</span></div>
-</div>
-
-<div class="calc-out">
-<div class="out-row"><span class="out-label">Trading result</span><span class="out-value" id="outResult">$100.00</span></div>
-<div class="out-row"><span class="out-label">Your share (60%)</span><span class="out-value hi" id="outClient">$60.00</span></div>
-<div class="out-row"><span class="out-label">Desk share (40%)</span><span class="out-value" id="outMgr">$40.00</span></div>
-<div class="calc-warn">This is a modeling tool, not a forecast. Forex and crypto trading carries risk of loss.</div>
-</div>
-</div>
-</div>
-</section>
-
-<!-- ==================== VERIFIED PERFORMANCE TABLE ==================== -->
-<section id="performance">
-<div class="wrap">
-<div class="sec-head">
-<div class="sec-tag">Verified <span>performance</span></div>
-<div>
-<h2>Monthly results, as they closed.</h2>
-<p class="sec-desc">Only settled, verified results are published here. Daily results are updated every day at 10:00 PM, except Saturday and Sunday when forex markets are closed and no result is recorded. Past performance does not guarantee future results.</p>
-</div>
-</div>
-
-<table>
-<thead>
-<tr><th>Month</th><th>Trading result</th><th>Client 60%</th><th>Desk 40%</th></tr>
-</thead>
-<tbody>
-<tr><td>June</td><td><span class="up">+$500</span><div class="bar-track"><div class="bar-fill" style="width:62%"></div></div></td><td>$300</td><td>$200</td></tr>
-<tr><td>July</td><td><span class="up">+$350</span><div class="bar-track"><div class="bar-fill" style="width:43%"></div></div></td><td>$210</td><td>$140</td></tr>
-<tr><td>August</td><td><span class="up">+$620</span><div class="bar-track"><div class="bar-fill" style="width:77%"></div></div></td><td>$372</td><td>$248</td></tr>
-</tbody>
-</table>
-</div>
-</section>
-
-<!-- ==================== RISK / BEFORE-YOU-DEPOSIT SECTION ==================== -->
-<section class="risk">
-<div class="wrap">
-<div class="sec-head">
-<div class="sec-tag">Before you <span>deposit</span></div>
-<div><h2>Understand the arrangement.</h2></div>
-</div>
-
-<div class="risk-grid">
-<div><h3>Returns are not guaranteed</h3><p>Forex and crypto trading can produce losses as well as profits.</p></div>
-<div><h3>Eligible profits can be withdrawn</h3><p>Eligible profit shares may be requested for withdrawal according to the applicable withdrawal terms. Your original deposit (principal) unlocks 40 days after it is credited to your account.</p></div>
-<div><h3>Deposits are confirmed on-chain</h3><p>A deposit is only credited after its blockchain transaction is verified.</p></div>
-<div><h3>Trading results are performance-based</h3><p>No fixed or guaranteed return is promised. Forex and crypto trading involves significant risk, and you may lose some or all of the capital used for trading. Only participate after understanding and accepting these risks.</p></div>
-</div>
-</div>
-</section>
-
-<!-- ==================== FAQ ACCORDION ==================== -->
-<section id="faq">
-<div class="wrap">
-<div class="sec-head">
-<div class="sec-tag">Common <span>questions</span></div>
-<div><h2>FAQ</h2></div>
-</div>
-
-<div class="faq-list">
-<div class="faq-item">
-<div class="faq-q"><span>What's the minimum deposit?</span><span class="plus">+</span></div>
-<div class="faq-a"><p>$100 in USDT, sent via TRC20 or BEP20, to open an account.</p></div>
-</div>
-
-<div class="faq-item">
-<div class="faq-q"><span>How is the profit split calculated?</span><span class="plus">+</span></div>
-<div class="faq-a"><p>Each day's actual trading result is calculated. You receive 60% and the desk receives 40%.</p></div>
-</div>
-
-<div class="faq-item">
-<div class="faq-q"><span>When can I withdraw?</span><span class="plus">+</span></div>
-<div class="faq-a"><p>Eligible profit shares may be requested for withdrawal according to the applicable withdrawal terms. Your original deposit (principal) can be withdrawn once 40 days have passed since it was credited. There is no minimum withdrawal amount, and a fixed $2 withdrawal fee applies to every request. Once approved, withdrawals are typically received within 5 minutes to 8 hours.</p></div>
-</div>
-
-<div class="faq-item">
-<div class="faq-q"><span>Is my capital guaranteed?</span><span class="plus">+</span></div>
-<div class="faq-a"><p>No. Forex and crypto trading can result in losses.</p></div>
-</div>
-
-<div class="faq-item">
-<div class="faq-q"><span>Do you trade every day?</span><span class="plus">+</span></div>
-<div class="faq-a"><p>We trade forex and crypto on trading days. Forex markets are closed on Saturdays and Sundays, so no trade is placed and no profit/loss is updated on your account those two days. Crypto markets trade every day, but results are still settled and updated on the same daily schedule as forex.</p></div>
-</div>
-</div>
-</div>
-</section>
-
-<!-- ==================== LEGAL: TERMS & CONDITIONS ==================== -->
-<section id="terms" class="legal-section">
-<div class="wrap">
-<div class="sec-tag">Legal</div>
-<h2>Terms &amp; Conditions</h2>
-<div class="legal-updated">Last updated: September 2026</div>
-
-<div class="legal-block">
-<h3>1. The arrangement</h3>
-<p>PipZoNe ("the desk", "we", "us") uses client-provided capital for forex and crypto trading under an agreed 60/40 profit-sharing structure. Trading results depend on actual market performance and may result in either profits or losses. By creating an account you agree to the terms described here and on the rest of this site.</p>
-
-<h3>2. Minimum deposit</h3>
-<p>The minimum deposit to open an account is $100, sent in USDT via the TRC20 or BEP20 network only. Deposits are credited to your account balance only after the transaction is confirmed on-chain.</p>
-
-<h3>3. Profit and loss sharing</h3>
-<p>Trading results are recorded for the relevant account and allocated according to the agreed 60% client and 40% desk sharing structure. Positive results increase the applicable account balance, while negative results reduce it. The sharing structure does not guarantee a profit or protect against losses.</p>
-
-<h3>4. Withdrawals</h3>
-<p>There is no minimum withdrawal amount. A fixed withdrawal fee of $2 is deducted from every withdrawal request; the remaining amount is paid out to you. Your accumulated profit share may be withdrawn on demand, at any time. Your original deposited capital (principal) may only be withdrawn once 40 days have passed since it was credited to your account. Requests are manually reviewed before approval. Once approved, funds are typically received within 5 minutes to 8 hours, paid to the wallet address you provide.</p>
-
-<h3>5. No guaranteed returns</h3>
-<p>Nothing in these terms, on this site, or in any communication from PipZoNe constitutes a guarantee of profit or of capital preservation. Forex and crypto trading carries a material risk of loss, up to and including the loss of your entire deposited capital.</p>
-
-<h3>6. Account accuracy</h3>
-<p>You are responsible for providing accurate deposit transaction hashes and withdrawal wallet addresses, and for selecting the correct network. PipZoNe is not responsible for funds sent to an incorrect address, on an incorrect network, or with incorrect transaction details.</p>
-
-<h3>7. Termination</h3>
-<p>Either party may close the arrangement. On closure, your remaining available balance is paid out through the standard withdrawal process, subject to the principal lock-in period described above.</p>
-
-<h3>8. Referral program</h3>
-<p>Clients may share a personal referral link. Referral earnings are not activated until the referring client's own first deposit has been approved. No commission is generated by a pending or rejected deposit, by a referred signup on its own, or more than once for the same approved deposit. Self-referral is not permitted, and each referred client is attributed to a single referrer. Commission rates are set by PipZoNe and may be changed at any time; the rate applied to a given deposit is the rate in effect when that deposit is approved.</p>
-
-<h3>9. Changes to these terms</h3>
-<p>We may update these terms from time to time. Continued use of your account after an update constitutes acceptance of the revised terms.</p>
-</div>
-</div>
-</section>
-
-<!-- ==================== LEGAL: PRIVACY POLICY ==================== -->
-<section id="privacy" class="legal-section">
-<div class="wrap">
-<div class="sec-tag">Legal</div>
-<h2>Privacy Policy</h2>
-<div class="legal-updated">Last updated: September 2026</div>
-
-<div class="legal-block">
-<h3>1. Information we collect</h3>
-<p>When you create an account we collect your full name, email address, phone number, and the wallet address(es) you provide for withdrawals. We also record your deposit and withdrawal requests, the resulting account balance history, and — if you joined via a referral link, or if you refer other clients — your referral relationship and referral earnings history. If you contact support, we also store the message and any attachment you choose to submit.</p>
-
-<h3>2. How we use your information</h3>
-<ul>
-<li>To create and manage your client account</li>
-<li>To verify deposits and process withdrawal requests</li>
-<li>To send account and transaction notifications</li>
-<li>To respond to support requests</li>
-<li>To attribute referral relationships and calculate referral earnings</li>
-</ul>
-
-<h3>3. What we do not do</h3>
-<p>We do not sell your personal information to third parties. We do not share your data with anyone outside of what is required to operate your account and process your transactions.</p>
-
-<h3>4. Data storage</h3>
-<p>Account data is stored with our database provider using industry-standard access controls. Passwords are stored in hashed form and are never visible to us in plain text.</p>
-
-<h3>5. Your rights</h3>
-<p>You may request a copy of the personal data we hold about you, or request that your account be closed and your data removed, subject to any records we are required to retain for financial record-keeping.</p>
-
-<h3>6. Contact</h3>
-<p>For any privacy-related request, please reach out through the contact details at the bottom of this page.</p>
-</div>
-</div>
-</section>
-
-<!-- ==================== LEGAL: RISK DISCLOSURE ==================== -->
-<section id="risk-disclosure" class="legal-section">
-<div class="wrap">
-<div class="sec-tag">Legal</div>
-<h2>Risk Disclosure</h2>
-<div class="legal-updated">Last updated: September 2026</div>
-
-<div class="legal-block">
-<h3>Trading risk</h3>
-<p>Forex and crypto trading is highly speculative and involves a significant risk of loss. Past performance of any trading strategy or account is not indicative of future results. You should only deposit capital you can afford to lose. Forex markets are closed on Saturdays and Sundays, so no trading result is recorded and no profit/loss update happens on those days.</p>
-
-<h3>No guarantee of profit</h3>
-<p>The 60/40 profit split describes how a trading result is divided — it is not a promise of what that result will be. Some days may produce a loss, which is shared in the same proportion as a profit.</p>
-
-<h3>Liquidity and withdrawal timing</h3>
-<p>Your profit share can be requested for withdrawal at any time and is subject to manual review. Your original deposited capital is locked for 40 days from the date it is credited. Once a withdrawal is approved, funds are typically received within 5 minutes to 8 hours. This means your principal is not available on demand in the same way as a bank account.</p>
-
-<h3>Not a bank or regulated fund</h3>
-<p>PipZoNe is a managed trading arrangement between you and the desk. It is not a bank, is not FDIC or similarly insured, and is not a licensed or regulated investment fund. Deposits are not protected by any deposit insurance scheme.</p>
-
-<h3>Independent advice</h3>
-<p>Nothing on this site is financial or investment advice. You are encouraged to seek independent financial advice before depositing capital, and to only invest an amount you are fully prepared to lose.</p>
-
-<div class="legal-disclaimer">This page is a plain-language summary for clients and is not a substitute for professional legal advice. If you are operating PipZoNe as a business, have this page (and the Terms &amp; Privacy pages above) reviewed by a qualified lawyer in your jurisdiction before relying on them.</div>
-</div>
-</div>
-</section>
-
-</div>
-
-<!-- ==================== CONTACT US ==================== -->
-<section id="contact" class="contact-section">
-<div class="wrap">
-
-<div class="sec-head">
-<div class="sec-tag">Contact <span>Us</span></div>
-<div>
-<h2>We're here to help.</h2>
-<p class="sec-desc">If you have an account, deposit, withdrawal, or general support issue, send us a message and our support team will review it.</p>
-</div>
-</div>
-
-<div class="contact-grid">
-
-<div class="contact-info">
-
-<h3>Support Email</h3>
-<p>
-<a href="mailto:support.pipzone@gmail.com">support.pipzone@gmail.com</a>
-</p>
-
-<h3 style="margin-top:30px">Office Address</h3>
-<p>
-Thanon Hat<br>
-Pattaya, Chon Buri 20260<br>
-Thailand
-</p>
-
-<h3 style="margin-top:30px">Support</h3>
-<p>
-For account, deposit, withdrawal, or general support questions, please use the contact form and provide enough information for our support team to understand the issue. You can attach a screenshot or document if it helps explain your issue.
-</p>
-
-</div>
-
-<div class="contact-form">
-
-<form onsubmit="submitContact(event)">
-
-<div class="form-group">
-<label>Name</label>
-<input id="contactName" type="text" placeholder="Your name" required>
-</div>
-
-<div class="form-group">
-<label>Email</label>
-<input id="contactEmail" type="email" placeholder="Your email" required>
-</div>
-
-<div class="form-group">
-<label>Issue / Subject</label>
-<input id="contactSubject" type="text" placeholder="What can we help with?" required>
-</div>
-
-<div class="form-group">
-<label>Message</label>
-<textarea id="contactMessage" placeholder="Describe your issue..." required></textarea>
-</div>
-
-<div class="form-group">
-<label>Attachment <span style="color:var(--muted2);font-weight:400">(optional, image or PDF, under 5MB)</span></label>
-<input id="contactAttachment" type="file" accept="image/*,.pdf" style="padding:8px">
-<div id="contactAttachmentName" style="font-size:12px;color:var(--muted2);margin-top:6px"></div>
-</div>
-
-<div class="form-actions">
-<button type="submit" class="btn btn-gold" style="width:100%;padding:12px" id="contactSubmitBtn">Submit</button>
-</div>
-
-<div id="contactSuccess" class="contact-success">Your message has been sent to our support team.</div>
-
-</form>
-
-</div>
-</div>
-</div>
-</section>
-
-<!-- ==================== DASHBOARD (client area) ==================== -->
-<section id="dashboard" class="dashboard">
-<div class="wrap">
-
-<div class="dash-topbar">
-<div class="dash-welcome" onclick="toggleAccountMenu()" role="button" tabindex="0" aria-label="Open account menu">
-<div class="dash-avatar" id="dashAvatar">C</div>
-<div>
-<div class="dash-hi">Welcome back</div>
-<div class="dash-name" id="welcomeName">Client</div>
-<div class="dash-email" id="welcomeEmail">—</div>
-</div>
-</div>
-<div class="dash-topbar-actions">
-<div class="notif-wrap">
-<button type="button" class="notif-bell" onclick="toggleNotifications()" aria-label="Notifications">
-🔔
-<span class="notif-badge" id="notifBadge" style="display:none">0</span>
-</button>
-<div class="notif-overlay" id="notifOverlay" onclick="handleNotifOverlayClick()"></div>
-<div class="notif-dropdown" id="notifDropdown">
-<div class="notif-head">
-<span>Notifications</span>
-<div class="notif-head-actions">
-<button type="button" class="notif-markread" onclick="markAllNotificationsRead()">Mark all as read</button>
-<button type="button" class="notif-close" onclick="closeNotifications()" aria-label="Close notifications">×</button>
-</div>
-</div>
-<div class="notif-list" id="notifList">
-<div class="notif-empty">Loading...</div>
-</div>
-</div>
-<!-- Single-notification detail popup — opens on top of the list when a notification is clicked -->
-<div class="notif-detail-modal" id="notifDetailModal">
-<div class="notif-detail-box">
-<button type="button" class="notif-detail-close" onclick="closeNotifDetail()" aria-label="Close">×</button>
-<div class="notif-detail-icon" id="notifDetailIcon"></div>
-<div class="notif-detail-text" id="notifDetailText"></div>
-<div class="notif-detail-time" id="notifDetailTime"></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- ==================== ACCOUNT MENU (opened by clicking the avatar/name) ====================
-     Small centered popup, same pattern as the notification popup: dim
-     overlay + fixed centered panel + explicit × close. Each row below
-     closes this menu and opens its own dedicated modal (or, for
-     Invite Members, scrolls to the existing Refer & Earn card). -->
-<div class="menu-overlay" id="accountMenuOverlay" onclick="closeAccountMenu()"></div>
-<div class="menu-popup" id="accountMenuPopup">
-
-<div class="menu-head">
-<div class="menu-head-avatar" id="menuHeadAvatar">C</div>
-<div class="menu-head-info">
-<div class="menu-head-name" id="menuHeadName">Client</div>
-<div class="menu-head-sub" id="menuHeadEmail">—</div>
-</div>
-<button type="button" class="notif-close" onclick="closeAccountMenu()" aria-label="Close menu">×</button>
-</div>
-
-<div class="menu-list">
-<button type="button" class="menu-item" onclick="openViewProfile()">👤 View Profile</button>
-<button type="button" class="menu-item" onclick="openSettings()">⚙️ Settings</button>
-<div class="menu-divider"></div>
-<button type="button" class="menu-item" onclick="openTeam()">👥 Team</button>
-<button type="button" class="menu-item" onclick="openInviteMembers()">➕ Invite Members</button>
-<div class="menu-divider"></div>
-<button type="button" class="menu-item" onclick="openSupport()">🎧 Support</button>
-<div class="menu-divider"></div>
-<button type="button" class="menu-item menu-item-danger" onclick="logout()">🚪 Sign Out</button>
-</div>
-
-</div>
-
-<!-- ==================== INVITE MEMBERS MODAL (Refer & Earn) ====================
-     Opened via the account-menu "Invite Members" row. Holds the same
-     locked/unlocked referral card content that used to sit inline on the
-     dashboard (same element ids, so loadReferralInfo()/copyReferralLink()/
-     shareReferralLink() in mainsite.js work unchanged), plus the referral
-     program terms underneath. -->
-<div class="request-modal" id="inviteModal">
-<div class="request-box">
-<button type="button" class="request-close" onclick="closeInviteMembers()">×</button>
-<h2>Invite Members</h2>
-<p class="auth-sub">Share your referral link and earn commission.</p>
-
-<div class="referral-card" id="referralCard">
-
-<div class="referral-locked" id="referralLocked">
-<div class="referral-head">🤝 Refer &amp; Earn</div>
-<div class="referral-locked-msg">🔒 Make your first deposit to unlock your referral link.</div>
-</div>
-
-<div class="referral-unlocked" id="referralUnlocked" style="display:none">
-<div class="referral-head">🤝 Refer &amp; Earn</div>
-<div class="referral-sub">Earn commission when people you refer make an approved deposit.</div>
-
-<div class="msg" id="referralMsg"></div>
-
-<div class="referral-link-row">
-<input id="referralLinkField" type="text" readonly value="Loading...">
-<button type="button" class="btn" onclick="copyReferralLink()">Copy Link</button>
-<button type="button" class="btn btn-gold" onclick="shareReferralLink()">Share</button>
-</div>
-
-<div class="referral-stats">
-<div class="referral-stat">
-<div class="referral-stat-label">Total Referrals</div>
-<div class="referral-stat-value" id="referralCount">0</div>
-</div>
-<div class="referral-stat">
-<div class="referral-stat-label">Referred Deposits</div>
-<div class="referral-stat-value" id="referralDeposits">$0.00</div>
-</div>
-<div class="referral-stat">
-<div class="referral-stat-label">Total Earnings</div>
-<div class="referral-stat-value gold" id="referralEarnings">$0.00</div>
-</div>
-</div>
-
-</div>
-
-</div>
-
-<div class="referral-terms">
-<h3>Referral program</h3>
-<p>Clients may share a personal referral link. Referral earnings are not activated until the referring client's own first deposit has been approved. No commission is generated by a pending or rejected deposit, by a referred signup on its own, or more than once for the same approved deposit. Self-referral is not permitted, and each referred client is attributed to a single referrer. Commission rates are set by PipZoNe and may be changed at any time; the rate applied to a given deposit is the rate in effect when that deposit is approved.</p>
-</div>
-
-</div>
-</div>
-
-<!-- ==================== VIEW PROFILE MODAL (read-only) ==================== -->
-<div class="request-modal" id="viewProfileModal">
-<div class="request-box">
-<button type="button" class="request-close" onclick="closeViewProfile()">×</button>
-<h2>Your Profile</h2>
-<p class="auth-sub">Your saved account details.</p>
-<div class="profile-view-list" id="profileViewList"></div>
-</div>
-</div>
-
-<!-- ==================== TEAM MODAL (clients referred by this client) ==================== -->
-<div class="request-modal" id="teamModal">
-<div class="request-box">
-<button type="button" class="request-close" onclick="closeTeam()">×</button>
-<h2>Your Team</h2>
-<p class="auth-sub">Clients who joined using your referral link.</p>
-<div id="teamList"><div class="tx-empty">Loading...</div></div>
-</div>
-</div>
-
-<!-- ==================== SUPPORT MODAL ==================== -->
-<div class="request-modal" id="supportModal">
-<div class="request-box">
-<button type="button" class="request-close" onclick="closeSupport()">×</button>
-<h2>Contact Support</h2>
-<p class="auth-sub">Send a message to the PipZoNe support team.</p>
-<div class="msg" id="supportMsg"></div>
-
-<div class="form-group">
-<label>Subject</label>
-<input id="supportSubject" type="text" placeholder="What can we help with?">
-</div>
-
-<div class="form-group">
-<label>Message</label>
-<textarea id="supportMessage" placeholder="Describe your issue..."></textarea>
-</div>
-
-<div class="form-group">
-<label>Attachment <span style="color:var(--muted2);font-weight:400">(optional, image or PDF, under 5MB)</span></label>
-<input id="supportAttachment" type="file" accept="image/*,.pdf" style="padding:8px">
-<div id="supportAttachmentName" style="font-size:12px;color:var(--muted2);margin-top:6px"></div>
-</div>
-
-<div class="form-actions">
-<button type="button" class="btn btn-gold" onclick="submitSupportMessage()">Send message</button>
-</div>
-</div>
-</div>
-
-<!-- Balance hero card -->
-<div class="balance-hero">
-<div class="balance-label">Your current balance</div>
-<div class="balance-amount" id="dashBalance">$0.00</div>
-<span class="balance-pl zero" id="dashProfitPill">$0.00 profit so far</span>
-</div>
-
-<!-- Dashboard stat cards -->
-<div class="dash-grid">
-<div class="dash-card">
-<div class="label">💵 Deposited capital</div>
-<div class="value" id="dashDeposit">$0.00</div>
-<div class="sub">Money you've put in</div>
-</div>
-
-<div class="dash-card">
-<div class="label">📈 Profit / Loss</div>
-<div class="value" id="dashProfit">$0.00</div>
-<div class="sub" id="dashProfitSub">Total earned since you joined</div>
-</div>
-
-<div class="dash-card">
-<div class="label">💸 Total withdrawn</div>
-<div class="value" id="dashWithdrawn">$0.00</div>
-<div class="sub">Paid out to you so far</div>
-</div>
-</div>
-
-<!-- Available-to-withdraw + unlock progress -->
-<div class="avail-card">
-<div class="avail-top">
-<div>
-<div class="avail-label">✅ Available to withdraw right now</div>
-<div class="avail-amount" id="dashAvailable">$0.00</div>
-</div>
-<div class="unlock-wrap">
-<div class="unlock-label"><span>Deposit unlock</span><b id="unlockDaysText">—</b></div>
-<div class="unlock-track"><div class="unlock-fill" id="unlockFill" style="width:0%"></div></div>
-<div class="unlock-note" id="unlockNote">Your deposited amount unlocks 40 days after it's credited. Your profit can be withdrawn any time.</div>
-</div>
-</div>
-</div>
-
-<!-- Deposit / Withdrawal action buttons -->
-<div class="dash-actions">
-<button type="button" class="btn btn-gold" onclick="openRequest('deposit')">➕ Deposit</button>
-<button type="button" class="btn" onclick="openRequest('withdrawal')">➖ Withdrawal</button>
-</div>
-
-<!-- Recent transactions list -->
-<div class="request-list">
-<h3>Recent transactions</h3>
-<div id="requestList">
-<div class="tx-empty">Loading...</div>
-</div>
-</div>
-
-</div>
-</section>
-
-<!-- ==================== FOOTER ==================== -->
-<footer>
-<div class="wrap">
-
-<div class="foot-grid">
-
-<div class="brand" style="font-size:17px">
-<span class="mark">PZ</span><span class="gold">Pip</span>ZoNe
-</div>
-
-<div class="foot-links">
-<a href="#how">How it works</a>
-<a href="#performance">Performance</a>
-<a href="#faq">FAQ</a>
-<a href="#contact">Contact</a>
-<a href="#terms">Terms</a>
-<a href="#privacy">Privacy</a>
-<a href="#risk-disclosure">Risk Disclosure</a>
-</div>
-
-</div>
-
-<div class="foot-bottom">
-PipZoNe is a managed trading arrangement, not a bank or a regulated fund. Trading forex and crypto carries a high level of risk and may not be suitable for all investors.
-</div>
-
-</div>
-</footer>
-
-<!-- ==================== DEPOSIT MODAL ==================== -->
-<div class="request-modal" id="depositModal">
-<div class="request-box">
-
-<button type="button" class="request-close" onclick="closeRequest('deposit')">×</button>
-
-<h2>Deposit USDT</h2>
-<p class="auth-sub">Choose a network and submit your deposit for review.</p>
-
-<div class="msg" id="depositMsg"></div>
-
-<div class="form-group">
-<label>Network</label>
-<div class="network-tabs">
-<div class="network-tab active" id="tab-TRC20" onclick="selectDepositNetwork('TRC20')">TRC20</div>
-<div class="network-tab" id="tab-BEP20" onclick="selectDepositNetwork('BEP20')">BEP20</div>
-</div>
-</div>
-
-<div class="form-group">
-<label>Deposit to this address <span style="color:var(--gold)" id="depositNetworkLabel">(TRC20)</span></label>
-<div style="display:flex;gap:8px">
-<input id="depositAddressField" type="text" readonly value="Loading..." style="flex:1">
-<button type="button" class="btn" style="white-space:nowrap" onclick="copyDepositAddress()">Copy</button>
-</div>
-<div class="note" style="margin-top:8px">Once you pick a network the address above is locked to that network — send funds only to this exact address on the network shown.</div>
-</div>
-
-<div class="form-group">
-<label>Amount (USDT)</label>
-<input id="depositAmount" type="number" min="100" step="0.01" placeholder="100">
-</div>
-
-<div class="form-group">
-<label>Transaction Hash</label>
-<input id="depositTx" type="text" placeholder="Paste transaction hash">
-</div>
-
-<div class="form-group">
-<label>Payment Screenshot <span style="color:var(--gold)">*required</span></label>
-<input id="depositProof" type="file" accept="image/*" style="padding:8px">
-<div id="depositProofName" style="font-size:12px;color:var(--muted2);margin-top:6px"></div>
-</div>
-
-<p class="request-note">
-Minimum deposit is $100. Send USDT only on the network selected above, to the address shown. A screenshot of your payment is required so we can verify it. Your request will remain <b>pending</b> until it is manually verified and approved. Your deposit unlocks for withdrawal 40 days after it is credited — your profit share is available sooner, on demand.
-</p>
-
-<div class="form-actions">
-<button type="button" class="btn btn-gold" onclick="submitDeposit()">Submit deposit request</button>
-</div>
-
-</div>
-</div>
-
-<!-- ==================== WITHDRAWAL MODAL ==================== -->
-<div class="request-modal" id="withdrawalModal">
-<div class="request-box">
-
-<button type="button" class="request-close" onclick="closeRequest('withdrawal')">×</button>
-
-<h2>Withdrawal request</h2>
-<p class="auth-sub">Choose the network and confirm the wallet you want to withdraw to.</p>
-
-<div class="msg" id="withdrawalMsg"></div>
-
-<div id="withdrawalAvailable" class="dash-note" style="display:none;margin-bottom:14px"></div>
-
-<div class="form-group">
-<label>Network</label>
-<div class="network-tabs">
-<div class="network-tab active" id="wd-tab-TRC20" onclick="selectWithdrawalNetwork('TRC20')">TRC20</div>
-<div class="network-tab" id="wd-tab-BEP20" onclick="selectWithdrawalNetwork('BEP20')">BEP20</div>
-</div>
-</div>
-
-<div class="form-group">
-<label>Amount (USDT)</label>
-<input id="withdrawalAmount" type="number" min="2.01" step="0.01" placeholder="Amount">
-</div>
-
-<div id="withdrawalCalc" class="fee-calc" style="display:none">
-<div class="fee-row"><span>Withdrawal Amount</span><span id="calcAmount">$0.00</span></div>
-<div class="fee-row"><span>Withdrawal Fee</span><span id="calcFee">$0.00</span></div>
-<div class="fee-row total"><span>You Will Receive</span><span id="calcReceive">$0.00</span></div>
-</div>
-
-<div class="form-group">
-<label id="withdrawalWalletLabel">TRC20 Withdrawal Wallet</label>
-<input id="withdrawalWallet" type="text" placeholder="T...">
-<div class="note" style="margin-top:8px" id="withdrawalWalletNote">This is the wallet saved on your account for this network. You can edit it if needed.</div>
-</div>
-
-<p class="request-note">
-Your profit share can be withdrawn on demand, any time, with no minimum amount — a fixed <b>$2 withdrawal fee</b> applies to every request. Your original deposit unlocks 40 days after it is credited. Once approved, withdrawals are typically received within <b>5 minutes to 8 hours</b>. Only your available balance can be withdrawn. Choose the same network you used to deposit, and make sure the wallet address is correct before submitting.
-</p>
-
-<div class="form-actions">
-<button type="button" class="btn btn-gold" onclick="submitWithdrawal()">Submit withdrawal request</button>
-</div>
-
-</div>
-</div>
-
-<!-- ==================== COMPLETE PROFILE MODAL ====================
-     Shown the FIRST time a client clicks "Deposit" if their profile is
-     still missing any required field (see isProfileComplete() /
-     openRequest('deposit') in mainsite.js). Saving here automatically
-     re-opens the deposit modal afterwards. -->
-<div class="request-modal" id="completeProfileModal">
-<div class="request-box">
-
-<button type="button" class="request-close" onclick="closeCompleteProfile()">×</button>
-
-<h2>Complete your profile</h2>
-<p class="auth-sub">Please complete your profile before making a deposit.</p>
-
-<div class="msg" id="profileMsg"></div>
-
-<div class="form-group">
-<label>First Name</label>
-<input id="profileFirstName" type="text" autocomplete="given-name">
-</div>
-
-<div class="form-group">
-<label>Last Name</label>
-<input id="profileLastName" type="text" autocomplete="family-name">
-</div>
-
-<div class="form-group">
-<label>Phone / WhatsApp</label>
-<input id="profilePhone" type="text" autocomplete="tel">
-</div>
-
-<div class="form-group">
-<label>Address</label>
-<input id="profileAddress" type="text" autocomplete="street-address">
-</div>
-
-<div class="form-group">
-<label>City</label>
-<input id="profileCity" type="text" autocomplete="address-level2">
-</div>
-
-<div class="form-group">
-<label>Postal Code</label>
-<input id="profilePostalCode" type="text" autocomplete="postal-code">
-</div>
-
-<div class="form-group">
-<label>State</label>
-<input id="profileState" type="text" autocomplete="address-level1">
-</div>
-
-<div class="form-group">
-<label>Withdrawal Wallet <span style="color:var(--gold)">(at least one required)</span></label>
-<div class="note" style="margin:0 0 12px">Provide your TRC20 wallet, your BEP20 wallet, or both.</div>
-</div>
-
-<div class="form-group">
-<label>TRC20 Wallet <span style="color:var(--muted2);font-weight:400">(optional)</span></label>
-<input id="profileWalletTrc20" type="text" placeholder="T...">
-</div>
-
-<div class="form-group">
-<label>BEP20 Wallet <span style="color:var(--muted2);font-weight:400">(optional)</span></label>
-<input id="profileWalletBep20" type="text" placeholder="0x...">
-</div>
-
-<div class="form-actions">
-<button type="button" class="btn btn-gold" onclick="submitProfile()">Save profile</button>
-</div>
-
-</div>
-</div>
-
-<!-- ==================== AUTH MODAL (login / signup / reset password) ==================== -->
-<div class="modal" id="authModal">
-<div class="auth-box">
-
-<button class="close" onclick="closeAuth()">×</button>
-
-<!-- Shared brand heading — shown for the Sign in / Create account tabs,
-     hidden (by showResetPassword()/showNewPasswordForm() in mainsite.js)
-     for the password-reset flows, which have their own clear heading. -->
-<h2 class="auth-title" id="authTitle">Welcome to <span class="gold">PipZoNe</span></h2>
-
-<!-- Tab bar — switches between #loginForm and #signupForm without closing
-     the modal. showLogin()/showSignup() in mainsite.js toggle both the
-     active tab and the visible form together. -->
-<div class="auth-tabs" id="authTabs">
-<button type="button" class="auth-tab" id="authTabLogin" onclick="showLogin()">Sign in</button>
-<button type="button" class="auth-tab" id="authTabSignup" onclick="showSignup()">Create an account</button>
-</div>
-
-<div id="loginForm">
-
-<p class="auth-sub">Sign in to your PipZoNe account.</p>
-
-<div class="msg" id="loginMsg"></div>
-
-<div class="form-group">
-<label>Email</label>
-<input id="loginEmail" type="email" autocomplete="email">
-</div>
-
-<div class="form-group">
-<label>Password</label>
-<div class="pw-wrap">
-<input id="loginPassword" type="password" autocomplete="current-password">
-<button type="button" class="pw-toggle" onclick="togglePw('loginPassword',this)" aria-label="Show password">👁</button>
-</div>
-
-<div class="forgot-link">
-<button type="button" onclick="showResetPassword()">Forgot password?</button>
-</div>
-</div>
-
-<div class="form-actions">
-<button type="button" class="btn btn-gold" onclick="login()">Login</button>
-</div>
-
-</div>
-
-<div id="signupForm" style="display:none">
-
-<p class="auth-sub">Create your client account.</p>
-
-<div class="msg" id="signupMsg"></div>
-
-
-<div class="form-group">
-<label>Email</label>
-<input id="signupEmail" type="email" autocomplete="email">
-</div>
-
-<div class="form-group">
-<label>Password</label>
-<div class="pw-wrap">
-<input id="signupPassword" type="password" autocomplete="new-password">
-<button type="button" class="pw-toggle" onclick="togglePw('signupPassword',this)" aria-label="Show password">👁</button>
-</div>
-
-<!-- Live password-strength checklist — updated on every keystroke by
-     updatePasswordRulesUI() in mainsite.js. Each rule gets a "valid"
-     class (turns its dot/text green) the instant it's satisfied. -->
-<div class="pw-rules" id="pwRules">
-<div class="pw-rule" id="ruleLen"><span class="pw-rule-dot"></span>Between 8-15 characters<span class="pw-rule-count" id="pwCount">0</span></div>
-<div class="pw-rule" id="ruleCase"><span class="pw-rule-dot"></span>At least one upper and one lower case letter</div>
-<div class="pw-rule" id="ruleNum"><span class="pw-rule-dot"></span>At least one number</div>
-<div class="pw-rule" id="ruleSpecial"><span class="pw-rule-dot"></span>At least one special character</div>
-</div>
-</div>
-
-<div class="form-group">
-<label>Confirm Password</label>
-<div class="pw-wrap">
-<input id="confirmPassword" type="password" autocomplete="new-password">
-<button type="button" class="pw-toggle" onclick="togglePw('confirmPassword',this)" aria-label="Show password">👁</button>
-</div>
-</div>
-
-<!-- Partner code — manually typed here takes priority; falls back to a
-     ?ref=CODE captured earlier this session (see captureReferralCodeFromUrl
-     in mainsite.js), which also pre-fills this field when present. -->
-<div class="form-group">
-<label>Partner code <span style="color:var(--muted2);font-weight:400">(optional)</span></label>
-<input id="partnerCode" type="text" placeholder="Enter partner code" autocomplete="off">
-</div>
-
-<div class="form-actions">
-<button type="button" class="btn btn-gold" onclick="signup()">Create account</button>
-</div>
-
-</div>
-
-<div id="resetPasswordForm" style="display:none">
-
-<h2>Reset password</h2>
-<p class="auth-sub">Enter your account email and we'll send you a password reset link.</p>
-
-<div class="msg" id="resetMsg"></div>
-
-<div class="form-group">
-<label>Email</label>
-<input id="resetEmail" type="email" autocomplete="email" placeholder="Your account email">
-</div>
-
-<div class="form-actions">
-<button type="button" class="btn btn-gold" onclick="sendResetEmail()">Send reset link</button>
-</div>
-
-<div class="switch">
-Remember your password?
-<button type="button" onclick="showLogin()">Client login</button>
-</div>
-
-</div>
-
-<div id="newPasswordForm" style="display:none">
-
-<h2>Set new password</h2>
-<p class="auth-sub">Enter your new PipZoNe account password.</p>
-
-<div class="msg" id="newPasswordMsg"></div>
-
-<div class="form-group">
-<label>New Password</label>
-<div class="pw-wrap">
-<input id="newPassword" type="password" autocomplete="new-password" placeholder="New password">
-<button type="button" class="pw-toggle" onclick="togglePw('newPassword',this)" aria-label="Show password">👁</button>
-</div>
-</div>
-
-<div class="form-group">
-<label>Confirm New Password</label>
-<div class="pw-wrap">
-<input id="confirmNewPassword" type="password" autocomplete="new-password" placeholder="Confirm new password">
-<button type="button" class="pw-toggle" onclick="togglePw('confirmNewPassword',this)" aria-label="Show password">👁</button>
-</div>
-</div>
-
-<div class="form-actions">
-<button type="button" class="btn btn-gold" onclick="updatePassword()">Update password</button>
-</div>
-
-<div class="switch">
-<button type="button" onclick="showLogin()">Back to client login</button>
-</div>
-
-</div>
-
-</div>
-</div>
-
-<!-- MAINSITE SCRIPT: see mainsite.js for all logic (organized by section) -->
-<script src="mainsite.js"></script>
-
-</body>
-</html>
+/* ==========================================================================
+   MAINSITE.CSS — PipZoNe (Managed Forex & Crypto Trading)
+   Table of contents:
+     1. Reset & base
+     2. Header / Nav
+     3. Hero section
+     4. Stats strip
+     5. Live stats strip
+     6. Generic section / heading styles
+     7. "How it works" steps
+     8. Profit calculator
+     9. Performance table
+    10. Risk section
+    11. FAQ accordion
+    12. Footer
+    13. Legal pages (Terms / Privacy / Risk Disclosure)
+    14. Auth modal (login / signup / reset password)
+    15. Dashboard (client area)
+    16. Balance hero card
+    17. Dashboard stat cards
+    18. Available-to-withdraw + unlock progress
+    19. Dashboard action buttons
+    20. Transaction list cards
+    21. Withdrawal fee calculator box
+    22. Network selector tabs (TRC20 / BEP20)
+    23. Contact section
+    24. Responsive breakpoints
+    25. Deposit / Withdrawal request modals
+    26. Notification bell + dropdown
+    27. Referral card (locked / unlocked states)
+    28. Loading skeletons (shimmer placeholders)
+   ========================================================================== */
+
+/* -------------------------- 1. Reset & base -------------------------- */
+:root{--bg:#101513;--bg2:#0B0F0D;--panel:#171F1B;--line:#283029;--soft:#1F2622;--text:#ECF3EE;--muted:#8B9992;--muted2:#57645E;--gold:#2FBF83;--profit:#5EEAB0;--loss:#F2735E}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;line-height:1.5}
+.serif{font-family:Fraunces,serif}
+.mono{font-family:'IBM Plex Mono',monospace}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1120px;margin:auto;padding:0 32px}
+@media(max-width:640px){.wrap{padding:0 20px}}
+
+/* -------------------------- 2. Header / Nav -------------------------- */
+header{position:sticky;top:0;z-index:50;background:rgba(14,20,32,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--soft)}
+.nav{height:76px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font:600 20px Fraunces}
+.mark{width:28px;height:28px;border:1px solid var(--gold);display:grid;place-items:center;color:var(--gold);font:500 12px 'IBM Plex Mono'}
+.navlinks{display:flex;gap:32px;color:var(--muted);font-size:14px}
+.navcta{display:flex;gap:10px}
+.btn{display:inline-block;padding:10px 20px;border:1px solid var(--line);border-radius:3px;font-size:14px;cursor:pointer;background:none;color:var(--text)}
+.btn-gold{background:var(--gold);color:#161008;border-color:var(--gold)}
+
+/* -------------------------- 3. Hero section -------------------------- */
+.hero{padding:96px 0 72px;border-bottom:1px solid var(--soft);position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;left:0;right:0;bottom:-60px;height:140px;background:radial-gradient(35% 100% at 15% 100%,rgba(47,191,131,.16),transparent 70%),radial-gradient(28% 100% at 55% 100%,rgba(47,191,131,.12),transparent 70%),radial-gradient(30% 100% at 90% 100%,rgba(47,191,131,.14),transparent 70%);filter:blur(14px);pointer-events:none;animation:hero-wave-drift 11s ease-in-out infinite alternate}
+@keyframes hero-wave-drift{from{transform:translateX(-24px)}to{transform:translateX(24px)}}
+.hero-grid{display:grid;grid-template-columns:1fr 1.25fr;gap:56px;align-items:start}
+@media(max-width:860px){.navlinks{display:none}.hero-grid{grid-template-columns:1fr}}
+.eyebrow{color:var(--gold);font-size:13px;margin-bottom:22px}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--profit);margin-right:8px}
+h1{font:500 clamp(38px,5.2vw,60px)/1.08 Fraunces;margin-bottom:22px}
+h1 em{color:var(--gold)}
+.hero-sub{color:var(--muted);font-size:17px;max-width:480px;line-height:1.65;margin-bottom:34px}
+.hero-actions{display:flex;gap:14px}
+.ledger-card,.calc-in{background:var(--panel);border:1px solid var(--line);padding:28px}
+.lc-title{font-size:12px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px}
+.lc-row,.out-row{display:flex;justify-content:space-between;padding:14px 0;border-top:1px solid var(--soft)}
+.lc-row:first-of-type,.out-row:first-child{border-top:0}
+.lc-label,.out-label{color:var(--muted);font-size:14px}
+.lc-value,.out-value{font:16px 'IBM Plex Mono'}
+.gold{color:var(--gold)}
+.note{color:var(--muted2);font-size:12px;margin-top:18px}
+
+/* ---- Hero trading-terminal mockup (decorative, animated) ----
+   Dark "trading desk" panel: topbar, left icon rail, chart (candles +
+   volume bars + price axis) + orders table + buy/sell controls in the
+   middle, market-watch/sentiment on the right. Candles use a subtle CSS
+   scaleY "breathe" loop (staggered via nth-child delays) instead of
+   literally animating height, so the layout never shifts. Sparklines use
+   stroke-dash draw/undraw loops. A soft green glow sits behind the panel
+   (::before) for the "premium trading desk" look. Everything here is
+   inert (aria-hidden, tabindex="-1" on the fake buttons) — see
+   .tm-disclaimer at the bottom of the panel. */
+.tm-panel{position:relative;background:var(--panel);border:1px solid rgba(47,191,131,.35);border-radius:14px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.5),0 0 0 1px rgba(47,191,131,.05)}
+.tm-panel::before{content:'';position:absolute;inset:-40px;z-index:-1;background:radial-gradient(60% 60% at 50% 0%,rgba(47,191,131,.22),transparent 70%);filter:blur(20px);pointer-events:none}
+.tm-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid var(--soft);background:var(--bg2);flex-wrap:wrap}
+.tm-brand{display:flex;align-items:center;gap:8px;font:600 17px Fraunces}
+.tm-top-right{display:flex;align-items:center;gap:16px}
+.tm-bell{position:relative;font-size:16px}
+.tm-bell-dot{position:absolute;top:-3px;right:-3px;width:7px;height:7px;border-radius:50%;background:var(--loss);box-shadow:0 0 0 2px var(--bg2)}
+.tm-user{display:flex;align-items:center;gap:9px}
+.tm-avatar{width:32px;height:32px;border-radius:50%;background:rgba(47,191,131,.15);border:1px solid rgba(47,191,131,.35);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:14px;flex:none}
+.tm-user-text{font-size:12.5px;color:var(--text);line-height:1.4}
+.tm-user-text small{color:var(--muted2);font-size:11px;font-weight:400}
+.tm-logout{border:1px solid var(--line);border-radius:7px;padding:7px 14px;font-size:12px;color:var(--muted);white-space:nowrap}
+
+.tm-body{display:grid;grid-template-columns:66px 1fr 240px}
+.tm-rail{background:var(--bg2);border-right:1px solid var(--soft);padding:16px 0;display:flex;flex-direction:column}
+.tm-rail-item{display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 2px;color:var(--muted2);font-size:9.5px}
+.tm-rail-item span{font-size:17px}
+.tm-rail-item.active{color:var(--gold);background:rgba(47,191,131,.10);border-right:2px solid var(--gold)}
+
+.tm-main{padding:18px 20px;border-right:1px solid var(--soft);min-width:0}
+.tm-chart-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.tm-symbol{font:600 16px Fraunces}
+.tm-symbol-sub{color:var(--muted2);font-size:11px;margin-top:2px}
+.tm-price-block{text-align:right}
+.tm-price{font:600 18px 'IBM Plex Mono';color:var(--text)}
+.tm-price-change{font-size:12px;margin-top:2px}
+.tm-price-change.up{color:var(--profit)}
+.tm-tf{display:flex;gap:6px;font-size:10.5px;color:var(--muted2)}
+.tm-tf span{padding:4px 7px;border-radius:4px}
+.tm-tf span.active{background:rgba(47,191,131,.14);color:var(--gold)}
+
+.tm-chart{position:relative;height:180px;border:1px solid var(--soft);border-radius:8px;overflow:hidden;background:var(--bg2);margin-bottom:14px}
+.tm-candles{position:absolute;left:8px;right:56px;bottom:34px;top:8px;display:flex;align-items:flex-end;gap:3px}
+.tm-candle{position:relative;flex:1;min-width:3px;border-radius:1px;transform-origin:bottom;animation:tm-breathe 2.6s ease-in-out infinite alternate}
+.tm-candle::before{content:'';position:absolute;left:50%;top:-5px;bottom:-5px;width:1px;background:inherit;opacity:.55;transform:translateX(-50%)}
+.tm-candle.up{background:var(--profit)}
+.tm-candle.down{background:var(--loss)}
+.tm-candle:nth-child(3n){animation-delay:.2s}
+.tm-candle:nth-child(3n+1){animation-delay:.6s}
+.tm-candle:nth-child(3n+2){animation-delay:1s}
+@keyframes tm-breathe{from{transform:scaleY(.86)}to{transform:scaleY(1)}}
+
+/* thin volume bars along the bottom of the chart, under the candles */
+.tm-vol{position:absolute;left:8px;right:56px;bottom:6px;height:24px;display:flex;align-items:flex-end;gap:3px;opacity:.55}
+.tm-vol-bar{flex:1;min-width:3px;border-radius:1px}
+.tm-vol-bar.up{background:var(--profit)}
+.tm-vol-bar.down{background:var(--loss)}
+
+/* fake price axis labels down the right edge of the chart */
+.tm-axis{position:absolute;right:8px;top:8px;bottom:34px;width:48px;display:flex;flex-direction:column;justify-content:space-between;font:10px 'IBM Plex Mono';color:var(--muted2);text-align:right}
+
+.tm-scanline{position:absolute;top:0;bottom:0;width:2px;background:linear-gradient(var(--gold),transparent 85%);opacity:.55;animation:tm-scan 5s linear infinite}
+@keyframes tm-scan{0%{left:0}100%{left:calc(100% - 56px)}}
+
+.tm-chart-logo{position:absolute;left:10px;bottom:8px;width:20px;height:20px;border-radius:4px;background:rgba(0,0,0,.35);color:var(--muted2);font:600 8px 'IBM Plex Mono';display:flex;align-items:center;justify-content:center}
+
+.tm-tabs{display:flex;gap:18px;font-size:11.5px;color:var(--muted2);border-bottom:1px solid var(--soft);margin-bottom:10px}
+.tm-tabs span{padding-bottom:9px}
+.tm-tabs span.active{color:var(--gold);border-bottom:2px solid var(--gold)}
+
+.tm-table-wrap{overflow-x:auto;margin-bottom:16px}
+.tm-table{width:100%;font-size:11px;border-collapse:collapse;white-space:nowrap}
+.tm-table th{color:var(--muted2);text-align:left;font-weight:500;padding-bottom:7px}
+.tm-table td{padding:7px 12px 7px 0;color:var(--text)}
+.tm-buy-chip,.tm-sell-chip{padding:2px 7px;border-radius:4px;font-size:10.5px}
+.tm-buy-chip{color:var(--profit);background:rgba(94,234,176,.10)}
+.tm-sell-chip{color:var(--loss);background:rgba(242,115,94,.10)}
+.tm-table td.up{color:var(--profit)}
+.tm-table td.down{color:var(--loss)}
+.tm-table td.tm-sltp{color:var(--muted2);font-size:10px}
+.tm-view-all{text-align:right;font-size:10.5px;color:var(--gold);margin-top:4px}
+
+.tm-actions{display:flex;align-items:center;gap:10px}
+.tm-buy-btn,.tm-sell-btn{flex:1;border:0;border-radius:7px;padding:11px;font-size:12.5px;font-weight:600;cursor:default}
+.tm-buy-btn{background:var(--gold);color:#161008}
+.tm-sell-btn{background:var(--loss);color:#1a0d0a}
+.tm-lot{display:flex;align-items:center;gap:8px;font-size:10.5px;color:var(--muted2);white-space:nowrap;background:var(--bg2);border:1px solid var(--line);border-radius:7px;padding:6px 10px}
+.tm-lot b{color:var(--text);font-size:12px}
+.tm-stepper{display:flex;gap:3px}
+.tm-stepper button{width:18px;height:18px;border-radius:4px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0}
+.tm-gear{font-size:13px;color:var(--muted2)}
+
+.tm-side{padding:18px 16px;background:var(--bg2);min-width:0}
+.tm-side-head{font-size:11.5px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.tm-side-close{color:var(--muted2);font-size:14px;line-height:1}
+.tm-watch-tabs{display:flex;gap:6px;margin-bottom:10px}
+.tm-watch-tabs span{font-size:9.5px;color:var(--muted2);border:1px solid var(--line);border-radius:5px;padding:3px 7px}
+.tm-watch-tabs span.active{color:var(--gold);border-color:rgba(47,191,131,.4);background:rgba(47,191,131,.08)}
+.tm-watch-head-row{display:flex;justify-content:space-between;gap:8px;padding-bottom:6px;border-bottom:1px solid var(--soft);font-size:9.5px;color:var(--muted2);text-transform:uppercase;letter-spacing:.4px}
+.tm-watch-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--soft)}
+.tm-watch-row:last-child{border-bottom:0}
+.tm-watch-sym{font-size:11px;color:var(--text);flex:none}
+.tm-watch-p{font-size:11px;color:var(--text);font-family:'IBM Plex Mono',monospace}
+.tm-watch-chg{font-size:10.5px;text-align:right;flex:none}
+.tm-watch-chg.up{color:var(--profit)}
+
+.tm-sentiment{margin-top:18px;padding-top:16px;border-top:1px solid var(--soft)}
+.tm-bullish{color:var(--profit);background:rgba(94,234,176,.12);border-radius:20px;padding:2px 9px;font-size:10px}
+.tm-spark-lg{width:100%;height:46px;margin-top:8px;display:block}
+.tm-spark-lg polyline{fill:none;stroke:var(--gold);stroke-width:1.6;stroke-dasharray:320;stroke-dashoffset:320;animation:tm-draw-lg 4s ease-in-out infinite}
+.tm-sentiment-foot{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted2);margin-top:8px}
+.tm-sentiment-foot b{font-weight:600}
+.tm-sentiment-foot b.up{color:var(--profit)}
+
+@keyframes tm-draw{0%{stroke-dashoffset:120}55%{stroke-dashoffset:0}100%{stroke-dashoffset:-120}}
+@keyframes tm-draw-lg{0%{stroke-dashoffset:320}55%{stroke-dashoffset:0}100%{stroke-dashoffset:-320}}
+
+.tm-disclaimer{padding:9px 20px;font-size:10.5px;color:var(--muted2);border-top:1px solid var(--soft);background:var(--bg2)}
+
+@media(max-width:760px){
+.tm-body{grid-template-columns:1fr}
+.tm-rail{display:none}
+.tm-main{border-right:0;border-bottom:1px solid var(--soft)}
+}
+@media(max-width:480px){
+.tm-chart{height:140px}
+.tm-axis{width:40px;font-size:9px}
+.tm-candles,.tm-vol{right:46px}
+}
+
+/* -------------------------- 4. Stats strip -------------------------- */
+.stats{border-bottom:1px solid var(--soft)}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr)}
+.stat{padding:34px 32px;border-left:1px solid var(--soft)}
+.stat:first-child{border-left:0;padding-left:0}
+.stat-num{font:34px Fraunces;color:var(--gold)}
+.stat-label{color:var(--muted);font-size:14px}
+
+/* -------------------------- 5. Live stats strip -------------------------- */
+.live-strip{border-bottom:1px solid var(--soft);background:var(--bg2)}
+.live-row{display:flex;align-items:center;gap:10px;padding:14px 0;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--profit);box-shadow:0 0 0 3px rgba(92,185,138,.15);flex:none}
+.live-strip b{color:var(--text);font-family:'IBM Plex Mono'}
+.live-sep{color:var(--muted2)}
+
+/* -------------------------- 6. Generic section / heading styles -------------------------- */
+section{padding:88px 0;border-bottom:1px solid var(--soft)}
+.sec-head{display:grid;grid-template-columns:.6fr 1fr;gap:48px;margin-bottom:56px}
+.sec-tag{color:#1F7A54;font-size:13px}
+.sec-tag span{color:var(--gold)}
+h2{font:500 clamp(26px,3.4vw,36px)/1.2 Fraunces}
+.sec-desc{color:var(--muted);max-width:500px;margin-top:10px}
+
+/* -------------------------- 7. "How it works" steps -------------------------- */
+.steps{border-top:1px solid var(--line)}
+.step{display:grid;grid-template-columns:70px 1fr 1.3fr;gap:32px;padding:30px 0;border-bottom:1px solid var(--line)}
+.step-num{color:#1F7A54;font:14px 'IBM Plex Mono'}
+.step-title{font:20px Fraunces}
+.step-desc{color:var(--muted);font-size:14px}
+
+/* -------------------------- 8. Profit calculator -------------------------- */
+.calc{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line)}
+.calc-in{border-right:1px solid var(--line)}
+.calc-out{padding:40px;background:var(--bg2)}
+.field-label{color:var(--muted);font-size:13px}
+.amount-display{font:44px Fraunces;color:var(--gold);margin:10px 0 18px}
+input[type=range]{width:100%;accent-color:var(--gold)}
+.calc-scale,.split-legend{display:flex;justify-content:space-between;color:var(--muted2);font-size:12px}
+.split-bar{display:flex;height:10px;margin:28px 0 14px}
+.split-client{width:60%;background:var(--gold)}
+.split-mgr{width:40%;background:var(--line)}
+.calc-warn{margin-top:24px;padding:14px;background:rgba(47,191,131,.07);border:1px solid rgba(47,191,131,.25);color:var(--gold);font-size:12px}
+.out-value.hi{color:var(--gold);font-size:20px}
+
+/* -------------------------- 9. Performance table -------------------------- */
+table{width:100%;border-collapse:collapse}
+th{text-align:left;color:var(--muted2);font-size:12px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+th:not(:first-child),td:not(:first-child){text-align:right}
+td{padding:18px 0;border-bottom:1px solid var(--soft);font-size:14px}
+.up{color:var(--profit)}
+.bar-track{height:6px;background:var(--soft);margin-top:6px}
+.bar-fill{height:100%;background:var(--gold)}
+
+/* -------------------------- 10. Risk section -------------------------- */
+.risk{background:var(--bg2)}
+.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.risk h3{font:18px Fraunces;color:var(--gold);margin-bottom:8px}
+.risk p{color:var(--muted);font-size:14px}
+
+/* -------------------------- 11. FAQ accordion -------------------------- */
+.faq-item{border-bottom:1px solid var(--soft)}
+.faq-q{display:flex;justify-content:space-between;padding:22px 0;cursor:pointer;font:17px Fraunces}
+.faq-a{max-height:0;overflow:hidden}
+.faq-a p{color:var(--muted);padding-bottom:22px}
+.faq-item.open .faq-a{max-height:200px}
+.faq-item.open .plus{transform:rotate(45deg);color:var(--gold)}
+
+/* -------------------------- 12. Footer -------------------------- */
+footer{padding:56px 0 40px}
+.foot-grid{display:flex;justify-content:space-between;gap:24px}
+.foot-links{display:flex;gap:24px;color:var(--muted);font-size:13px}
+.foot-bottom{border-top:1px solid var(--soft);padding-top:24px;margin-top:30px;color:var(--muted2);font-size:12px}
+
+/* -------------------------- 13. Legal pages (Terms / Privacy / Risk Disclosure) -------------------------- */
+.legal-section{padding:72px 0;border-bottom:1px solid var(--soft)}
+.legal-section h2{margin-bottom:8px}
+.legal-updated{color:var(--muted2);font-size:12px;margin-bottom:36px}
+.legal-block{max-width:760px}
+.legal-block h3{font:18px Fraunces;color:var(--gold);margin:30px 0 10px}
+.legal-block h3:first-child{margin-top:0}
+.legal-block p{color:var(--muted);font-size:14px;line-height:1.75;margin-bottom:10px}
+.legal-block ul{color:var(--muted);font-size:14px;line-height:1.75;padding-left:20px;margin-bottom:10px}
+.legal-block li{margin-bottom:4px}
+.legal-disclaimer{margin-top:32px;padding:14px 16px;background:rgba(47,191,131,.07);border:1px solid rgba(47,191,131,.25);border-radius:3px;font-size:12.5px;color:var(--gold);line-height:1.6}
+
+/* -------------------------- 14. Auth modal (login / signup / reset password) -------------------------- */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100;align-items:center;justify-content:center;padding:20px}
+.modal.show{display:flex}
+.auth-box{width:min(460px,100%);background:var(--panel);border:1px solid var(--line);padding:30px;border-radius:5px;position:relative;max-height:90vh;overflow:auto}
+.close{position:absolute;right:18px;top:12px;background:none;border:0;color:var(--muted);font-size:28px;cursor:pointer}
+.auth-box h2{margin-bottom:8px}
+.auth-sub{color:var(--muted);font-size:13px;margin-bottom:20px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+.form-group input{width:100%;padding:11px 12px;background:var(--bg2);border:1px solid var(--line);color:var(--text);border-radius:3px;outline:none}
+.form-group input:focus{border-color:var(--gold)}
+.form-group textarea{width:100%;min-height:140px;padding:11px 12px;background:var(--bg2);border:1px solid var(--line);color:var(--text);border-radius:3px;outline:none;resize:vertical;font-family:inherit}
+.form-group textarea:focus{border-color:var(--gold)}
+.pw-wrap{position:relative}
+.pw-wrap input{padding-right:40px}
+.pw-toggle{position:absolute;right:0;top:0;height:100%;width:38px;display:flex;align-items:center;justify-content:center;background:none;border:0;cursor:pointer;color:var(--muted);padding:0}
+.pw-toggle:hover{color:var(--gold)}
+.pw-toggle svg{width:18px;height:18px}
+.form-actions{margin-top:18px}
+.form-actions .btn{width:100%;padding:12px}
+.switch{margin-top:16px;text-align:center;color:var(--muted);font-size:13px}
+.switch button{background:none;border:0;color:var(--gold);cursor:pointer}
+.forgot-link{text-align:right;margin-top:9px}
+.forgot-link button{background:none;border:0;color:var(--gold);cursor:pointer;font-size:12px;padding:0}
+.forgot-link button:hover{text-decoration:underline}
+.msg{display:none;padding:10px 12px;margin-bottom:14px;border:1px solid var(--line);font-size:13px}
+.msg.show{display:block}
+
+/* -------------------------- 15. Dashboard (client area) -------------------------- */
+.dashboard{display:none;min-height:70vh;padding:36px 0 70px}
+.dash-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:22px;border-bottom:1px solid var(--soft);margin-bottom:28px}
+.dash-welcome{display:flex;align-items:center;gap:14px}
+.dash-avatar{width:48px;height:48px;border-radius:50%;background:rgba(47,191,131,.12);border:1px solid rgba(47,191,131,.35);color:var(--gold);display:flex;align-items:center;justify-content:center;font:600 17px Fraunces;flex:none}
+.dash-hi{color:var(--muted);font-size:13px}
+.dash-name{font:20px Fraunces;margin-top:2px}
+.dash-email{color:var(--muted2);font-size:12px;margin-top:2px}
+.dash-topbar-actions{display:flex;align-items:center;gap:12px}
+.logout{background:none;border:1px solid var(--line);color:var(--text);padding:10px 16px;cursor:pointer;border-radius:6px;font-size:13px;white-space:nowrap}
+.logout:hover{border-color:var(--loss);color:var(--loss)}
+
+/* -------------------------- 16. Balance hero card -------------------------- */
+.balance-hero{background:linear-gradient(155deg,var(--panel) 0%,var(--bg2) 100%);border:1px solid var(--line);border-radius:10px;padding:30px 32px;margin-bottom:18px;position:relative;overflow:hidden}
+.balance-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(47,191,131,.14),transparent 70%)}
+.balance-label{color:var(--muted);font-size:13px;letter-spacing:.3px}
+.balance-amount{font:56px Fraunces;color:var(--text);margin:8px 0 4px;line-height:1;word-break:break-word}
+.balance-pl{display:inline-flex;align-items:center;gap:6px;font:600 14px 'IBM Plex Mono';padding:5px 10px;border-radius:20px}
+.balance-pl.pos{color:var(--profit);background:rgba(94,234,176,.10)}
+.balance-pl.neg{color:var(--loss);background:rgba(242,115,94,.10)}
+.balance-pl.zero{color:var(--muted);background:rgba(139,153,146,.10)}
+
+/* -------------------------- 17. Dashboard stat cards -------------------------- */
+.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+.dash-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px}
+.dash-card .label{color:var(--muted);font-size:12.5px;display:flex;align-items:center;gap:6px}
+.dash-card .value{font:26px Fraunces;color:var(--text);margin-top:8px}
+.dash-card .value.up{color:var(--profit)}
+.dash-card .value.down{color:var(--loss)}
+.dash-card .sub{color:var(--muted2);font-size:11.5px;margin-top:4px}
+
+/* -------------------------- 18. Available-to-withdraw + unlock progress -------------------------- */
+.avail-card{background:rgba(47,191,131,.06);border:1px solid rgba(47,191,131,.28);border-radius:8px;padding:22px 24px;margin-bottom:22px}
+.avail-top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.avail-label{color:var(--muted);font-size:13px}
+.avail-amount{font:34px Fraunces;color:var(--gold);margin-top:6px}
+.unlock-wrap{min-width:220px;flex:1;max-width:340px}
+.unlock-label{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-bottom:6px}
+.unlock-label b{color:var(--text);font-family:'IBM Plex Mono'}
+.unlock-track{height:7px;background:var(--soft);border-radius:4px;overflow:hidden}
+.unlock-fill{height:100%;background:var(--gold);border-radius:4px;transition:width .4s}
+.unlock-fill.done{background:var(--profit)}
+.unlock-note{color:var(--muted2);font-size:11.5px;margin-top:8px;line-height:1.5}
+
+/* -------------------------- 19. Dashboard action buttons -------------------------- */
+.dash-actions{display:flex;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+.dash-actions .btn{padding:15px 26px;font-size:15px;border-radius:8px;flex:1;min-width:150px;text-align:center}
+.dash-actions .btn-gold{box-shadow:0 4px 18px rgba(47,191,131,.18)}
+.dash-note{margin-top:18px;padding:12px 14px;background:rgba(47,191,131,.07);border:1px solid rgba(47,191,131,.25);border-radius:3px;font-size:13px;color:var(--gold);line-height:1.6}
+
+/* -------------------------- 20. Transaction list cards -------------------------- */
+.tx-card{display:flex;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-bottom:10px}
+.tx-icon{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+.tx-icon.dep{background:rgba(47,191,131,.12);color:var(--gold)}
+.tx-icon.wd{background:rgba(139,153,146,.12);color:var(--muted)}
+.tx-mid{flex:1;min-width:0}
+.tx-type{font-size:14.5px;font-weight:600}
+.tx-date{color:var(--muted2);font-size:12px;margin-top:2px}
+.tx-right{text-align:right;flex:none}
+.tx-amount{font:15px 'IBM Plex Mono'}
+.tx-status{font-size:11.5px;margin-top:4px;font-weight:600;letter-spacing:.3px;padding:2px 8px;border-radius:20px;display:inline-block}
+.tx-status.status-pending{color:var(--gold);background:rgba(47,191,131,.10)}
+.tx-status.status-approved{color:var(--profit);background:rgba(94,234,176,.10)}
+.tx-status.status-rejected{color:var(--loss);background:rgba(242,115,94,.10)}
+.tx-empty{color:var(--muted);font-size:14px;padding:24px 0;text-align:center;border:1px dashed var(--line);border-radius:8px}
+
+@media(max-width:640px){
+.dash-topbar{flex-direction:column;align-items:flex-start}
+.dash-topbar-actions{align-self:flex-end}
+.balance-amount{font:42px Fraunces}
+.dash-grid{grid-template-columns:1fr 1fr}
+.avail-top{flex-direction:column;align-items:flex-start}
+.unlock-wrap{max-width:100%;width:100%}
+.dash-actions .btn{min-width:100%}
+}
+
+/* -------------------------- 21. Withdrawal fee calculator box -------------------------- */
+.fee-calc{margin-top:12px;padding:14px;background:var(--bg2);border:1px solid var(--line);border-radius:3px;font-size:13px}
+.fee-row{display:flex;justify-content:space-between;padding:5px 0;color:var(--muted)}
+.fee-row.total{border-top:1px solid var(--line);margin-top:5px;padding-top:9px;font-weight:600;color:var(--text)}
+.fee-row span:last-child{font-family:'IBM Plex Mono',monospace}
+
+/* -------------------------- 22. Network selector tabs (TRC20 / BEP20) -------------------------- */
+.network-tabs{display:flex;gap:8px;margin-bottom:14px}
+.network-tab{flex:1;padding:10px;text-align:center;border:1px solid var(--line);background:var(--bg2);color:var(--muted);cursor:pointer;border-radius:3px;font-size:13px;transition:.15s}
+.network-tab.active{border-color:var(--gold);color:var(--gold);background:rgba(47,191,131,.08)}
+.network-tab:hover{border-color:var(--gold)}
+
+/* -------------------------- 23. Contact section -------------------------- */
+.contact-section{padding:88px 0;border-bottom:1px solid var(--soft)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px}
+.contact-info h3{font:18px Fraunces;color:var(--gold);margin-bottom:8px}
+.contact-info p{color:var(--muted);font-size:14px;line-height:1.8}
+.contact-info a{color:var(--gold)}
+.contact-form{background:var(--panel);border:1px solid var(--line);padding:28px}
+.contact-form .form-group:last-of-type{margin-bottom:0}
+.contact-form textarea{width:100%;min-height:150px;padding:11px 12px;background:var(--bg2);border:1px solid var(--line);color:var(--text);border-radius:3px;outline:none;resize:vertical;font-family:inherit}
+.contact-form textarea:focus{border-color:var(--gold)}
+.contact-success{display:none;margin-top:14px;padding:10px 12px;border:1px solid rgba(63,214,140,.3);color:var(--profit);font-size:13px;background:rgba(63,214,140,.05)}
+
+/* -------------------------- 24. Responsive breakpoints -------------------------- */
+@media(max-width:760px){
+.sec-head,.calc,.risk-grid,.contact-grid{grid-template-columns:1fr}
+.calc-in{border-right:0;border-bottom:1px solid var(--line)}
+.step{grid-template-columns:44px 1fr}
+.step-desc{grid-column:2}
+.stats-row,.dash-grid{grid-template-columns:1fr}
+.foot-grid{flex-direction:column}
+.foot-links{flex-wrap:wrap}
+.stat{border-left:0;border-top:1px solid var(--soft);padding-left:0}
+.stat:first-child{border-top:0}
+}
+
+/* mobile nav */
+@media(max-width:860px){
+.nav{flex-wrap:wrap;height:auto;padding:14px 0}
+.navlinks{display:none}
+.navcta{width:100%;order:3;margin-top:12px;gap:10px}
+.navcta .btn{flex:1;text-align:center;padding:11px 14px}
+}
+
+/* -------------------------- 25. Deposit / Withdrawal request modals -------------------------- */
+.request-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:110;align-items:center;justify-content:center;padding:20px}
+.request-modal.show{display:flex}
+.request-box{width:min(500px,100%);max-height:90vh;overflow:auto;background:var(--panel);border:1px solid var(--line);padding:30px;border-radius:5px;position:relative}
+.request-box h2{margin-bottom:8px}
+.request-close{position:absolute;right:18px;top:12px;background:none;border:0;color:var(--muted);font-size:28px;cursor:pointer}
+.request-note{font-size:12px;color:var(--muted);line-height:1.6;margin:14px 0}
+.request-actions{display:flex;gap:10px;margin-top:18px}
+.request-actions .btn{flex:1}
+.request-status{margin-top:14px}
+.request-list{margin-top:34px;border-top:1px solid var(--line)}
+.request-list h3{font:18px Fraunces;margin:24px 0 12px}
+.request-item{display:flex;justify-content:space-between;gap:16px;padding:15px 0;border-bottom:1px solid var(--soft);font-size:13px}
+.request-item .meta{color:var(--muted)}
+.status-pending{color:var(--gold)}
+.status-approved{color:var(--profit)}
+.status-rejected{color:var(--loss)}
+
+/* -------------------------- 26. Notification bell + dropdown --------------------------
+   Notification popup is a small, fixed, CENTERED popup (like a modal) instead of an
+   absolutely-positioned dropdown anchored to the bell. This fixes the old mobile bug
+   where the dropdown (anchored with top/right offsets relative to the bell button)
+   overflowed off the left edge of narrow screens and got visually cut off.
+   A dark .notif-overlay sits behind it (click it, press Escape, or use the explicit
+   × close button to dismiss) so it behaves consistently on both mobile and desktop. */
+.notif-wrap{position:relative}
+.notif-bell{position:relative;background:none;border:1px solid var(--line);color:var(--text);width:42px;height:42px;border-radius:8px;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;line-height:1}
+.notif-bell:hover{border-color:var(--gold)}
+.notif-badge{position:absolute;top:-6px;right:-6px;background:var(--loss);color:#fff;font:600 11px 'IBM Plex Mono';min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+
+/* dim backdrop shown behind the popup */
+.notif-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:69}
+.notif-overlay.show{display:block}
+
+/* the popup itself — fixed + centered, so it never depends on the bell's position */
+.notif-dropdown{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(360px,90vw);max-height:min(70vh,520px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 12px 30px rgba(0,0,0,.45);z-index:70}
+.notif-dropdown.show{display:block}
+.notif-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--soft);font:600 14px Fraunces;position:sticky;top:0;background:var(--panel)}
+.notif-head-actions{display:flex;align-items:center;gap:14px;flex:none}
+.notif-markread{background:none;border:0;color:var(--gold);font-size:11.5px;cursor:pointer;padding:0;white-space:nowrap}
+.notif-markread:hover{text-decoration:underline}
+.notif-close{background:none;border:0;color:var(--muted);font-size:22px;line-height:1;cursor:pointer;padding:0}
+.notif-close:hover{color:var(--loss)}
+.notif-group-label{padding:10px 16px 6px;color:var(--muted2);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.notif-item{display:flex;gap:10px;padding:10px 16px;border-bottom:1px solid var(--soft);align-items:flex-start;cursor:pointer}
+.notif-item:last-child{border-bottom:0}
+.notif-item:hover{background:rgba(47,191,131,.04)}
+.notif-item.unread{background:rgba(47,191,131,.06)}
+.notif-icon{font-size:16px;flex:none;margin-top:1px}
+.notif-body{flex:1;min-width:0}
+/* unread = bold, read = normal weight — flips instantly when "Mark all as read" is used */
+.notif-text{font-size:13px;color:var(--text);line-height:1.4;font-weight:400}
+.notif-item.unread .notif-text{font-weight:600}
+.notif-time{font-size:11px;color:var(--muted2);margin-top:2px}
+.notif-empty{color:var(--muted);font-size:13px;padding:30px 16px;text-align:center}
+
+/* Scrolling the notification list must never chain into scrolling the page
+   behind it (the old "background scrolls too" bug). overscroll-behavior
+   stops scroll from passing through once the list hits its top/bottom, and
+   locking the body (see body.modal-open below) stops the page itself from
+   moving while the popup is open. */
+.notif-list{overscroll-behavior:contain}
+body.modal-open{overflow:hidden}
+
+/* Single-notification detail popup — opens on top of the notif-dropdown
+   when a notification row is clicked, so a client can view one notification
+   at a time (X button to close) without losing the list underneath. */
+.notif-detail-modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(320px,86vw);z-index:80}
+.notif-detail-modal.show{display:block}
+.notif-detail-box{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:22px 20px;box-shadow:0 14px 34px rgba(0,0,0,.5)}
+.notif-detail-close{position:absolute;right:12px;top:8px;background:none;border:0;color:var(--muted);font-size:22px;line-height:1;cursor:pointer;padding:0}
+.notif-detail-close:hover{color:var(--loss)}
+.notif-detail-icon{font-size:30px;margin-bottom:12px}
+.notif-detail-text{font-size:15px;color:var(--text);line-height:1.5;padding-right:20px}
+.notif-detail-time{font-size:12px;color:var(--muted2);margin-top:12px}
+
+@media(max-width:640px){
+.notif-dropdown{width:92vw;max-height:min(75vh,480px)}
+}
+
+/* -------------------------- 27. Referral card (locked / unlocked states) --------------------------
+   Two states inside the same .referral-card wrapper, toggled by
+   loadReferralInfo() in mainsite.js based on profiles.referral_unlocked:
+     - .referral-locked   — shown before the client's own first deposit is approved
+     - .referral-unlocked — shown after, with the client's link + live stats
+   Kept visually close to .avail-card (same gold accent, same rounded panel
+   language) so it reads as part of the same dashboard, not a bolted-on widget. */
+.referral-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:22px 24px;margin-bottom:22px}
+
+/* -- locked state -- */
+.referral-locked-msg{color:var(--muted);font-size:13.5px;margin-top:10px;line-height:1.6}
+
+/* -- shared head/sub used by both states -- */
+.referral-head{font:19px Fraunces}
+.referral-sub{color:var(--muted);font-size:13px;margin-top:6px;margin-bottom:18px;line-height:1.6}
+
+/* -- unlocked state: link row -- */
+.referral-link-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.referral-link-row input{flex:1;min-width:220px;padding:11px 12px;background:var(--bg2);border:1px solid var(--line);color:var(--text);border-radius:3px;outline:none;font-family:'IBM Plex Mono',monospace;font-size:13px}
+.referral-link-row .btn{white-space:nowrap}
+
+/* -- unlocked state: stats row -- */
+.referral-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.referral-stat{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:16px}
+.referral-stat-label{color:var(--muted);font-size:12px}
+.referral-stat-value{font:22px Fraunces;color:var(--text);margin-top:6px}
+.referral-stat-value.gold{color:var(--gold)}
+
+.referral-terms{margin-top:22px;padding-top:18px;border-top:1px solid var(--soft)}
+.referral-terms h3{font:15px Fraunces;color:var(--gold);margin-bottom:8px}
+.referral-terms p{color:var(--muted);font-size:12.5px;line-height:1.7}
+
+@media(max-width:640px){
+.referral-stats{grid-template-columns:1fr}
+.referral-link-row{flex-direction:column}
+.referral-link-row input{width:100%}
+.referral-link-row .btn{width:100%;text-align:center}
+}
+
+/* -------------------------- 28. Loading skeletons (pulse placeholders) --------------------------
+   Applied by mainsite.js while dashboard data is being fetched, so numbers
+   never flash "$0.00" before the real value arrives. Two flavours:
+     - .skeleton        — put on an existing text element (e.g. #dashBalance);
+                           hides its current text and shows a soft, slowly
+                           breathing solid-colour bar in its place, same
+                           footprint as the text.
+     - .skeleton-row     — a whole placeholder "card" (icon + two lines),
+                           used to pre-fill the transactions/notifications
+                           lists before their real rows are fetched.
+   Deliberately a plain, slow opacity "breathe" rather than a moving
+   gradient sweep — closer to the quiet, understated loading state used by
+   Linear/Stripe-style dashboards than a flashy shimmer. Every skeleton
+   piece shares the same animation so the whole dashboard breathes in sync
+   instead of several separate effects competing for attention. */
+@keyframes pz-pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.skeleton{
+color:transparent!important;
+background:var(--soft);
+border-radius:4px;
+animation:pz-pulse 1.8s ease-in-out infinite;
+user-select:none;
+}
+
+.skeleton-row{
+background:var(--panel);
+border:1px solid var(--line);
+border-radius:8px;
+padding:16px 18px;
+margin-bottom:10px;
+display:flex;
+align-items:center;
+gap:14px
+}
+
+.skeleton-circle{
+width:38px;
+height:38px;
+border-radius:50%;
+flex:none;
+background:var(--soft);
+animation:pz-pulse 1.8s ease-in-out infinite
+}
+
+.skeleton-lines{flex:1;display:flex;flex-direction:column;gap:8px}
+
+.skeleton-line{
+height:11px;
+border-radius:4px;
+background:var(--soft);
+animation:pz-pulse 1.8s ease-in-out infinite
+}
+
+.skeleton-line.short{width:55%}
+.skeleton-line.long{width:85%}
+
+
+/* -------------------------- 29. Auth modal tabs + password strength checklist --------------------------
+   Added for the redesigned Sign in / Create account modal. Two pieces:
+     - .auth-title / .auth-tabs — shared brand heading + the two-tab
+       switcher shown above #loginForm / #signupForm. Hidden by
+       showResetPassword()/showNewPasswordForm() in mainsite.js, since
+       those flows have their own clear heading instead.
+     - .pw-rules — the live password-requirements checklist under the
+       signup password field, updated on every keystroke by
+       updatePasswordRulesUI() in mainsite.js.
+========================================================================== */
+
+h2.auth-title{
+text-align:center;
+font:24px Fraunces;
+margin-bottom:20px
+}
+
+.auth-tabs{
+display:flex;
+border-bottom:1px solid var(--line);
+margin-bottom:22px
+}
+
+.auth-tab{
+flex:1;
+background:none;
+border:0;
+padding:12px 0;
+font-size:14px;
+color:var(--muted);
+cursor:pointer;
+border-bottom:2px solid transparent;
+margin-bottom:-1px
+}
+
+.auth-tab.active{
+color:var(--text);
+border-bottom-color:var(--gold)
+}
+
+.pw-rules{
+margin-top:10px;
+display:flex;
+flex-direction:column;
+gap:6px
+}
+
+.pw-rule{
+display:flex;
+align-items:center;
+gap:8px;
+font-size:12px;
+color:var(--muted)
+}
+
+.pw-rule-dot{
+width:5px;
+height:5px;
+border-radius:50%;
+border:1px solid var(--muted);
+flex:none
+}
+
+.pw-rule.valid{
+color:var(--profit)
+}
+
+.pw-rule.valid .pw-rule-dot{
+background:var(--profit);
+border-color:var(--profit)
+}
+
+.pw-rule-count{
+margin-left:auto;
+color:var(--muted2);
+font-family:'IBM Plex Mono',monospace
+}
+
+/* -------------------------- 30. Account menu popup + its sub-modals --------------------------
+   Opened by clicking the avatar/name in the dashboard topbar. Same
+   overlay + fixed-centered-panel pattern as the notification popup
+   (section 26), generalized under .menu-* class names since it's used
+   for a different trigger. Its "Settings" row re-opens the existing
+   profile-completion form (#completeProfileModal); "View Profile",
+   "Team" and "Support" each get their own small .request-modal
+   (same pattern already used for deposit/withdrawal/complete-profile). */
+
+.dash-welcome{cursor:pointer}
+.dash-welcome:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:8px}
+
+.menu-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:89}
+.menu-overlay.show{display:block}
+
+.menu-popup{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(340px,90vw);max-height:80vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 20px 50px rgba(0,0,0,.5);z-index:90}
+.menu-popup.show{display:block}
+
+.menu-head{display:flex;align-items:center;gap:12px;padding:18px 40px 18px 16px;border-bottom:1px solid var(--soft);position:relative}
+.menu-head .notif-close{position:absolute;right:12px;top:14px}
+.menu-head-avatar{width:44px;height:44px;border-radius:50%;background:rgba(47,191,131,.12);border:1px solid rgba(47,191,131,.35);color:var(--gold);display:flex;align-items:center;justify-content:center;font:600 16px Fraunces;flex:none}
+.menu-head-info{flex:1;min-width:0}
+.menu-head-name{font:16px Fraunces;color:var(--text)}
+.menu-head-sub{font-size:12px;color:var(--muted2);margin-top:2px}
+
+.menu-list{padding:8px}
+.menu-item{width:100%;text-align:left;background:none;border:0;color:var(--text);font-size:14px;padding:12px 10px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:10px}
+.menu-item:hover{background:rgba(47,191,131,.06)}
+.menu-item-danger{color:var(--loss)}
+.menu-divider{height:1px;background:var(--soft);margin:6px 4px}
+
+/* -- View Profile modal: simple label/value rows -- */
+.profile-view-list{display:flex;flex-direction:column}
+.profile-view-row{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--soft);font-size:13px}
+.profile-view-row:last-child{border-bottom:0}
+.profile-view-label{color:var(--muted)}
+.profile-view-value{color:var(--text);text-align:right;word-break:break-word}
+
+/* -- Team modal: one row per referred client -- */
+.team-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--soft);font-size:13px}
+.team-item:last-child{border-bottom:0}
+.team-item-name{font-weight:600}
+.team-item-date{color:var(--muted2);font-size:11.5px;margin-top:2px}
+.team-item-earn{color:var(--gold);font-size:12px;margin-top:4px}
+
+/* -- Invite Members lives in its own modal (#inviteModal) now, opened
+   from the account menu — see JS section 21.5. */
+
+@media(max-width:640px){
+.menu-popup{width:92vw}
+}
