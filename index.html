@@ -51,13 +51,138 @@
 </div>
 </div>
 
-<div class="ledger-card">
-<div class="lc-title">Sample account · illustrative</div>
-<div class="lc-row"><span class="lc-label">Deposited capital</span><span class="lc-value">$500.00</span></div>
-<div class="lc-row"><span class="lc-label">August result</span><span class="lc-value" style="color:var(--profit)">+$100.00</span></div>
-<div class="lc-row"><span class="lc-label">Your share (60%)</span><span class="lc-value gold">$60.00</span></div>
-<div class="lc-row"><span class="lc-label">Closing balance</span><span class="lc-value">$560.00</span></div>
-<div class="note">Figures are illustrative only. Actual results vary month to month and losses are possible.</div>
+<!-- ==================== HERO TRADING TERMINAL MOCKUP ====================
+     Purely decorative (aria-hidden, no real functionality/tabindex) —
+     an animated "trading desk" visual for the hero, inspired by the
+     TraderiseFX-style reference. Candles/sparklines are static SVG/CSS,
+     not live data; see the disclaimer strip at the bottom of the panel. -->
+<div class="tm-panel" aria-hidden="true">
+
+<div class="tm-topbar">
+<div class="tm-brand"><span class="mark">PZ</span>PipZoNe</div>
+<div class="tm-top-right">
+<span class="tm-bell">🔔<span class="tm-bell-dot"></span></span>
+<div class="tm-user">
+<span class="tm-avatar">M</span>
+<span class="tm-user-text">Welcome, Trader<br><small>trader@pipzone.io</small></span>
+</div>
+<span class="tm-logout">Logout</span>
+</div>
+</div>
+
+<div class="tm-body">
+
+<div class="tm-rail">
+<div class="tm-rail-item active"><span>📈</span>Trade</div>
+<div class="tm-rail-item"><span>🌐</span>Markets</div>
+<div class="tm-rail-item"><span>💼</span>Portfolio</div>
+<div class="tm-rail-item"><span>🕒</span>History</div>
+<div class="tm-rail-item"><span>⚙️</span>Settings</div>
+</div>
+
+<div class="tm-main">
+
+<div class="tm-chart-head">
+<div>
+<div class="tm-symbol">XAU/USD</div>
+<div class="tm-symbol-sub">Gold / US Dollar</div>
+</div>
+<div class="tm-price-block">
+<div class="tm-price">2,486.32</div>
+<div class="tm-price-change up">+12.48 (+0.50%)</div>
+</div>
+<div class="tm-tf">
+<span>1m</span><span>5m</span><span>15m</span><span class="active">1h</span><span>4h</span><span>1D</span>
+</div>
+</div>
+
+<div class="tm-chart">
+<div class="tm-candles">
+<div class="tm-candle up" style="height:38%"></div>
+<div class="tm-candle down" style="height:52%"></div>
+<div class="tm-candle up" style="height:44%"></div>
+<div class="tm-candle up" style="height:60%"></div>
+<div class="tm-candle down" style="height:34%"></div>
+<div class="tm-candle up" style="height:48%"></div>
+<div class="tm-candle up" style="height:66%"></div>
+<div class="tm-candle down" style="height:40%"></div>
+<div class="tm-candle up" style="height:56%"></div>
+<div class="tm-candle up" style="height:72%"></div>
+<div class="tm-candle down" style="height:50%"></div>
+<div class="tm-candle up" style="height:64%"></div>
+<div class="tm-candle up" style="height:78%"></div>
+<div class="tm-candle down" style="height:58%"></div>
+<div class="tm-candle up" style="height:70%"></div>
+<div class="tm-candle up" style="height:84%"></div>
+<div class="tm-candle down" style="height:62%"></div>
+<div class="tm-candle up" style="height:76%"></div>
+<div class="tm-candle up" style="height:90%"></div>
+<div class="tm-candle down" style="height:68%"></div>
+<div class="tm-candle up" style="height:82%"></div>
+<div class="tm-candle up" style="height:94%"></div>
+<div class="tm-candle down" style="height:74%"></div>
+<div class="tm-candle up" style="height:88%"></div>
+</div>
+<div class="tm-scanline"></div>
+</div>
+
+<div class="tm-tabs">
+<span class="active">Open Orders</span><span>Positions</span><span>Order History</span>
+</div>
+
+<div class="tm-table-wrap">
+<table class="tm-table">
+<thead><tr><th>Symbol</th><th>Type</th><th>Lot</th><th>Price</th><th>P/L</th></tr></thead>
+<tbody>
+<tr><td>XAUUSD</td><td><span class="tm-buy-chip">Buy</span></td><td>0.10</td><td>2,486.32</td><td class="up">+24.50</td></tr>
+<tr><td>BTCUSD</td><td><span class="tm-sell-chip">Sell</span></td><td>0.05</td><td>68,421.00</td><td class="down">-8.20</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="tm-actions">
+<button class="tm-buy-btn" type="button" tabindex="-1">Buy →</button>
+<button class="tm-sell-btn" type="button" tabindex="-1">Sell →</button>
+<div class="tm-lot">Lot Size <b>0.10</b></div>
+</div>
+
+</div>
+
+<div class="tm-side">
+<div class="tm-side-head">Market Watch</div>
+<div class="tm-watch-list">
+<div class="tm-watch-row">
+<span class="tm-watch-sym">🥇 XAUUSD</span>
+<svg class="tm-spark" viewBox="0 0 60 20" preserveAspectRatio="none"><polyline points="0,14 8,12 16,15 24,9 32,11 40,6 48,8 60,3"/></svg>
+<span class="tm-watch-price up">2,486.32<small>+0.50%</small></span>
+</div>
+<div class="tm-watch-row">
+<span class="tm-watch-sym">💶 EURUSD</span>
+<svg class="tm-spark" viewBox="0 0 60 20" preserveAspectRatio="none"><polyline points="0,10 8,11 16,8 24,10 32,7 40,9 48,5 60,6"/></svg>
+<span class="tm-watch-price up">1.1054<small>+0.48%</small></span>
+</div>
+<div class="tm-watch-row">
+<span class="tm-watch-sym">🪙 BTCUSD</span>
+<svg class="tm-spark" viewBox="0 0 60 20" preserveAspectRatio="none"><polyline points="0,16 8,10 16,13 24,7 32,9 40,4 48,6 60,2"/></svg>
+<span class="tm-watch-price up">68,421<small>+1.24%</small></span>
+</div>
+<div class="tm-watch-row">
+<span class="tm-watch-sym">Ξ ETHUSD</span>
+<svg class="tm-spark" viewBox="0 0 60 20" preserveAspectRatio="none"><polyline points="0,12 8,13 16,9 24,11 32,8 40,10 48,6 60,7"/></svg>
+<span class="tm-watch-price up">2,612.35<small>+0.87%</small></span>
+</div>
+</div>
+
+<div class="tm-sentiment">
+<div class="tm-side-head">Market Sentiment <span class="tm-bullish">● Bullish</span></div>
+<svg class="tm-spark-lg" viewBox="0 0 220 50" preserveAspectRatio="none"><polyline points="0,40 20,36 40,38 60,30 80,32 100,24 120,26 140,18 160,20 180,12 200,14 220,8"/></svg>
+</div>
+</div>
+
+</div>
+
+<div class="tm-disclaimer">Illustrative market data — not live prices, not a recommendation to trade.</div>
+
 </div>
 </div>
 </section>
