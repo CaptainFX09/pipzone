@@ -1,0 +1,603 @@
+<!-- =========================================================
+     PIPZONE MAINTENANCE PAGE
+========================================================= -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>PipZoNe — Under Maintenance</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <style>
+    /* =========================================================
+       RESET
+    ========================================================= */
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* =========================================================
+       BODY
+    ========================================================= */
+
+    body {
+      min-height: 100vh;
+      background: #101513;
+      color: #ffffff;
+      font-family: Arial, Helvetica, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* =========================================================
+       MAIN CONTAINER
+    ========================================================= */
+
+    .maintenance-container {
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+    }
+
+    /* =========================================================
+       LOGO
+    ========================================================= */
+
+    .logo {
+      margin-bottom: 45px;
+    }
+
+    .logo h1 {
+      margin: 0;
+      color: #2FBF83;
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .logo h1 span {
+      color: #ffffff;
+    }
+
+    /* =========================================================
+       MAINTENANCE CARD
+    ========================================================= */
+
+    .maintenance-card {
+      background: #151b18;
+      border: 1px solid #27332e;
+      border-radius: 18px;
+      padding: 48px 35px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    /* =========================================================
+       ICON
+    ========================================================= */
+
+    .icon {
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 25px;
+      border-radius: 50%;
+      background: #1c2b25;
+      border: 1px solid #2FBF83;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+    }
+
+    /* =========================================================
+       HEADING
+    ========================================================= */
+
+    h2 {
+      font-size: 30px;
+      margin-bottom: 15px;
+      color: #ffffff;
+    }
+
+    /* =========================================================
+       MESSAGE
+    ========================================================= */
+
+    .message {
+      color: #9ba8a1;
+      font-size: 15px;
+      line-height: 1.7;
+      max-width: 470px;
+      margin: 0 auto;
+    }
+
+    /* =========================================================
+       STATUS
+    ========================================================= */
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 28px;
+      padding: 10px 18px;
+      border-radius: 30px;
+      background: #10251d;
+      border: 1px solid #245c45;
+      color: #2FBF83;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #2FBF83;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #2FBF83;
+    }
+
+    /* =========================================================
+       COUNTDOWN TITLE
+    ========================================================= */
+
+    .countdown-title {
+      margin-top: 30px;
+      color: #9ba8a1;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    /* =========================================================
+       COUNTDOWN
+    ========================================================= */
+
+    .countdown {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    /* =========================================================
+       TIME BOX
+    ========================================================= */
+
+    .time-box {
+      min-width: 75px;
+      padding: 15px 10px;
+      background: #101513;
+      border: 1px solid #2c3b34;
+      border-radius: 10px;
+    }
+
+    .time-box strong {
+      display: block;
+      color: #2FBF83;
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .time-box span {
+      display: block;
+      margin-top: 5px;
+      color: #7f8d86;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    /* =========================================================
+       BACK SOON MESSAGE
+    ========================================================= */
+
+    .back-soon {
+      margin-top: 30px;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    /* =========================================================
+       SUPPORT
+    ========================================================= */
+
+    .support {
+      margin-top: 35px;
+      padding-top: 25px;
+      border-top: 1px solid #27332e;
+      color: #7f8d86;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .support strong {
+      color: #2FBF83;
+    }
+
+    /* =========================================================
+       FOOTER
+    ========================================================= */
+
+    .footer {
+      margin-top: 25px;
+      color: #5f6c65;
+      font-size: 11px;
+    }
+
+    /* =========================================================
+       MOBILE RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 500px) {
+
+      body {
+        padding: 15px;
+      }
+
+      .logo {
+        margin-bottom: 30px;
+      }
+
+      .logo h1 {
+        font-size: 34px;
+      }
+
+      .maintenance-card {
+        padding: 38px 22px;
+        border-radius: 15px;
+      }
+
+      h2 {
+        font-size: 25px;
+      }
+
+      .message {
+        font-size: 14px;
+      }
+
+      .icon {
+        width: 68px;
+        height: 68px;
+        font-size: 30px;
+      }
+
+      .countdown {
+        gap: 7px;
+      }
+
+      .time-box {
+        min-width: 65px;
+        padding: 12px 7px;
+      }
+
+      .time-box strong {
+        font-size: 23px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================================================
+       MAIN PAGE
+  ========================================================= -->
+
+  <div class="maintenance-container">
+
+    <!-- LOGO -->
+    <div class="logo">
+      <h1>Pip<span>ZoNe</span></h1>
+    </div>
+
+    <!-- MAINTENANCE CARD -->
+    <div class="maintenance-card">
+
+      <!-- MAINTENANCE ICON -->
+      <div class="icon">
+        🔧
+      </div>
+
+      <!-- HEADING -->
+      <h2>
+        Website Under Maintenance
+      </h2>
+
+      <!-- DESCRIPTION -->
+      <p class="message">
+        We're currently improving our platform to provide you
+        with a better experience. Please check back shortly.
+      </p>
+
+      <!-- STATUS -->
+      <div class="status">
+        <span class="status-dot"></span>
+        <span id="statusText">
+          Maintenance in Progress
+        </span>
+      </div>
+
+      <!-- COUNTDOWN TITLE -->
+      <div class="countdown-title">
+        Estimated Time Remaining
+      </div>
+
+      <!-- COUNTDOWN -->
+      <div class="countdown">
+
+        <!-- HOURS -->
+        <div class="time-box">
+          <strong id="hours">00</strong>
+          <span>Hours</span>
+        </div>
+
+        <!-- MINUTES -->
+        <div class="time-box">
+          <strong id="minutes">00</strong>
+          <span>Minutes</span>
+        </div>
+
+        <!-- SECONDS -->
+        <div class="time-box">
+          <strong id="seconds">00</strong>
+          <span>Seconds</span>
+        </div>
+
+      </div>
+
+      <!-- BACK SOON MESSAGE -->
+      <div class="back-soon" id="backSoon">
+        We'll be back soon.
+      </div>
+
+      <!-- SUPPORT -->
+      <div class="support">
+        If you need assistance, please contact
+        <strong>PipZoNe Support</strong>.
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      © 2026 PipZoNe. All rights reserved.
+    </div>
+
+  </div>
+
+
+  <!-- =========================================================
+       JAVASCRIPT
+  ========================================================= -->
+
+  <script>
+
+    /* =========================================================
+       🔧 PIPZONE MAINTENANCE SETTINGS
+       =========================================================
+
+       YAHAN SIRF YE 2 SETTINGS CHANGE KARNI HAIN.
+
+       1. START TIME
+
+       14:00 = 2:00 PM
+       15:00 = 3:00 PM
+       16:00 = 4:00 PM
+       17:30 = 5:30 PM
+
+       2. DURATION
+
+       5   = 5 minutes
+       10  = 10 minutes
+       15  = 15 minutes
+       30  = 30 minutes
+       60  = 1 hour
+       120 = 2 hours
+
+    ========================================================= */
+
+    /* ---------------------------------------------------------
+       MAINTENANCE START TIME
+    --------------------------------------------------------- */
+
+    const maintenanceStartTime = "16:00";
+
+
+    /* ---------------------------------------------------------
+       MAINTENANCE DURATION IN MINUTES
+    --------------------------------------------------------- */
+
+    const maintenanceDurationMinutes = 120;
+
+
+    /* =========================================================
+       GET TODAY'S DATE
+    ========================================================= */
+
+    const now = new Date();
+
+    const year = now.getFullYear();
+
+    const month = String(
+      now.getMonth() + 1
+    ).padStart(2, "0");
+
+    const day = String(
+      now.getDate()
+    ).padStart(2, "0");
+
+
+    /* =========================================================
+       CREATE MAINTENANCE START TIME
+    =========================================================
+
+       +05:00 = Pakistan Standard Time
+    ========================================================= */
+
+    const maintenanceStart = new Date(
+      `${year}-${month}-${day}T${maintenanceStartTime}:00+05:00`
+    );
+
+
+    /* =========================================================
+       AUTOMATICALLY CALCULATE END TIME
+    ========================================================= */
+
+    const maintenanceEnd = new Date(
+      maintenanceStart.getTime() +
+      maintenanceDurationMinutes * 60 * 1000
+    );
+
+
+    /* =========================================================
+       GET HTML ELEMENTS
+    ========================================================= */
+
+    const hoursElement =
+      document.getElementById("hours");
+
+    const minutesElement =
+      document.getElementById("minutes");
+
+    const secondsElement =
+      document.getElementById("seconds");
+
+    const statusTextElement =
+      document.getElementById("statusText");
+
+    const backSoonElement =
+      document.getElementById("backSoon");
+
+
+    /* =========================================================
+       COUNTDOWN FUNCTION
+    ========================================================= */
+
+    function updateCountdown() {
+
+      const currentTime = new Date();
+
+
+      /* -------------------------------------------------------
+         CALCULATE REMAINING SECONDS
+      ------------------------------------------------------- */
+
+      let remainingSeconds = Math.max(
+        0,
+        Math.floor(
+          (
+            maintenanceEnd.getTime() -
+            currentTime.getTime()
+          ) / 1000
+        )
+      );
+
+
+      /* =======================================================
+         BEFORE MAINTENANCE START
+      ======================================================= */
+
+      if (
+        currentTime.getTime() <
+        maintenanceStart.getTime()
+      ) {
+
+        remainingSeconds =
+          maintenanceDurationMinutes * 60;
+
+        statusTextElement.textContent =
+          "Maintenance Scheduled";
+
+        backSoonElement.textContent =
+          "Maintenance will start soon.";
+      }
+
+
+      /* =======================================================
+         CONVERT SECONDS INTO HOURS / MINUTES / SECONDS
+      ======================================================= */
+
+      const hours =
+        Math.floor(
+          remainingSeconds / 3600
+        );
+
+      const minutes =
+        Math.floor(
+          (remainingSeconds % 3600) / 60
+        );
+
+      const seconds =
+        remainingSeconds % 60;
+
+
+      /* =======================================================
+         SHOW COUNTDOWN
+      ======================================================= */
+
+      hoursElement.textContent =
+        String(hours).padStart(2, "0");
+
+      minutesElement.textContent =
+        String(minutes).padStart(2, "0");
+
+      secondsElement.textContent =
+        String(seconds).padStart(2, "0");
+
+
+      /* =======================================================
+         MAINTENANCE COMPLETED
+      ======================================================= */
+
+      if (
+        currentTime.getTime() >=
+        maintenanceEnd.getTime()
+      ) {
+
+        clearInterval(countdownInterval);
+
+        hoursElement.textContent = "00";
+        minutesElement.textContent = "00";
+        secondsElement.textContent = "00";
+
+        statusTextElement.textContent =
+          "Maintenance Completed";
+
+        backSoonElement.textContent =
+          "Maintenance time completed.";
+      }
+    }
+
+
+    /* =========================================================
+       START COUNTDOWN
+    ========================================================= */
+
+    updateCountdown();
+
+
+    /* =========================================================
+       UPDATE EVERY SECOND
+    ========================================================= */
+
+    const countdownInterval =
+      setInterval(
+        updateCountdown,
+        1000
+      );
+
+  </script>
+
+</body>
+
+</html>
