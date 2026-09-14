@@ -186,6 +186,8 @@ $('tab-TRC20').classList.toggle('active',net==='TRC20');
 $('tab-BEP20').classList.toggle('active',net==='BEP20');
 $('depositAddressField').value=DEPOSIT_ADDRESSES[net];
 $('depositNetworkLabel').textContent='('+net+')';
+const qrImg=$('depositQrImage');
+if(qrImg)qrImg.src=DEPOSIT_QR_IMAGES[net];
 }
 
 /* NETWORK SELECTOR FOR WITHDRAWAL
