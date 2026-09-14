@@ -74,7 +74,627 @@ const REFERRAL_STORAGE_KEY='pz_referral_code';
    PIPZONE — ANIMATED CANDLESTICK ENGINE
    Gold + Bitcoin demo market animation
 ====================================================== */
+/* =====================================================
+   PIPZONE — LIVE MARKET DATA
+   XAUUSD + BTCUSD
+   Data source: Supabase Edge Function
+====================================================== */
 
+(function () {
+  "use strict";
+
+  const FUNCTION_URL =
+    "https://nzasmkplxzirnqeteclv.supabase.co/functions/v1/market-prices";
+
+  const POLL_INTERVAL_MS = 15000;
+
+  const canvas = document.getElementById("candlestick-chart");
+  const priceEl = document.getElementById("market-price");
+  const symbolEl = document.getElementById("market-symbol");
+  const changeEl = document.getElementById("market-change");
+  const tabs = document.querySelectorAll(".market-tab");
+
+  if (!canvas || !priceEl || !symbolEl || !changeEl) {
+    return;
+  }
+
+  const ctx = canvas.getContext("2d");
+
+  const markets = {
+    gold: {
+      symbol: "XAUUSD",
+      name: "Gold",
+      decimals: 2
+    },
+
+    btc: {
+      symbol: "BTCUSD",
+      name: "Bitcoin",
+      decimals: 2
+    }
+  };
+
+  let currentMarket = "gold";
+  let liveData = null;
+  let candles = [];
+
+  const candleCount = 42;
+
+  /* -----------------------------
+     Fetch live data
+  ----------------------------- */
+
+  async function fetchLivePrices() {
+    const response = await fetch(FUNCTION_URL, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json"
+      },
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        "Market data request failed: " + response.status
+      );
+    }
+
+    const data = await response.json();
+
+    if (!data.gold || !data.btc) {
+      throw new Error("Invalid market data response");
+    }
+
+    return data;
+  }
+
+  /* -----------------------------
+     Format price
+  ----------------------------- */
+
+  function formatPrice(value, decimals) {
+    return "$" + Number(value).toLocaleString(
+      "en-US",
+      {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      }
+    );
+  }
+
+  /* -----------------------------
+     Update price display
+  ----------------------------- */
+
+  function updatePriceDisplay() {
+    if (!liveData) return;
+
+    const market = markets[currentMarket];
+
+    const data =
+      currentMarket === "gold"
+        ? liveData.gold
+        : liveData.btc;
+
+    if (!data || typeof data.price !== "number") {
+      return;
+    }
+
+    symbolEl.textContent = market.symbol;
+
+    priceEl.textContent = formatPrice(
+      data.price,
+      market.decimals
+    );
+
+    let change = 0;
+
+    if (
+      currentMarket === "btc" &&
+      typeof data.change24h === "number"
+    ) {
+      change = data.change24h;
+    }
+
+    changeEl.textContent =
+      (change >= 0 ? "+" : "") +
+      change.toFixed(2) +
+      "%";
+
+    changeEl.classList.toggle(
+      "positive",
+      change >= 0
+    );
+
+    changeEl.classList.toggle(
+      "negative",
+      change < 0
+    );
+  }
+
+  /* -----------------------------
+     Create visual candles
+     from the live price
+  ----------------------------- */
+
+  function createInitialCandles(price) {
+    candles = [];
+
+    const range = currentMarket === "gold"
+      ? price * 0.0015
+      : price * 0.004;
+
+    let previous = price;
+
+    for (let i = 0; i < candleCount; i++) {
+
+      const movement =
+        (Math.random() - 0.48) * range;
+
+      const open = previous;
+      const close = previous + movement;
+
+      const high =
+        Math.max(open, close) +
+        Math.random() * range * 0.45;
+
+      const low =
+        Math.min(open, close) -
+        Math.random() * range * 0.45;
+
+      candles.push({
+        open,
+        high,
+        low,
+        close
+      });
+
+      previous = close;
+    }
+
+    /*
+      Force the final candle to the actual
+      live market price.
+    */
+
+    const last =
+      candles[candles.length - 1];
+
+    last.close = price;
+    last.high = Math.max(last.high, price);
+    last.low = Math.min(last.low, price);
+  }
+
+  /* -----------------------------
+     Update latest candle
+  ----------------------------- */
+
+  function updateLatestCandle(price) {
+    if (!candles.length) {
+      createInitialCandles(price);
+      return;
+    }
+
+    const last =
+      candles[candles.length - 1];
+
+    last.close = price;
+
+    last.high =
+      Math.max(last.high, price);
+
+    last.low =
+      Math.min(last.low, price);
+  }
+
+  /* -----------------------------
+     Draw chart
+  ----------------------------- */
+
+  function resizeCanvas() {
+
+    const rect =
+      canvas.getBoundingClientRect();
+
+    const dpr =
+      Math.min(window.devicePixelRatio || 1, 2);
+
+    canvas.width =
+      Math.max(1, Math.round(rect.width * dpr));
+
+    canvas.height =
+      Math.max(1, Math.round(rect.height * dpr));
+
+    ctx.setTransform(
+      dpr,
+      0,
+      0,
+      dpr,
+      0,
+      0
+    );
+
+    drawChart();
+  }
+
+  function drawChart() {
+
+    const width =
+      canvas.clientWidth;
+
+    const height =
+      canvas.clientHeight;
+
+    if (
+      !width ||
+      !height ||
+      !candles.length
+    ) {
+      return;
+    }
+
+    ctx.clearRect(
+      0,
+      0,
+      width,
+      height
+    );
+
+    const plotLeft = 8;
+    const plotRight = width - 8;
+    const plotTop = 10;
+    const plotBottom = height - 10;
+
+    const plotWidth =
+      plotRight - plotLeft;
+
+    const plotHeight =
+      plotBottom - plotTop;
+
+    let minPrice = Infinity;
+    let maxPrice = -Infinity;
+
+    candles.forEach(candle => {
+
+      minPrice =
+        Math.min(
+          minPrice,
+          candle.low
+        );
+
+      maxPrice =
+        Math.max(
+          maxPrice,
+          candle.high
+        );
+    });
+
+    const priceRange =
+      maxPrice - minPrice;
+
+    const padding =
+      priceRange * 0.12 || 1;
+
+    minPrice -= padding;
+    maxPrice += padding;
+
+    function priceToY(price) {
+
+      return plotBottom -
+        (
+          (price - minPrice) /
+          (maxPrice - minPrice)
+        ) *
+        plotHeight;
+    }
+
+    /* Grid */
+
+    ctx.strokeStyle =
+      "rgba(82, 114, 96, 0.22)";
+
+    ctx.lineWidth = 1;
+
+    ctx.setLineDash([3, 5]);
+
+    for (let i = 0; i <= 4; i++) {
+
+      const y =
+        plotTop +
+        (plotHeight / 4) * i;
+
+      ctx.beginPath();
+
+      ctx.moveTo(
+        plotLeft,
+        y
+      );
+
+      ctx.lineTo(
+        plotRight,
+        y
+      );
+
+      ctx.stroke();
+    }
+
+    ctx.setLineDash([]);
+
+    /* Candles */
+
+    const slotWidth =
+      plotWidth / candles.length;
+
+    const bodyWidth =
+      Math.max(
+        3,
+        Math.min(
+          9,
+          slotWidth * 0.58
+        )
+      );
+
+    candles.forEach(
+      (candle, index) => {
+
+        const x =
+          plotLeft +
+          index * slotWidth +
+          slotWidth / 2;
+
+        const openY =
+          priceToY(candle.open);
+
+        const closeY =
+          priceToY(candle.close);
+
+        const highY =
+          priceToY(candle.high);
+
+        const lowY =
+          priceToY(candle.low);
+
+        const bullish =
+          candle.close >= candle.open;
+
+        const candleColor =
+          bullish
+            ? "#2fbf83"
+            : "#ef626f";
+
+        /* Wick */
+
+        ctx.beginPath();
+
+        ctx.strokeStyle =
+          candleColor;
+
+        ctx.lineWidth = 1;
+
+        ctx.moveTo(
+          x,
+          highY
+        );
+
+        ctx.lineTo(
+          x,
+          lowY
+        );
+
+        ctx.stroke();
+
+        /* Body */
+
+        const bodyTop =
+          Math.min(
+            openY,
+            closeY
+          );
+
+        const bodyHeight =
+          Math.max(
+            2,
+            Math.abs(
+              openY - closeY
+            )
+          );
+
+        ctx.fillStyle =
+          candleColor;
+
+        ctx.fillRect(
+          x - bodyWidth / 2,
+          bodyTop,
+          bodyWidth,
+          bodyHeight
+        );
+
+        /* Latest candle glow */
+
+        if (
+          index ===
+          candles.length - 1
+        ) {
+
+          ctx.shadowColor =
+            candleColor;
+
+          ctx.shadowBlur = 10;
+
+          ctx.fillRect(
+            x - bodyWidth / 2,
+            bodyTop,
+            bodyWidth,
+            bodyHeight
+          );
+
+          ctx.shadowBlur = 0;
+        }
+      }
+    );
+
+    /* Current price line */
+
+    const latest =
+      candles[candles.length - 1];
+
+    const priceY =
+      priceToY(latest.close);
+
+    ctx.strokeStyle =
+      "rgba(47, 191, 131, 0.65)";
+
+    ctx.lineWidth = 1;
+
+    ctx.setLineDash([4, 4]);
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+      plotLeft,
+      priceY
+    );
+
+    ctx.lineTo(
+      plotRight,
+      priceY
+    );
+
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+  }
+
+  /* -----------------------------
+     Load live market data
+  ----------------------------- */
+
+  async function loadLiveMarketData(
+    firstLoad = false
+  ) {
+
+    try {
+
+      const data =
+        await fetchLivePrices();
+
+      liveData = data;
+
+      const marketData =
+        currentMarket === "gold"
+          ? data.gold
+          : data.btc;
+
+      if (
+        !marketData ||
+        typeof marketData.price !== "number"
+      ) {
+        throw new Error(
+          "Invalid price received"
+        );
+      }
+
+      if (firstLoad || !candles.length) {
+
+        createInitialCandles(
+          marketData.price
+        );
+
+      } else {
+
+        updateLatestCandle(
+          marketData.price
+        );
+      }
+
+      updatePriceDisplay();
+
+      drawChart();
+
+    } catch (error) {
+
+      console.error(
+        "PipZoNe market data error:",
+        error
+      );
+    }
+  }
+
+  /* -----------------------------
+     Market switching
+  ----------------------------- */
+
+  async function switchMarket(
+    marketName
+  ) {
+
+    if (!markets[marketName]) {
+      return;
+    }
+
+    currentMarket =
+      marketName;
+
+    tabs.forEach(tab => {
+
+      tab.classList.toggle(
+        "active",
+        tab.dataset.market ===
+          marketName
+      );
+    });
+
+    candles = [];
+
+    await loadLiveMarketData(true);
+  }
+
+  /* -----------------------------
+     Tab buttons
+  ----------------------------- */
+
+  tabs.forEach(tab => {
+
+    tab.addEventListener(
+      "click",
+      () => {
+
+        switchMarket(
+          tab.dataset.market
+        );
+      }
+    );
+  });
+
+  /* -----------------------------
+     Resize
+  ----------------------------- */
+
+  window.addEventListener(
+    "resize",
+    resizeCanvas
+  );
+
+  /* -----------------------------
+     Initial load
+  ----------------------------- */
+
+  resizeCanvas();
+
+  loadLiveMarketData(true);
+
+  /* -----------------------------
+     Poll live prices
+  ----------------------------- */
+
+  setInterval(
+    () => {
+      loadLiveMarketData(false);
+    },
+    POLL_INTERVAL_MS
+  );
+
+})();
 /* -------------------------- 2. Global state -------------------------- */
 let selectedDepositNetwork='TRC20';
 let selectedWithdrawalNetwork='TRC20';
