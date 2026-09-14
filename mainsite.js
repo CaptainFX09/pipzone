@@ -1963,5 +1963,3 @@ if(isRecovery&&data?.session){showNewPasswordForm()}
 else if(data?.session){await loadDashboard()}
 }catch(err){console.error('Session check error:',err)}
 });
-
-<script>
