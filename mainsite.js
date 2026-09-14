@@ -44,8 +44,8 @@ const DEPOSIT_ADDRESSES={
 /* QR code image per network — swapped by selectDepositNetwork() below.
    Scanning it in a wallet app avoids the address being mistyped. */
 const DEPOSIT_QR_IMAGES={
-  TRC20:'qr-trc20.jpg',
-  BEP20:'qr-bep20.jpg'
+  TRC20:'qr-trc20.png',
+  BEP20:'qr-bep20.png'
 };
 
 const PRINCIPAL_LOCK_DAYS=40;
