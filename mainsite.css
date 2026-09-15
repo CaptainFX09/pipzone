@@ -891,3 +891,40 @@ font-family:'IBM Plex Mono',monospace
     margin-left: 0;
   }
 }
+
+/* -------------------------- 31. Live market badge (new market-card header) -------------------------- */
+.market-live-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:6px 13px;
+  border:1px solid rgba(47,191,131,0.4);
+  border-radius:20px;
+  background:rgba(47,191,131,0.10);
+  color:var(--gold);
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:0.3px;
+  white-space:nowrap;
+}
+
+.market-live-dot{
+  display:inline-block;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--gold);
+  box-shadow:0 0 8px rgba(47,191,131,0.75);
+  flex:none;
+  animation:pz-live-pulse 1.6s ease-in-out infinite;
+}
+
+.market-live-dot.small{
+  width:5px;
+  height:5px;
+}
+
+@keyframes pz-live-pulse{
+  0%,100%{opacity:1}
+  50%{opacity:0.35}
+}
