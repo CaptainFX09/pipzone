@@ -51,99 +51,14 @@
 </div>
 </div>
 
-<!-- ==================== ANIMATED MARKET OVERVIEW CARD (illustrative only) ====================
-     Purely decorative — ticker prices and the chart are generated and
-     animated client-side by initMarketOverviewDemo() in mainsite.js.
-     Never fed by any live market feed, never tied to a real account,
-     and explicitly labelled "simulated" so it can't be mistaken for a
-     real signal, quote, or performance guarantee. -->
-<!-- =====================================================
-     PIPZONE — GOLD & BTC CANDLESTICK ANIMATION
-     Sirf animation panel ko existing hero mein add karein
-====================================================== -->
-
-<!-- ==================== LIVE MARKET CHART ==================== -->
-<div class="market-card live-market-card">
-
-  <div class="market-card-head">
-    <div>
-      <div class="market-card-eyebrow">PIPZONE TRADING DESK</div>
-      <div class="market-card-title">Market overview</div>
-    </div>
-
-    <span class="market-live-badge">
-      <span class="market-live-dot"></span>
-      Live market
-    </span>
-  </div>
-
-  <!-- Market selector -->
-  <div class="market-tabs">
-    <button class="market-tab active" data-market="gold">
-      <span class="market-tab-symbol">XAUUSD</span>
-      <span class="market-tab-name">Gold</span>
-    </button>
-
-    <button class="market-tab" data-market="btc">
-      <span class="market-tab-symbol">BTCUSD</span>
-      <span class="market-tab-name">Bitcoin</span>
-    </button>
-  </div>
-
-  <!-- Price -->
-  <div class="market-price-row">
-    <div>
-      <div class="market-symbol" id="market-symbol">XAUUSD</div>
-
-      <div class="market-price" id="market-price">
-        $2,650.00
-      </div>
-    </div>
-
-    <div class="market-change positive" id="market-change">
-      +0.00%
-    </div>
-  </div>
-
-  <!-- Candlestick chart -->
-  <div class="market-chart-wrap live-chart-wrap">
-
-    <div class="market-chart-head">
-      <span id="market-chart-label">XAUUSD · Gold</span>
-
-      <span class="market-chart-status">
-        <span class="market-live-dot small"></span>
-        Market data
-      </span>
-    </div>
-
-    <div class="candlestick-chart-container">
-      <canvas
-        id="candlestick-chart"
-        class="candlestick-chart"
-        aria-label="Live XAUUSD and BTCUSD candlestick chart">
-      </canvas>
-    </div>
-
-    <!-- Timeframes -->
-    <div class="market-timeframes">
-      <button class="market-timeframe">5m</button>
-      <button class="market-timeframe active">15m</button>
-      <button class="market-timeframe">1H</button>
-      <button class="market-timeframe">4H</button>
-    </div>
-
-  </div>
-
-  <div class="market-card-disclaimer">
-    Market data is provided for informational display only.
-    Prices may be delayed and are not trading advice or a
-    performance guarantee.
-  </div>
-
+<div class="ledger-card">
+<div class="lc-title">Sample account · illustrative</div>
+<div class="lc-row"><span class="lc-label">Deposited capital</span><span class="lc-value">$500.00</span></div>
+<div class="lc-row"><span class="lc-label">August result</span><span class="lc-value" style="color:var(--profit)">+$100.00</span></div>
+<div class="lc-row"><span class="lc-label">Your share (60%)</span><span class="lc-value gold">$60.00</span></div>
+<div class="lc-row"><span class="lc-label">Closing balance</span><span class="lc-value">$560.00</span></div>
+<div class="note">Figures are illustrative only. Actual results vary month to month and losses are possible.</div>
 </div>
-<!-- ==================== END LIVE MARKET CHART ==================== -->
-
 </div>
 </section>
 
@@ -775,7 +690,7 @@ PipZoNe is a managed trading arrangement, not a bank or a regulated fund. Tradin
 fills in the address automatically, avoiding copy-paste mistakes. -->
 <div class="form-group" style="text-align:center">
 <label>Scan to Deposit</label>
-<img id="depositQrImage" src="qr-trc20.png" alt="Deposit QR code" style="width:180px;height:180px;border-radius:8px;border:1px solid var(--line);margin-top:6px">
+<img id="depositQrImage" src="qr-trc20.jpg" alt="Deposit QR code" style="width:180px;height:180px;border-radius:8px;border:1px solid var(--line);margin-top:6px">
 </div>
 </div>
 
