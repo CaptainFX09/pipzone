@@ -928,3 +928,66 @@ font-family:'IBM Plex Mono',monospace
   0%,100%{opacity:1}
   50%{opacity:0.35}
 }
+
+/* -------------------------- 32. Market animation panel — class-name fixes + bigger, responsive sizing --------------------------
+   FIX: the candlestick panel's HTML uses .market-card / .market-chart-wrap
+   / .market-tab-symbol etc, but the CSS pasted earlier only defined
+   .market-animation-panel / .candlestick-chart-wrap / .market-tab strong
+   — none of which match, so most of that styling never applied (this is
+   why the panel/chart rendered small and under-styled). This section
+   re-targets the ACTUAL class names used in the HTML, and sizes the
+   chart larger on desktop with a proper responsive step-down on mobile. */
+
+.market-card{
+background:linear-gradient(145deg,#17251e,#0c1410 70%);
+border:1px solid rgba(92,140,112,.25);
+border-radius:20px;
+padding:26px;
+box-shadow:0 24px 70px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.035);
+max-width:600px;
+width:100%
+}
+
+.market-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}
+.market-card-eyebrow{color:#7d9e8a;font-size:10px;font-weight:700;letter-spacing:2px}
+.market-card-title{margin-top:5px;font:600 22px Fraunces;color:var(--text)}
+
+.market-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+.market-tab{display:flex;align-items:center;gap:10px;text-align:left;padding:13px;border:1px solid #263d30;border-radius:14px;background:#122019;color:#a4b9ab;cursor:pointer;transition:.2s ease}
+.market-tab:hover{border-color:rgba(47,191,131,.4)}
+.market-tab.active{border-color:var(--gold);background:rgba(47,191,131,.09);color:#effaf2}
+.market-tab-symbol{display:block;font-size:14px;font-weight:600}
+.market-tab-name{display:block;margin-top:3px;color:#789583;font-size:11px}
+
+.market-price-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
+#market-symbol{color:#8da997;font-size:12px;letter-spacing:1px}
+.market-price{margin:6px 0;font:600 clamp(30px,4.5vw,42px)/1 'IBM Plex Mono',monospace;letter-spacing:-1px;color:var(--text);transition:color .2s}
+.market-change{font:13px 'IBM Plex Mono',monospace;padding:4px 0}
+
+.market-chart-wrap{background:#0c1711;border:1px solid #20382b;border-radius:16px;padding:16px}
+.market-chart-head{display:flex;justify-content:space-between;align-items:center;color:#8da997;font-size:12px;margin-bottom:12px}
+.market-chart-status{display:inline-flex;align-items:center;gap:5px;color:#789583;font-size:11px}
+
+.candlestick-chart-container{position:relative;width:100%;height:300px}
+.candlestick-chart{display:block;width:100%;height:100%}
+
+.market-timeframes{display:flex;gap:8px;margin-top:14px}
+.market-timeframe{padding:8px 14px;border-radius:8px;background:#20342a;border:1px solid transparent;color:#a8c2b1;font-size:12px;cursor:pointer;transition:.15s}
+.market-timeframe:hover{border-color:rgba(47,191,131,.35)}
+.market-timeframe.active{background:rgba(47,191,131,.12);border-color:var(--gold);color:var(--gold);font-weight:600}
+
+.market-card-disclaimer{color:#789583;font-size:10.5px;line-height:1.6;margin-top:16px}
+
+@media(max-width:960px){
+.market-card{max-width:100%}
+}
+
+@media(max-width:640px){
+.market-card{padding:18px;border-radius:16px}
+.market-card-title{font-size:18px}
+.market-price{font-size:26px}
+.candlestick-chart-container{height:220px}
+.market-tabs{gap:8px}
+.market-tab{padding:10px}
+.market-timeframes{flex-wrap:wrap}
+}
