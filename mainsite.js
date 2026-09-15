@@ -1970,11 +1970,11 @@ if(isRecovery&&data?.session){showNewPasswordForm()}
 else if(data?.session){await loadDashboard()}
 }catch(err){console.error('Session check error:',err)}
 });
+
 /* =====================================================
    PIPZONE — ANIMATED CANDLESTICK ENGINE
    Gold + Bitcoin demo market animation
-   LIVE-PRICE-ANCHORED
-   SAME CANDLE DATA ACROSS PC + MOBILE
+   NOW LIVE-PRICE-ANCHORED via the market-prices Edge Function
 ====================================================== */
 
 (function () {
@@ -1991,6 +1991,11 @@ else if(data?.session){await loadDashboard()}
 
   const tabs = document.querySelectorAll(".market-tab");
 
+  /* basePrice below is only the STARTING fallback shown for a split
+     second before the first live fetch completes — fetchLivePrices()
+     overwrites both of these with real numbers from the Edge Function
+     before createCandles() ever runs, so the chart never actually
+     opens on these hardcoded values. */
   const markets = {
     gold: {
       symbol: "XAUUSD",
@@ -1998,7 +2003,6 @@ else if(data?.session){await loadDashboard()}
       decimals: 2,
       volatility: 2.5
     },
-
     btc: {
       symbol: "BTCUSD",
       basePrice: 65000,
@@ -2007,1002 +2011,391 @@ else if(data?.session){await loadDashboard()}
     }
   };
 
-  /* =====================================================
-     LIVE PRICE
-  ===================================================== */
-
-  const MARKET_PRICES_ENDPOINT =
-    SUPABASE_URL + "/functions/v1/market-prices";
-
+  /* ---- Live price wiring ----
+     SUPABASE_URL is already declared earlier in this same file (section 1
+     — Config/constants), so this closure can read it directly without
+     redefining it. The Edge Function itself keeps the GoldAPI key
+     server-side and proxies CoinGecko for Bitcoin — see
+     supabase/functions/market-prices/index.ts. */
+  const MARKET_PRICES_ENDPOINT = SUPABASE_URL + "/functions/v1/market-prices";
   const LIVE_PRICE_REFRESH_MS = 45000;
 
+  /* Fetches the current Gold/Bitcoin prices and updates each market's
+     basePrice with the real number. Never throws — on any network/API
+     failure it just leaves the previous basePrice in place (which is
+     itself either a prior live value or the hardcoded fallback above),
+     so the animation keeps running smoothly either way. */
   async function fetchLivePrices() {
     try {
       const res = await fetch(MARKET_PRICES_ENDPOINT);
-
-      if (!res.ok) {
-        throw new Error(
-          "market-prices status " + res.status
-        );
-      }
-
+      if (!res.ok) throw new Error("market-prices status " + res.status);
       const data = await res.json();
-
-      if (data?.gold?.price) {
-        markets.gold.basePrice =
-          Number(data.gold.price);
-      }
-
-      if (data?.bitcoin?.price) {
-        markets.btc.basePrice =
-          Number(data.bitcoin.price);
-      }
-
+      if (data?.gold?.price) markets.gold.basePrice = Number(data.gold.price);
+      if (data?.bitcoin?.price) markets.btc.basePrice = Number(data.bitcoin.price);
       return data;
-
     } catch (err) {
-      console.error(
-        "Live market price fetch error:",
-        err
-      );
-
+      console.error("Live market price fetch error:", err);
       return null;
     }
   }
 
-  /* =====================================================
-     MARKET STATE
-  ===================================================== */
+  /* Pulls the currently-forming candle's close price 35% of the way
+     toward a freshly-fetched live price, instead of snapping to it —
+     keeps the visual movement smooth on every refresh rather than
+     causing a visible jump every 45 seconds. Only touches the candle
+     set if that market is the one currently on screen. */
+  function nudgeLatestCandleToward(marketName, livePrice) {
+    if (currentMarket !== marketName || !candles.length || !Number.isFinite(livePrice)) return;
+    const latest = candles[candles.length - 1];
+    latest.close = latest.close + (livePrice - latest.close) * 0.35;
+    latest.high = Math.max(latest.high, latest.close);
+    latest.low = Math.min(latest.low, latest.close);
+  }
 
-  let currentMarket = "gold";
-
+    let currentMarket = "gold";
   let candles = [];
-
-  let currentPrice =
-    markets.gold.basePrice;
-
-  let lastPrice =
-    currentPrice;
-
+  let currentPrice = markets.gold.basePrice;
+  let lastPrice = currentPrice;
   let animationFrame;
-
   let lastTime = 0;
-
   let elapsed = 0;
 
-  /* =====================================================
-     TIMEFRAMES
-  ===================================================== */
-
+  /* Timeframe presets - bigger timeframe = bigger price swings (volMult)
+     and fewer visible candles (candleCount), like a real chart zoomed out. */
   const TIMEFRAMES = {
-
-    "5m": {
-      volMult: 0.4,
-      candleCount: 60
-    },
-
-    "15m": {
-      volMult: 1.0,
-      candleCount: 42
-    },
-
-    "1H": {
-      volMult: 2.2,
-      candleCount: 30
-    },
-
-    "4H": {
-      volMult: 4.5,
-      candleCount: 24
-    }
-
+    "5m":  { volMult: 0.4, candleCount: 60 },
+    "15m": { volMult: 1.0, candleCount: 42 },
+    "1H":  { volMult: 2.2, candleCount: 30 },
+    "4H":  { volMult: 4.5, candleCount: 24 }
   };
-
   let currentTimeframe = "15m";
-
-  let candleCount =
-    TIMEFRAMES[currentTimeframe].candleCount;
+  let candleCount = TIMEFRAMES[currentTimeframe].candleCount;
 
   function getVolatility(market) {
-
-    const mult =
-      TIMEFRAMES[currentTimeframe]?.volMult || 1;
-
+    const mult = TIMEFRAMES[currentTimeframe]?.volMult || 1;
     return market.volatility * mult;
   }
 
-  /* =====================================================
-     SEEDED RANDOM GENERATOR
-     
-     IMPORTANT:
-     Same seed = same candles.
-     This makes PC and mobile show the same pattern.
-  ===================================================== */
-
-  function seededRandom(seed) {
-
-    let value = seed >>> 0;
-
-    return function () {
-
-      value += 0x6D2B79F5;
-
-      let t = value;
-
-      t = Math.imul(
-        t ^ (t >>> 15),
-        t | 1
-      );
-
-      t ^= t +
-        Math.imul(
-          t ^ (t >>> 7),
-          t | 61
-        );
-
-      return (
-        (t ^ (t >>> 14)) >>> 0
-      ) / 4294967296;
-
-    };
-
+  function randomBetween(min, max) {
+    return Math.random() * (max - min) + min;
   }
-
-  function randomBetween(
-    random,
-    min,
-    max
-  ) {
-
-    return (
-      random() *
-      (max - min) +
-      min
-    );
-
-  }
-
-  /* =====================================================
-     CREATE STABLE SEED
-     
-     Same market + timeframe gives
-     same candle structure.
-  ===================================================== */
-
-  function getCandleSeed() {
-
-    const marketSeed =
-      currentMarket === "gold"
-        ? 135791
-        : 246802;
-
-    const timeframeSeed = {
-
-      "5m": 501,
-      "15m": 1515,
-      "1H": 6060,
-      "4H": 2424
-
-    }[currentTimeframe] || 1515;
-
-    return (
-      marketSeed +
-      timeframeSeed
-    );
-
-  }
-
-  /* =====================================================
-     CREATE CANDLES
-  ===================================================== */
 
   function createCandles() {
-
-    const market =
-      markets[currentMarket];
-
-    /*
-      IMPORTANT:
-
-      The seed does NOT depend on screen width,
-      canvas width, device or browser.
-
-      Therefore PC and mobile get the same
-      candle sequence.
-    */
-
-    const random =
-      seededRandom(getCandleSeed());
-
-    let price =
-      market.basePrice;
+    const market = markets[currentMarket];
+    let price = market.basePrice;
 
     candles = [];
 
-    const vol =
-      getVolatility(market);
-
-    for (
-      let i = 0;
-      i < candleCount;
-      i++
-    ) {
-
+    for (let i = 0; i < candleCount; i++) {
       const open = price;
+            const vol = getVolatility(market);
+      const movement = randomBetween(-vol, vol);
 
-      const movement =
-        randomBetween(
-          random,
-          -vol,
-          vol
-        );
+      const close = open + movement;
+      const high = Math.max(open, close) +
+        randomBetween(0, vol * 0.8);
 
-      const close =
-        open + movement;
-
-      const high =
-        Math.max(
-          open,
-          close
-        ) +
-        randomBetween(
-          random,
-          0,
-          vol * 0.8
-        );
-
-      const low =
-        Math.min(
-          open,
-          close
-        ) -
-        randomBetween(
-          random,
-          0,
-          vol * 0.8
-        );
-
-      candles.push({
-
-        open,
-        close,
-        high,
-        low
-
-      });
-
+      const low = Math.min(open, close) -
+        randomBetween(0, vol * 0.8);
+      candles.push({ open, close, high, low });
       price = close;
-
     }
 
     currentPrice = price;
-
     lastPrice = price;
-
   }
-
-  /* =====================================================
-     CANVAS RESIZE
-     
-     Only changes drawing size.
-     It NEVER regenerates candles.
-  ===================================================== */
 
   function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
 
-    const rect =
-      canvas.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-    const dpr =
-      Math.min(
-        window.devicePixelRatio || 1,
-        2
-      );
+    canvas.width = Math.max(1, Math.round(rect.width * dpr));
+    canvas.height = Math.max(1, Math.round(rect.height * dpr));
 
-    canvas.width =
-      Math.max(
-        1,
-        Math.round(
-          rect.width * dpr
-        )
-      );
-
-    canvas.height =
-      Math.max(
-        1,
-        Math.round(
-          rect.height * dpr
-        )
-      );
-
-    ctx.setTransform(
-      dpr,
-      0,
-      0,
-      dpr,
-      0,
-      0
-    );
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     drawChart();
-
   }
 
-  /* =====================================================
-     DRAW CHART
-  ===================================================== */
-
   function drawChart() {
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
 
-    const width =
-      canvas.clientWidth;
+    if (!width || !height || candles.length === 0) return;
 
-    const height =
-      canvas.clientHeight;
-
-    if (
-      !width ||
-      !height ||
-      candles.length === 0
-    ) {
-      return;
-    }
-
-    ctx.clearRect(
-      0,
-      0,
-      width,
-      height
-    );
+    ctx.clearRect(0, 0, width, height);
 
     const plotLeft = 12;
-
-    const plotRight =
-      width - 40;
-
+    const plotRight = width - 40;
     const plotTop = 13;
+    const plotBottom = height - 27;
 
-    const plotBottom =
-      height - 27;
+    const plotWidth = plotRight - plotLeft;
+    const plotHeight = plotBottom - plotTop;
 
-    const plotWidth =
-      plotRight - plotLeft;
+    let minPrice = Infinity;
+    let maxPrice = -Infinity;
 
-    const plotHeight =
-      plotBottom - plotTop;
+    candles.forEach(candle => {
+      minPrice = Math.min(minPrice, candle.low);
+      maxPrice = Math.max(maxPrice, candle.high);
+    });
 
-    let minPrice =
-      Infinity;
-
-    let maxPrice =
-      -Infinity;
-
-    candles.forEach(
-      candle => {
-
-        minPrice =
-          Math.min(
-            minPrice,
-            candle.low
-          );
-
-        maxPrice =
-          Math.max(
-            maxPrice,
-            candle.high
-          );
-
-      }
-    );
-
-    const padding =
-      (maxPrice - minPrice) *
-      0.12 || 1;
+    const padding = (maxPrice - minPrice) * 0.12 || 1;
 
     minPrice -= padding;
-
     maxPrice += padding;
 
     function y(price) {
-
-      return (
-        plotBottom -
-        (
-          (price - minPrice) /
-          (maxPrice - minPrice)
-        ) *
-        plotHeight
-      );
-
+      return plotBottom -
+        ((price - minPrice) / (maxPrice - minPrice)) *
+        plotHeight;
     }
 
-    /* =================================================
-       GRID
-    ================================================= */
-
-    ctx.strokeStyle =
-      "rgba(56, 91, 70, 0.25)";
-
+    // Background grid
+    ctx.strokeStyle = "rgba(56, 91, 70, 0.25)";
     ctx.lineWidth = 1;
+    ctx.setLineDash([3, 5]);
 
-    ctx.setLineDash([
-      3,
-      5
-    ]);
-
-    for (
-      let i = 0;
-      i <= 4;
-      i++
-    ) {
-
-      const gridY =
-        plotTop +
-        (plotHeight / 4) *
-        i;
+    for (let i = 0; i <= 4; i++) {
+      const gridY = plotTop + (plotHeight / 4) * i;
 
       ctx.beginPath();
-
-      ctx.moveTo(
-        plotLeft,
-        gridY
-      );
-
-      ctx.lineTo(
-        plotRight,
-        gridY
-      );
-
+      ctx.moveTo(plotLeft, gridY);
+      ctx.lineTo(plotRight, gridY);
       ctx.stroke();
-
     }
 
     ctx.setLineDash([]);
 
-    /* =================================================
-       CANDLES
-    ================================================= */
+    const slotWidth = plotWidth / candles.length;
+    const bodyWidth = Math.max(3, slotWidth * 0.55);
 
-    const slotWidth =
-      plotWidth /
-      candles.length;
+    candles.forEach((candle, index) => {
+      const x = plotLeft + index * slotWidth + slotWidth / 2;
 
-    const bodyWidth =
-      Math.max(
-        3,
-        slotWidth * 0.55
+      const openY = y(candle.open);
+      const closeY = y(candle.close);
+      const highY = y(candle.high);
+      const lowY = y(candle.low);
+
+      const bullish = candle.close >= candle.open;
+      const candleColor = bullish ? "#2fbf83" : "#ef626f";
+
+      // Wick
+      ctx.beginPath();
+      ctx.strokeStyle = candleColor;
+      ctx.lineWidth = 1;
+      ctx.moveTo(x, highY);
+      ctx.lineTo(x, lowY);
+      ctx.stroke();
+
+      // Body
+      const bodyTop = Math.min(openY, closeY);
+      const bodyHeight = Math.max(2, Math.abs(openY - closeY));
+
+      ctx.fillStyle = candleColor;
+      ctx.fillRect(
+        x - bodyWidth / 2,
+        bodyTop,
+        bodyWidth,
+        bodyHeight
       );
 
-    candles.forEach(
-      (candle, index) => {
-
-        const x =
-          plotLeft +
-          index * slotWidth +
-          slotWidth / 2;
-
-        const openY =
-          y(candle.open);
-
-        const closeY =
-          y(candle.close);
-
-        const highY =
-          y(candle.high);
-
-        const lowY =
-          y(candle.low);
-
-        const bullish =
-          candle.close >=
-          candle.open;
-
-        const candleColor =
-          bullish
-            ? "#2fbf83"
-            : "#ef626f";
-
-        /* Wick */
-
-        ctx.beginPath();
-
-        ctx.strokeStyle =
-          candleColor;
-
-        ctx.lineWidth = 1;
-
-        ctx.moveTo(
-          x,
-          highY
-        );
-
-        ctx.lineTo(
-          x,
-          lowY
-        );
-
-        ctx.stroke();
-
-        /* Body */
-
-        const bodyTop =
-          Math.min(
-            openY,
-            closeY
-          );
-
-        const bodyHeight =
-          Math.max(
-            2,
-            Math.abs(
-              openY -
-              closeY
-            )
-          );
-
-        ctx.fillStyle =
-          candleColor;
-
+      // Subtle glow
+      if (index === candles.length - 1) {
+        ctx.shadowColor = candleColor;
+        ctx.shadowBlur = 9;
         ctx.fillRect(
-          x -
-            bodyWidth / 2,
+          x - bodyWidth / 2,
           bodyTop,
           bodyWidth,
           bodyHeight
         );
-
-        /* Latest candle glow */
-
-        if (
-          index ===
-          candles.length - 1
-        ) {
-
-          ctx.shadowColor =
-            candleColor;
-
-          ctx.shadowBlur = 9;
-
-          ctx.fillRect(
-            x -
-              bodyWidth / 2,
-            bodyTop,
-            bodyWidth,
-            bodyHeight
-          );
-
-          ctx.shadowBlur = 0;
-
-        }
-
+        ctx.shadowBlur = 0;
       }
-    );
+    });
 
-    /* =================================================
-       CURRENT PRICE LINE
-    ================================================= */
+    // Current price line
+    const latest = candles[candles.length - 1].close;
+    const priceY = y(latest);
 
-    const latest =
-      candles[
-        candles.length - 1
-      ].close;
-
-    const priceY =
-      y(latest);
-
-    ctx.strokeStyle =
-      "rgba(47, 191, 131, 0.65)";
-
+    ctx.strokeStyle = "rgba(47, 191, 131, 0.65)";
     ctx.lineWidth = 1;
-
-    ctx.setLineDash([
-      4,
-      4
-    ]);
+    ctx.setLineDash([4, 4]);
 
     ctx.beginPath();
-
-    ctx.moveTo(
-      plotLeft,
-      priceY
-    );
-
-    ctx.lineTo(
-      plotRight,
-      priceY
-    );
-
+    ctx.moveTo(plotLeft, priceY);
+    ctx.lineTo(plotRight, priceY);
     ctx.stroke();
 
     ctx.setLineDash([]);
-
   }
-
-  /* =====================================================
-     LIVE PRICE MOVEMENT
-  ===================================================== */
 
   function updatePrice() {
+    const market = markets[currentMarket];
+    const latest = candles[candles.length - 1];
 
-    if (!candles.length) {
-      return;
-    }
-
-    const market =
-      markets[currentMarket];
-
-    const latest =
-      candles[
-        candles.length - 1
-      ];
-
-    const vol =
-      getVolatility(market);
-
-    const movement =
-      randomBetween(
-        Math.random,
-        -vol * 0.22,
-        vol * 0.22
-      );
+    const vol = getVolatility(market);
+    const movement = randomBetween(-vol * 0.22, vol * 0.22);
 
     latest.close += movement;
+    latest.high = Math.max(latest.high, latest.close);
+    latest.low = Math.min(latest.low, latest.close);
 
-    latest.high =
-      Math.max(
-        latest.high,
-        latest.close
-      );
+    currentPrice = latest.close;
 
-    latest.low =
-      Math.min(
-        latest.low,
-        latest.close
-      );
+    const change = ((currentPrice - lastPrice) / lastPrice) * 100;
 
-    currentPrice =
-      latest.close;
-
-    const change =
-      (
-        (currentPrice -
-          lastPrice) /
-        lastPrice
-      ) * 100;
-
-    priceEl.textContent =
-      "$" +
-      currentPrice.toLocaleString(
-        "en-US",
-        {
-          minimumFractionDigits:
-            market.decimals,
-
-          maximumFractionDigits:
-            market.decimals
-        }
-      );
+    priceEl.textContent = "$" + currentPrice.toLocaleString(
+      "en-US",
+      {
+        minimumFractionDigits: market.decimals,
+        maximumFractionDigits: market.decimals
+      }
+    );
 
     changeEl.textContent =
-      (
-        change >= 0
-          ? "+"
-          : ""
-      ) +
-      change.toFixed(2) +
-      "%";
+      (change >= 0 ? "+" : "") + change.toFixed(2) + "%";
 
-    changeEl.classList.toggle(
-      "positive",
-      change >= 0
-    );
+    changeEl.classList.toggle("positive", change >= 0);
+    changeEl.classList.toggle("negative", change < 0);
 
-    changeEl.classList.toggle(
-      "negative",
-      change < 0
-    );
-
-    lastPrice =
-      currentPrice;
-
+    lastPrice = currentPrice;
   }
 
-  /* =====================================================
-     ANIMATION
-  ===================================================== */
+  function createNextCandle() {
+    const market = markets[currentMarket];
+    const open = candles[candles.length - 1].close;
 
-  function animate(timestamp) {
+        const vol = getVolatility(market);
+    const close = open + randomBetween(-vol, vol);
 
-    if (!lastTime) {
-      lastTime = timestamp;
+    const high = Math.max(open, close) +
+      randomBetween(0, vol * 0.7);
+
+    const low = Math.min(open, close) -
+      randomBetween(0, vol * 0.7);
+
+    candles.push({ open, close, high, low });
+
+    if (candles.length > candleCount) {
+      candles.shift();
     }
 
-    const delta =
-      timestamp -
-      lastTime;
+    currentPrice = close;
+    updatePrice();
+  }
 
-    lastTime =
-      timestamp;
+  function animate(timestamp) {
+    if (!lastTime) lastTime = timestamp;
 
+    const delta = timestamp - lastTime;
+    lastTime = timestamp;
     elapsed += delta;
 
+    // Smoothly update the latest candle
     if (elapsed > 850) {
-
       elapsed = 0;
-
       updatePrice();
-
     }
 
     drawChart();
 
-    animationFrame =
-      requestAnimationFrame(
-        animate
-      );
-
+    animationFrame = requestAnimationFrame(animate);
   }
 
-  /* =====================================================
-     MARKET SWITCH
-  ===================================================== */
+  function switchMarket(marketName) {
+    if (!markets[marketName]) return;
 
-  function switchMarket(
-    marketName
-  ) {
+    currentMarket = marketName;
 
-    if (
-      !markets[marketName]
-    ) {
-      return;
-    }
+    const market = markets[currentMarket];
 
-    currentMarket =
-      marketName;
-
-    const market =
-      markets[currentMarket];
-
-    symbolEl.textContent =
-      market.symbol;
-
-    priceEl.textContent =
-      "$" +
-      market.basePrice.toLocaleString(
-        "en-US",
-        {
-          minimumFractionDigits:
-            market.decimals,
-
-          maximumFractionDigits:
-            market.decimals
-        }
-      );
-
-    changeEl.textContent =
-      "+0.00%";
-
-    changeEl.classList.remove(
-      "negative"
-    );
-
-    changeEl.classList.add(
-      "positive"
-    );
-
-    tabs.forEach(
-      tab => {
-
-        tab.classList.toggle(
-          "active",
-          tab.dataset.market ===
-            marketName
-        );
-
+    symbolEl.textContent = market.symbol;
+    priceEl.textContent = "$" + market.basePrice.toLocaleString(
+      "en-US",
+      {
+        minimumFractionDigits: market.decimals,
+        maximumFractionDigits: market.decimals
       }
     );
 
-    /*
-      Same market + same timeframe
-      always produces the same
-      initial candle pattern.
-    */
+    changeEl.textContent = "+0.00%";
+    changeEl.classList.remove("negative");
+    changeEl.classList.add("positive");
 
+    tabs.forEach(tab => {
+      tab.classList.toggle(
+        "active",
+        tab.dataset.market === marketName
+      );
+    });
+
+    /* markets[marketName].basePrice already holds the latest live price
+       fetched by fetchLivePrices() (or refreshLivePrices() since), so
+       switching tabs rebuilds candles anchored to real data — no extra
+       fetch needed here. */
     createCandles();
-
     resizeCanvas();
-
   }
 
-  tabs.forEach(
-    tab => {
+  tabs.forEach(tab => {
+    tab.addEventListener("click", function () {
+      switchMarket(tab.dataset.market);
+    });
+  });
 
-      tab.addEventListener(
-        "click",
-        function () {
-
-          switchMarket(
-            tab.dataset.market
-          );
-
-        }
-      );
-
-    }
-  );
-
-  /* =====================================================
-     TIMEFRAME SWITCH
-  ===================================================== */
-
-  const timeframeButtons =
-    document.querySelectorAll(
-      ".market-timeframe"
-    );
+  /* Timeframe buttons (5m / 15m / 1H / 4H) - switches volatility/candle
+     density and rebuilds the chart from the current live price, same
+     idea as switchMarket() above but for zoom level instead of asset. */
+  const timeframeButtons = document.querySelectorAll(".market-timeframe");
 
   function switchTimeframe(tf) {
+    if (!TIMEFRAMES[tf]) return;
+    currentTimeframe = tf;
+    candleCount = TIMEFRAMES[tf].candleCount;
 
-    if (!TIMEFRAMES[tf]) {
-      return;
-    }
-
-    currentTimeframe =
-      tf;
-
-    candleCount =
-      TIMEFRAMES[
-        tf
-      ].candleCount;
-
-    timeframeButtons.forEach(
-      btn => {
-
-        btn.classList.toggle(
-          "active",
-          btn.textContent.trim() ===
-            tf
-        );
-
-      }
-    );
-
-    /*
-      Rebuilds using the same seed.
-      PC + mobile therefore get
-      the same candle sequence.
-    */
+    timeframeButtons.forEach(btn => {
+      btn.classList.toggle("active", btn.textContent.trim() === tf);
+    });
 
     createCandles();
-
     resizeCanvas();
-
   }
 
-  timeframeButtons.forEach(
-    btn => {
+  timeframeButtons.forEach(btn => {
+    btn.addEventListener("click", function () {
+      switchTimeframe(btn.textContent.trim());
+    });
+  });
 
-      btn.addEventListener(
-        "click",
-        function () {
+  window.addEventListener("resize", resizeCanvas);
 
-          switchTimeframe(
-            btn.textContent.trim()
-          );
-
-        }
-      );
-
-    }
-  );
-
-  /* =====================================================
-     WINDOW RESIZE
-     
-     IMPORTANT:
-     No createCandles() here.
-     
-     Therefore changing:
-       PC width
-       mobile width
-       browser orientation
-     
-     does NOT change the candles.
-  ===================================================== */
-
-  window.addEventListener(
-    "resize",
-    resizeCanvas
-  );
-
-  /* =====================================================
-     LIVE PRICE NUDGE
-  ===================================================== */
-
-  function nudgeLatestCandleToward(
-    marketName,
-    livePrice
-  ) {
-
-    if (
-      currentMarket !==
-        marketName ||
-      !candles.length ||
-      !Number.isFinite(
-        livePrice
-      )
-    ) {
-      return;
-    }
-
-    const latest =
-      candles[
-        candles.length - 1
-      ];
-
-    latest.close =
-      latest.close +
-      (
-        livePrice -
-        latest.close
-      ) * 0.35;
-
-    latest.high =
-      Math.max(
-        latest.high,
-        latest.close
-      );
-
-    latest.low =
-      Math.min(
-        latest.low,
-        latest.close
-      );
-
-  }
-
+  /* ---- Periodic live refresh ----
+     Re-fetches every LIVE_PRICE_REFRESH_MS and gently nudges whichever
+     market is currently showing toward the new real price. Both markets'
+     basePrice fields are updated every time regardless of which tab is
+     active, so switching tabs later always shows the latest real price
+     immediately instead of a stale one. */
   async function refreshLivePrices() {
-
-    const data =
-      await fetchLivePrices();
-
-    if (!data) {
-      return;
-    }
-
-    nudgeLatestCandleToward(
-      "gold",
-      data.gold?.price
-    );
-
-    nudgeLatestCandleToward(
-      "btc",
-      data.bitcoin?.price
-    );
-
+    const data = await fetchLivePrices();
+    if (!data) return;
+    nudgeLatestCandleToward("gold", data.gold?.price);
+    nudgeLatestCandleToward("btc", data.bitcoin?.price);
   }
 
-  /* =====================================================
-     STARTUP
-  ===================================================== */
-
+  /* ---- Startup ----
+     Fetch real prices FIRST so both markets' basePrice reflect actual
+     Gold/Bitcoin values before the very first candle is ever drawn, then
+     start the animation loop and the recurring live-refresh timer. */
   (async function initWithLivePrices() {
-
     await fetchLivePrices();
-
     createCandles();
-
     resizeCanvas();
-
-    animationFrame =
-      requestAnimationFrame(
-        animate
-      );
-
-    setInterval(
-      refreshLivePrices,
-      LIVE_PRICE_REFRESH_MS
-    );
-
+    animationFrame = requestAnimationFrame(animate);
+    setInterval(refreshLivePrices, LIVE_PRICE_REFRESH_MS);
   })();
 
 })();
