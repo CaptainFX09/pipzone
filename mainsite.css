@@ -29,6 +29,9 @@
     26. Notification bell + dropdown
     27. Referral card (locked / unlocked states)
     28. Loading skeletons (shimmer placeholders)
+    29. Auth modal tabs + password strength checklist
+    30. Account menu popup + its sub-modals
+    31. Live market widgets (BTC & Gold candlestick charts)
    ========================================================================== */
 
 /* -------------------------- 1. Reset & base -------------------------- */
@@ -610,4 +613,60 @@ font-family:'IBM Plex Mono',monospace
 
 @media(max-width:640px){
 .menu-popup{width:92vw}
+}
+
+/* -------------------------- 31. Live market widgets (BTC & Gold candlestick charts) --------------------------
+   Two places use these classes:
+     - .market-card in the hero section — a compact widget with asset
+       tabs (BTC / XAU), a shared timeframe row, and a small chart.
+     - #markets section further down the page — a bigger, permanent
+       side-by-side pair of panels (.market-panel), one for BTC and one
+       for Gold, sharing a single timeframe row above them.
+   Both are driven by mainsite.js section 31 (initLiveMarkets and friends),
+   which renders actual candlesticks via the lightweight-charts library. */
+
+.market-card{background:var(--panel);border:1px solid var(--line);padding:28px}
+
+.market-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+
+.market-tabs{display:flex;gap:8px}
+.market-tab{background:none;border:1px solid var(--line);color:var(--muted);padding:7px 12px;border-radius:20px;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.market-tab.active{border-color:var(--gold);color:var(--gold);background:rgba(47,191,131,.08)}
+
+.live-dot-wrap{display:flex;align-items:center;gap:6px;color:var(--muted2);font-size:12px;white-space:nowrap}
+.live-dot-wrap .live-dot{width:6px;height:6px;border-radius:50%;background:var(--profit);box-shadow:0 0 0 3px rgba(92,185,138,.15)}
+
+.market-price-row{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.market-price{font:32px Fraunces;color:var(--text)}
+.market-change{font:14px 'IBM Plex Mono';color:var(--muted)}
+.market-change.up{color:var(--profit)}
+.market-change.down{color:var(--loss)}
+
+.market-tf-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.tf-chip{background:var(--bg2);border:1px solid var(--line);color:var(--muted);padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer}
+.tf-chip.active{border-color:var(--gold);color:var(--gold);background:rgba(47,191,131,.08)}
+.tf-chip:hover{border-color:var(--gold)}
+
+.market-chart{height:160px;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--bg2)}
+
+/* -- big "Live Markets" section -- */
+.market-tf-row-big{margin-bottom:28px;justify-content:center}
+.markets-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.market-panel{background:var(--panel);border:1px solid var(--line);padding:22px}
+.market-panel-head{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.market-panel-title{font:16px Fraunces;color:var(--text)}
+.market-panel-price{font:19px 'IBM Plex Mono';color:var(--text)}
+.market-panel-change{font:13px 'IBM Plex Mono';color:var(--muted)}
+.market-panel-change.up{color:var(--profit)}
+.market-panel-change.down{color:var(--loss)}
+.market-chart-big{height:300px}
+
+@media(max-width:760px){
+.markets-grid{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+.market-card{padding:20px}
+.market-price{font:26px Fraunces}
+.market-chart{height:140px}
+.market-chart-big{height:240px}
 }
