@@ -526,7 +526,7 @@ th{
 
 .ann-email-type-row{
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:12px;
   margin-top:8px
 }
@@ -534,13 +534,14 @@ th{
 .ann-type-option{
   display:flex;
   align-items:flex-start;
-  gap:10px;
-  padding:13px 14px;
+  gap:9px;
+  padding:12px 12px;
   border:1px solid var(--line);
   border-radius:10px;
   background:#091525;
   cursor:pointer;
-  transition:border-color .2s ease,background .2s ease
+  transition:border-color .2s ease,background .2s ease;
+  min-width:0
 }
 
 .ann-type-option:hover{
@@ -550,24 +551,27 @@ th{
 
 .ann-type-option input{
   margin-top:3px;
-  cursor:pointer
+  cursor:pointer;
+  flex-shrink:0
 }
 
 .ann-type-content{
   display:flex;
   flex-direction:column;
-  gap:4px
+  gap:4px;
+  min-width:0
 }
 
 .ann-type-content strong{
   color:#fff;
-  font-size:14px
+  font-size:14px;
+  white-space:nowrap
 }
 
 .ann-type-content small{
   color:var(--muted);
-  font-size:12px;
-  line-height:1.4
+  font-size:11px;
+  line-height:1.35
 }
 
 
