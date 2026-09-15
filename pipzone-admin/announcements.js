@@ -10,11 +10,12 @@
    6. Load clients + announcement history
    7. Client checklist renderer
    8. Recipient-type toggle
-   9. Quill editor init + image upload handler
-   10. Send Announcement action
-   11. Announcement history table renderer
-   12. Login / logout event handlers
-   13. Auth state listener & app start
+   9. Email-type selector
+   10. Quill editor init + image upload handler
+   11. Send Announcement / Update action
+   12. Announcement history table renderer
+   13. Login / logout event handlers
+   14. Auth state listener & app start
 ========================================================= */
 
 
@@ -36,7 +37,7 @@ supabase.createClient(
 
 
 /* =========================================================
-   2. HELPERS (DOM SHORTCUT, ESCAPE, CONSTANTS)
+   2. HELPERS
 ========================================================= */
 
 const $ =
@@ -68,7 +69,7 @@ let ALL_CLIENT_PROFILES = [];
 
 
 /* =========================================================
-   3. UI MESSAGES (TOP BANNER + LOGIN BANNER)
+   3. UI MESSAGES
 ========================================================= */
 
 function showMsg(text,error=false){
@@ -179,7 +180,10 @@ async function checkAdmin(){
     $('loginView').classList.remove('hidden');
     $('app').classList.add('hidden');
 
-    loginMsg('This account is not an admin account.', true);
+    loginMsg(
+      'This account is not an admin account.',
+      true
+    );
 
     return false;
   }
@@ -211,7 +215,10 @@ async function checkAdmin(){
     $('loginView').classList.remove('hidden');
     $('app').classList.add('hidden');
 
-    loginMsg('This account is not an admin account.', true);
+    loginMsg(
+      'This account is not an admin account.',
+      true
+    );
 
     return false;
   }
@@ -262,7 +269,10 @@ async function loadAll(){
 
     if(profiles.error){
 
-      showMsg(profiles.error.message, true);
+      showMsg(
+        profiles.error.message,
+        true
+      );
 
       return;
     }
@@ -270,7 +280,10 @@ async function loadAll(){
 
     if(announcements.error){
 
-      showMsg(announcements.error.message, true);
+      showMsg(
+        announcements.error.message,
+        true
+      );
 
       return;
     }
@@ -292,11 +305,18 @@ async function loadAll(){
 
   }catch(err){
 
-    console.error('loadAll unexpected error:', err);
+    console.error(
+      'loadAll unexpected error:',
+      err
+    );
 
     showMsg(
       'Something went wrong while loading data: ' +
-      (err && err.message ? err.message : String(err)),
+      (
+        err && err.message
+        ? err.message
+        : String(err)
+      ),
       true
     );
 
@@ -321,9 +341,19 @@ function renderClientChecklist(clientProfiles){
   $('annClientListWrap').innerHTML =
     clientProfiles.map(p => `
       <label class="ann-client-item">
-        <input type="checkbox" class="annClientCheckbox" value="${esc(p.id)}">
+
+        <input
+          type="checkbox"
+          class="annClientCheckbox"
+          value="${esc(p.id)}"
+        >
+
         ${esc(p.full_name || 'Unknown')}
-        <small>${esc(p.id)}</small>
+
+        <small>
+          ${esc(p.id)}
+        </small>
+
       </label>
     `).join('');
 }
@@ -333,200 +363,406 @@ function renderClientChecklist(clientProfiles){
    8. RECIPIENT-TYPE TOGGLE
 ========================================================= */
 
-document.querySelectorAll('input[name="annRecipientType"]').forEach(radio => {
+document
+  .querySelectorAll(
+    'input[name="annRecipientType"]'
+  )
+  .forEach(radio => {
 
-  radio.addEventListener('change', () => {
+    radio.addEventListener(
+      'change',
+      () => {
 
-    $('annClientListWrap').classList.toggle(
-      'hidden',
-      $('annRecipientAll').checked
+        $('annClientListWrap').classList.toggle(
+          'hidden',
+          $('annRecipientAll').checked
+        );
+
+      }
     );
 
   });
 
-});
+
+/* =========================================================
+   9. EMAIL-TYPE SELECTOR
+========================================================= */
+
+function getEmailType(){
+
+  const selected =
+    document.querySelector(
+      'input[name="annEmailType"]:checked'
+    );
+
+  return selected
+    ? selected.value
+    : 'announcement';
+}
+
+
+function getEmailTypeLabel(emailType){
+
+  return emailType === 'update'
+    ? 'Account Update'
+    : 'Announcement';
+}
+
+
+document
+  .querySelectorAll(
+    'input[name="annEmailType"]'
+  )
+  .forEach(radio => {
+
+    radio.addEventListener(
+      'change',
+      () => {
+
+        const type =
+          getEmailType();
+
+        const btn =
+          $('sendAnnouncementBtn');
+
+        btn.textContent =
+          type === 'update'
+          ? 'Send Account Update'
+          : 'Send Announcement';
+
+      }
+    );
+
+  });
 
 
 /* =========================================================
-   9. QUILL EDITOR INIT + IMAGE UPLOAD HANDLER
+   10. QUILL EDITOR INIT + IMAGE UPLOAD HANDLER
 ========================================================= */
 
-const annQuill = new Quill('#annEditor', {
-  theme: 'snow',
-  placeholder: 'Write your announcement...',
-  modules: {
-    toolbar: {
-      container: [
-        [{ header: [1, 2, false] }],
-        ['bold', 'italic', 'underline', 'link'],
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        ['image'],
-        ['clean']
-      ],
-      handlers: {
-        image: annImageHandler
+const annQuill = new Quill(
+  '#annEditor',
+  {
+    theme: 'snow',
+
+    placeholder:
+      'Write your announcement...',
+
+    modules: {
+
+      toolbar: {
+
+        container: [
+          [{ header: [1, 2, false] }],
+          ['bold', 'italic', 'underline', 'link'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          ['image'],
+          ['clean']
+        ],
+
+        handlers: {
+          image: annImageHandler
+        }
+
       }
+
     }
+
   }
-});
+);
 
 
 async function annImageHandler(){
 
-  const input = document.createElement('input');
-  input.setAttribute('type','file');
-  input.setAttribute('accept','image/*');
+  const input =
+    document.createElement('input');
+
+  input.setAttribute(
+    'type',
+    'file'
+  );
+
+  input.setAttribute(
+    'accept',
+    'image/*'
+  );
+
   input.click();
+
 
   input.onchange = async () => {
 
-    const file = input.files[0];
+    const file =
+      input.files[0];
 
-    if(!file) return;
+    if(!file)
+      return;
 
-    const ext = file.name.split('.').pop();
+
+    const ext =
+      file.name.split('.').pop();
+
 
     const path =
       `announcements/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
 
     const { error: upErr } =
       await client.storage
         .from('announcement-images')
         .upload(path, file);
 
+
     if(upErr){
 
-      showMsg('Image upload failed: ' + upErr.message, true);
+      showMsg(
+        'Image upload failed: ' +
+        upErr.message,
+        true
+      );
 
       return;
     }
+
 
     const { data: pub } =
       client.storage
         .from('announcement-images')
         .getPublicUrl(path);
 
+
     const range =
       annQuill.getSelection(true);
+
 
     annQuill.insertEmbed(
       range ? range.index : 0,
       'image',
       pub.publicUrl
     );
+
   };
+
 }
 
 
 /* =========================================================
-   10. SEND ANNOUNCEMENT ACTION
+   11. SEND ANNOUNCEMENT / UPDATE ACTION
 ========================================================= */
 
-$('sendAnnouncementBtn').addEventListener('click', async () => {
+$('sendAnnouncementBtn')
+  .addEventListener(
+    'click',
+    async () => {
 
-  const subject =
-    $('annSubject').value.trim();
+      const subject =
+        $('annSubject')
+          .value
+          .trim();
 
-  const message =
-    annQuill.root.innerHTML.trim();
 
-  const recipientType =
-    $('annRecipientAll').checked
-    ? 'all'
-    : 'selected';
+      const message =
+        annQuill.root.innerHTML.trim();
 
-  let recipientIds = [];
 
-  if(recipientType === 'selected'){
+      const emailType =
+        getEmailType();
 
-    recipientIds =
-      Array.from(
-        document.querySelectorAll('.annClientCheckbox:checked')
-      ).map(cb => cb.value);
-  }
 
-  if(!subject){
-    showMsg('Enter a subject.', true);
-    return;
-  }
+      const emailTypeLabel =
+        getEmailTypeLabel(
+          emailType
+        );
 
-  if(!message || message === '<p><br></p>'){
-    showMsg('Enter a message.', true);
-    return;
-  }
 
-  if(recipientType === 'selected' && recipientIds.length === 0){
-    showMsg('Select at least one client.', true);
-    return;
-  }
+      const recipientType =
+        $('annRecipientAll').checked
+        ? 'all'
+        : 'selected';
 
-  const countLabel =
-    recipientType === 'all'
-    ? `all ${ALL_CLIENT_PROFILES.length} clients`
-    : `${recipientIds.length} selected client(s)`;
 
-  if(
-    !confirm(
-      `Send this announcement to ${countLabel}?`
-    )
-  )
-    return;
+      let recipientIds = [];
 
-  const btn = $('sendAnnouncementBtn');
 
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
+      if(recipientType === 'selected'){
 
-  $('annResult').textContent = '';
+        recipientIds =
+          Array.from(
+            document.querySelectorAll(
+              '.annClientCheckbox:checked'
+            )
+          ).map(
+            cb => cb.value
+          );
 
-  try{
+      }
 
-    const { data, error } =
-      await client.functions.invoke('send-announcement', {
-        body: { subject, message, recipientType, recipientIds }
-      });
 
-    if(error){
-      showMsg(error.message || 'Failed to send announcement.', true);
-      return;
+      if(!subject){
+
+        showMsg(
+          'Enter a subject.',
+          true
+        );
+
+        return;
+      }
+
+
+      if(
+        !message ||
+        message === '<p><br></p>'
+      ){
+
+        showMsg(
+          'Enter a message.',
+          true
+        );
+
+        return;
+      }
+
+
+      if(
+        recipientType === 'selected' &&
+        recipientIds.length === 0
+      ){
+
+        showMsg(
+          'Select at least one client.',
+          true
+        );
+
+        return;
+      }
+
+
+      const countLabel =
+        recipientType === 'all'
+        ? `all ${ALL_CLIENT_PROFILES.length} clients`
+        : `${recipientIds.length} selected client(s)`;
+
+
+      if(
+        !confirm(
+          `Send this ${emailTypeLabel.toLowerCase()} to ${countLabel}?`
+        )
+      )
+        return;
+
+
+      const btn =
+        $('sendAnnouncementBtn');
+
+
+      btn.disabled = true;
+
+      btn.textContent =
+        'Sending...';
+
+
+      $('annResult')
+        .textContent = '';
+
+
+      try{
+
+        const {
+          data,
+          error
+        } =
+        await client.functions.invoke(
+          'send-announcement',
+          {
+            body: {
+              subject,
+              message,
+              emailType,
+              recipientType,
+              recipientIds
+            }
+          }
+        );
+
+
+        if(error){
+
+          showMsg(
+            error.message ||
+            'Failed to send email.',
+            true
+          );
+
+          return;
+        }
+
+
+        if(data && data.error){
+
+          showMsg(
+            data.error,
+            true
+          );
+
+          return;
+        }
+
+
+        $('annResult').innerHTML =
+          `✅ ${data.sent} sent, ❌ ${data.failed} failed (of ${data.total})`;
+
+
+        showMsg(
+          `${emailTypeLabel} sent.`
+        );
+
+
+        $('annSubject').value =
+          '';
+
+
+        annQuill.setContents([]);
+
+
+        loadAll();
+
+
+      }catch(err){
+
+        console.error(
+          'Send announcement error:',
+          err
+        );
+
+
+        showMsg(
+          'Something went wrong sending the email: ' +
+          (
+            err && err.message
+            ? err.message
+            : String(err)
+          ),
+          true
+        );
+
+
+      }finally{
+
+        btn.disabled = false;
+
+        btn.textContent =
+          getEmailType() === 'update'
+          ? 'Send Account Update'
+          : 'Send Announcement';
+
+      }
+
     }
-
-    if(data && data.error){
-      showMsg(data.error, true);
-      return;
-    }
-
-    $('annResult').innerHTML =
-      `✅ ${data.sent} sent, ❌ ${data.failed} failed (of ${data.total})`;
-
-    showMsg('Announcement sent.');
-
-    $('annSubject').value = '';
-    annQuill.setContents([]);
-
-    loadAll();
-
-  }catch(err){
-
-    console.error('Send announcement error:', err);
-
-    showMsg(
-      'Something went wrong sending the announcement: ' +
-      (err && err.message ? err.message : String(err)),
-      true
-    );
-
-  }finally{
-
-    btn.disabled = false;
-    btn.textContent = 'Send Announcement';
-  }
-
-});
+  );
 
 
 /* =========================================================
-   11. ANNOUNCEMENT HISTORY TABLE RENDERER
+   12. ANNOUNCEMENT HISTORY TABLE RENDERER
 ========================================================= */
 
 function renderAnnouncementHistory(rows){
@@ -539,30 +775,81 @@ function renderAnnouncementHistory(rows){
     return;
   }
 
+
   $('announcementHistoryTable').innerHTML = `
 
   <table>
 
     <thead>
+
       <tr>
+
         <th>Date</th>
+
+        <th>Type</th>
+
         <th>Subject</th>
+
         <th>Recipients</th>
+
         <th>Sent</th>
+
         <th>Failed</th>
+
       </tr>
+
     </thead>
+
 
     <tbody>
 
       ${rows.map(r => `
+
         <tr>
-          <td>${new Date(r.created_at).toLocaleString()}</td>
-          <td>${esc(r.subject)}</td>
-          <td>${r.recipient_type === 'all' ? 'All Clients' : (r.total_recipients + ' selected')}</td>
-          <td>${r.sent_count}</td>
-          <td>${r.failed_count}</td>
+
+          <td>
+            ${new Date(r.created_at).toLocaleString()}
+          </td>
+
+
+          <td>
+
+            ${
+              r.email_type === 'update'
+              ? '⚙️ Account Update'
+              : '📢 Announcement'
+            }
+
+          </td>
+
+
+          <td>
+            ${esc(r.subject)}
+          </td>
+
+
+          <td>
+
+            ${
+              r.recipient_type === 'all'
+              ? 'All Clients'
+              : (r.total_recipients + ' selected')
+            }
+
+          </td>
+
+
+          <td>
+            ${r.sent_count}
+          </td>
+
+
+          <td>
+            ${r.failed_count}
+          </td>
+
         </tr>
+
       `).join('')}
 
     </tbody>
@@ -574,88 +861,127 @@ function renderAnnouncementHistory(rows){
 
 
 /* =========================================================
-   12. LOGIN / LOGOUT EVENT HANDLERS
+   13. LOGIN / LOGOUT EVENT HANDLERS
 ========================================================= */
 
-$('loginBtn').addEventListener('click', async()=>{
+$('loginBtn')
+  .addEventListener(
+    'click',
+    async()=>{
 
-  const email = $('email').value.trim();
-  const password = $('password').value;
+      const email =
+        $('email').value.trim();
 
-  if(!email || !password){
-
-    loginMsg('Enter email and password.', true);
-
-    return;
-  }
-
-
-  $('loginBtn').disabled = true;
+      const password =
+        $('password').value;
 
 
-  try{
+      if(!email || !password){
 
-    const { error } =
-    await client.auth.signInWithPassword({ email, password });
+        loginMsg(
+          'Enter email and password.',
+          true
+        );
+
+        return;
+      }
 
 
-    if(error){
+      $('loginBtn').disabled = true;
 
-      loginMsg(error.message, true);
 
-      return;
+      try{
+
+        const { error } =
+          await client.auth.signInWithPassword({
+            email,
+            password
+          });
+
+
+        if(error){
+
+          loginMsg(
+            error.message,
+            true
+          );
+
+          return;
+        }
+
+
+        loginMsg(
+          'Login successful.'
+        );
+
+
+        await loadAll();
+
+
+      }catch(err){
+
+        console.error(
+          'Login error:',
+          err
+        );
+
+
+        loginMsg(
+          'Something went wrong logging in: ' +
+          (
+            err && err.message
+            ? err.message
+            : String(err)
+          ),
+          true
+        );
+
+
+      }finally{
+
+        $('loginBtn').disabled = false;
+
+      }
+
     }
+  );
 
 
-    loginMsg('Login successful.');
+$('password')
+  .addEventListener(
+    'keydown',
+    e => {
 
-    await loadAll();
+      if(e.key === 'Enter')
+        $('loginBtn').click();
 
-
-  }catch(err){
-
-    console.error('Login error:', err);
-
-    loginMsg(
-      'Something went wrong logging in: ' +
-      (err && err.message ? err.message : String(err)),
-      true
-    );
+    }
+  );
 
 
-  }finally{
+$('logoutBtn')
+  .addEventListener(
+    'click',
+    async()=>{
 
-    $('loginBtn').disabled = false;
+      await client.auth.signOut();
 
-  }
+      location.reload();
 
-});
-
-
-$('password').addEventListener('keydown', e => {
-
-  if(e.key === 'Enter')
-    $('loginBtn').click();
-
-});
-
-
-$('logoutBtn').addEventListener('click', async()=>{
-
-  await client.auth.signOut();
-
-  location.reload();
-
-});
+    }
+  );
 
 
 /* =========================================================
-   13. AUTH STATE LISTENER & APP START
+   14. AUTH STATE LISTENER & APP START
 ========================================================= */
 
 client.auth.onAuthStateChange(
   (_event)=>{
-    setTimeout(loadAll, 0);
+    setTimeout(
+      loadAll,
+      0
+    );
   }
 );
 
