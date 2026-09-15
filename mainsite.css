@@ -612,432 +612,282 @@ font-family:'IBM Plex Mono',monospace
 .menu-popup{width:92vw}
 }
 
-
+/* -------------------------- NOTE --------------------------
+   The old decorative "Animated market overview card" styles (section 31,
+   .market-card / .market-tickers / .market-chart-* / etc.) have been
+   REMOVED from here — that hero panel and its demo JS
+   (initMarketOverviewDemo() in mainsite.js) were replaced by the new
+   candlestick animation panel, which has its own stylesheet:
+   candlestick-chart.css (loaded via <link> in index.html). */
 /* =====================================================
-   PIPZONE — LIVE MARKET CANDLESTICK CHART
-   XAUUSD + BTCUSD
+   PIPZONE — CANDLESTICK ANIMATION STYLES
 ====================================================== */
 
-.live-market-card {
+.market-animation-panel {
   width: 100%;
   max-width: 530px;
-  padding: 22px;
-  box-sizing: border-box;
-
-  background:
-    linear-gradient(145deg, #17251e, #0c1410 72%);
-
+  padding: 24px;
   border: 1px solid rgba(92, 140, 112, 0.25);
-  border-radius: 18px;
-
+  border-radius: 24px;
+  background:
+    linear-gradient(145deg, #17251e, #0c1410 70%);
+  color: #edf7ef;
   box-shadow:
     0 24px 70px rgba(0, 0, 0, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.035);
-
-  overflow: hidden;
+  font-family: "IBM Plex Sans", sans-serif;
+  box-sizing: border-box;
 }
 
-/* -----------------------------
-   Header
------------------------------ */
-
-.live-market-card .market-card-head {
+.market-panel-header,
+.market-price-row,
+.market-panel-footer {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 18px;
 }
 
-.market-card-eyebrow {
+.market-panel-label {
   color: #7d9e8a;
-  font-family: "IBM Plex Mono", monospace;
   font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.market-panel-header h3 {
+  margin: 5px 0 0;
+  font-size: 20px;
   font-weight: 600;
-  letter-spacing: 1.8px;
-  text-transform: uppercase;
 }
 
-.live-market-card .market-card-title {
-  margin-top: 5px;
-  color: #edf7ef;
-  font: 500 20px Fraunces, serif;
-}
-
-.market-live-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-
-  padding: 6px 10px;
-
-  border: 1px solid rgba(47, 191, 131, 0.20);
-  border-radius: 20px;
-
-  background: rgba(47, 191, 131, 0.08);
+.market-status {
   color: #9db7a5;
-
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 9px;
-  white-space: nowrap;
+  font-size: 10px;
+  letter-spacing: 1px;
+  border: 1px solid #304a3a;
+  border-radius: 20px;
+  padding: 7px 10px;
 }
 
-.market-live-dot {
+.status-dot {
   display: inline-block;
   width: 6px;
   height: 6px;
-
-  border-radius: 50%;
   background: #2fbf83;
-
-  box-shadow:
-    0 0 0 3px rgba(47, 191, 131, 0.12),
-    0 0 10px rgba(47, 191, 131, 0.65);
-
-  animation: pipzoneMarketPulse 1.7s ease-in-out infinite;
-}
-
-.market-live-dot.small {
-  width: 5px;
-  height: 5px;
+  border-radius: 50%;
   margin-right: 5px;
+  box-shadow: 0 0 10px rgba(47, 191, 131, 0.7);
 }
-
-@keyframes pipzoneMarketPulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 0.55;
-    transform: scale(0.8);
-  }
-}
-
-/* -----------------------------
-   Market Tabs
------------------------------ */
 
 .market-tabs {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 9px;
-
-  margin-bottom: 18px;
+  gap: 10px;
+  margin: 24px 0;
 }
 
 .market-tab {
-  min-width: 0;
-
-  padding: 11px 13px;
-
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  padding: 12px;
   border: 1px solid #263d30;
-  border-radius: 10px;
-
+  border-radius: 14px;
   background: #122019;
   color: #a4b9ab;
-
   cursor: pointer;
-
-  text-align: left;
-
-  transition:
-    border-color 0.2s ease,
-    background 0.2s ease,
-    transform 0.2s ease;
-}
-
-.market-tab:hover {
-  border-color: rgba(47, 191, 131, 0.45);
-  transform: translateY(-1px);
+  transition: 0.25s ease;
 }
 
 .market-tab.active {
-  border-color: rgba(47, 191, 131, 0.75);
+  border-color: #2fbf83;
   background: rgba(47, 191, 131, 0.09);
   color: #effaf2;
-
-  box-shadow:
-    inset 0 0 20px rgba(47, 191, 131, 0.025);
 }
 
-.market-tab-symbol {
+.market-tab strong,
+.market-tab small {
   display: block;
-
-  color: inherit;
-
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 12px;
-  font-weight: 600;
 }
 
-.market-tab-name {
-  display: block;
+.market-tab strong {
+  font-size: 13px;
+}
 
+.market-tab small {
   margin-top: 3px;
-
   color: #789583;
-
   font-size: 10px;
 }
 
-.market-tab.active .market-tab-name {
-  color: #91b19d;
+.asset-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 35px;
+  height: 35px;
+  border-radius: 11px;
+  font-weight: 700;
+  font-size: 15px;
 }
 
-/* -----------------------------
-   Price Row
------------------------------ */
+.gold-icon {
+  background: rgba(218, 171, 75, 0.15);
+  color: #e0b65d;
+}
+
+.btc-icon {
+  background: rgba(247, 147, 26, 0.14);
+  color: #f7931a;
+}
 
 .market-price-row {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 15px;
-
-  margin-bottom: 13px;
+  align-items: flex-start;
+  margin-bottom: 15px;
 }
 
-.market-symbol {
+#market-symbol {
   color: #8da997;
-
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 10px;
-  letter-spacing: 1.2px;
+  font-size: 11px;
+  letter-spacing: 1px;
 }
 
 .market-price {
-  margin-top: 4px;
-
-  color: #edf7ef;
-
+  margin: 5px 0;
   font-family: "IBM Plex Mono", monospace;
   font-size: clamp(25px, 4vw, 34px);
   font-weight: 600;
-
-  line-height: 1.15;
   letter-spacing: -1px;
-
-  transition: color 0.25s ease;
+  transition: color 0.2s ease;
 }
 
 .market-change {
-  padding-bottom: 3px;
-
   font-family: "IBM Plex Mono", monospace;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 12px;
 }
 
-.market-change.positive {
+.positive {
   color: #2fbf83;
 }
 
-.market-change.negative {
-  color: #ef626f;
+.negative {
+  color: #ef6c7b;
 }
 
-/* -----------------------------
-   Chart Area
------------------------------ */
-
-.live-chart-wrap {
-  padding: 12px;
-
-  border: 1px solid #20382b;
-  border-radius: 12px;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(20, 39, 29, 0.96),
-      rgba(8, 19, 13, 0.98)
-    );
-}
-
-.live-market-card .market-chart-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-
-  margin-bottom: 9px;
-
-  color: #8da997;
-
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 10px;
-}
-
-.market-chart-status {
-  display: inline-flex;
-  align-items: center;
-
-  color: #668272;
-  white-space: nowrap;
-}
-
-.candlestick-chart-container {
-  position: relative;
-
-  width: 100%;
-  height: 215px;
-
-  overflow: hidden;
-
+.market-timeframe {
+  padding: 7px 11px;
   border-radius: 8px;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(13, 28, 19, 0.65),
-      rgba(7, 17, 11, 0.9)
-    );
+  background: #20342a;
+  color: #a8c2b1;
+  font-size: 11px;
 }
 
-.candlestick-chart {
-  display: block;
+.candlestick-chart-wrap {
+  position: relative;
+  width: 100%;
+  height: 235px;
+  border: 1px solid #20382b;
+  border-radius: 14px;
+  background: #0c1711;
+  overflow: hidden;
+}
 
+#candlestick-chart {
+  display: block;
   width: 100%;
   height: 100%;
 }
 
-/* -----------------------------
-   Timeframes
------------------------------ */
-
-.market-timeframes {
+.chart-y-labels {
+  position: absolute;
+  inset: 12px 10px auto auto;
+  bottom: 24px;
+  top: 12px;
   display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #527260;
+  font: 9px "IBM Plex Mono", monospace;
+  pointer-events: none;
+}
+
+.chart-bottom-labels {
+  position: absolute;
+  bottom: 7px;
+  left: 12px;
+  right: 42px;
+  display: flex;
+  justify-content: space-between;
+  color: #527260;
+  font: 9px "IBM Plex Mono", monospace;
+  pointer-events: none;
+}
+
+.market-panel-footer {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin-top: 16px;
+  color: #789583;
+  font-size: 10px;
+}
+
+.market-panel-footer > span {
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-
-  margin-top: 10px;
 }
 
-.market-timeframe {
-  padding: 5px 9px;
-
-  border: 1px solid transparent;
-  border-radius: 6px;
-
-  background: transparent;
-  color: #668272;
-
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 9px;
-
-  cursor: pointer;
-
-  transition:
-    color 0.2s ease,
-    background 0.2s ease,
-    border-color 0.2s ease;
+.legend-candle {
+  display: inline-block;
+  width: 8px;
+  height: 13px;
+  border-radius: 2px;
 }
 
-.market-timeframe:hover {
-  color: #a8c2b1;
+.legend-candle.up {
+  background: #2fbf83;
 }
 
-.market-timeframe.active {
-  border-color: #294637;
-  background: #17291f;
-  color: #b8d1c0;
+.legend-candle.down {
+  background: #ef626f;
 }
 
-/* -----------------------------
-   Disclaimer
------------------------------ */
-
-.market-card-disclaimer {
-  margin-top: 12px;
-
-  color: #627b6c;
-
-  font-size: 9.5px;
-  line-height: 1.55;
+.chart-live-label {
+  margin-left: auto;
+  color: #527260;
 }
 
-/* -----------------------------
-   Mobile
------------------------------ */
-
-@media (max-width: 640px) {
-
-  .live-market-card {
-    max-width: 100%;
+@media (max-width: 480px) {
+  .market-animation-panel {
     padding: 17px;
-    border-radius: 15px;
+    border-radius: 18px;
   }
 
-  .live-market-card .market-card-head {
-    margin-bottom: 14px;
-  }
-
-  .live-market-card .market-card-title {
-    font-size: 18px;
-  }
-
-  .market-live-badge {
-    padding: 5px 8px;
-    font-size: 8px;
+  .market-panel-header h3 {
+    font-size: 17px;
   }
 
   .market-tabs {
     gap: 7px;
-    margin-bottom: 15px;
+    margin: 18px 0;
   }
 
   .market-tab {
-    padding: 9px 10px;
-  }
-
-  .market-tab-symbol {
-    font-size: 10px;
-  }
-
-  .market-tab-name {
-    font-size: 9px;
+    padding: 9px;
   }
 
   .market-price {
     font-size: 25px;
   }
 
-  .candlestick-chart-container {
-    height: 190px;
+  .candlestick-chart-wrap {
+    height: 205px;
   }
 
-  .market-timeframes {
-    gap: 4px;
-  }
-
-  .market-timeframe {
-    padding: 5px 7px;
-    font-size: 8px;
-  }
-}
-
-/* -----------------------------
-   Very Small Screens
------------------------------ */
-
-@media (max-width: 380px) {
-
-  .live-market-card {
-    padding: 14px;
-  }
-
-  .market-live-badge {
-    display: none;
-  }
-
-  .market-price {
-    font-size: 23px;
-  }
-
-  .candlestick-chart-container {
-    height: 175px;
+  .chart-live-label {
+    width: 100%;
+    margin-left: 0;
   }
 }
