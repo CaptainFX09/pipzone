@@ -22,6 +22,18 @@
 </div>
 </div>
 
+<div class="card">
+<div class="card-title">Generate Trade Code</div>
+<div class="card-sub">Create a one-time code for a specific client. The server controls expiry, balance limits and one-time use.</div>
+
+<div class="grid">
+<div class="field full">
+<label for="clientSelect">Client</label>
+<select id="clientSelect">
+<option value="">Loading clients...</option>
+</select>
+</div>
+
 <div class="field">
 <label for="adjustmentType">Adjustment Type</label>
 <select id="adjustmentType">
@@ -35,10 +47,10 @@
 <input id="percentage" type="number" min="0.01" max="100" step="0.01" placeholder="e.g. 1.50">
 </div>
 
-<div class="field">
+<div class="field full">
 <label for="expiryValue">Code Expiry Time</label>
 <div class="expiry-row">
-<input id="expiryValue" type="number" min="1" step="1" placeholder="e.g. 15">
+<input id="expiryValue" type="number" min="1" step="1" placeholder="e.g. 10">
 <select id="expiryUnit">
 <option value="minutes">Minutes</option>
 <option value="hours">Hours</option>
@@ -46,21 +58,29 @@
 </select>
 </div>
 </div>
+</div>
 
+<div class="generated-row">
 <div class="field">
 <label for="generatedCode">Generated Code</label>
 <input id="generatedCode" type="text" readonly placeholder="PZ-TRD-000001">
 </div>
-
 <button id="generateBtn" class="generate-btn" type="button">Generate Code</button>
+</div>
 <div id="message" class="message"></div>
-
-<div class="history">
-<h2>Generated Codes History</h2>
-<div id="historyList"><div class="empty">No codes generated yet.</div></div>
-</div>
 </div>
 
+<div class="history card">
+<div class="history-head">
+<div>
+<div class="card-title">Generated Codes History</div>
+<div class="card-sub">Stored in Supabase. Test records can be deleted from here.</div>
+</div>
+<button id="refreshBtn" class="back-btn" type="button">Refresh</button>
+</div>
+<div id="historyList"><div class="empty">Loading...</div></div>
+</div>
+</div>
 <script src="profit-codes.js"></script>
 </body>
 </html>
