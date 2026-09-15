@@ -660,6 +660,88 @@ For account, deposit, withdrawal, or general support questions, please use the c
 <div class="balance-amount" id="dashBalance">$0.00</div>
 <span class="balance-pl zero" id="dashProfitPill">$0.00 profit so far</span>
 </div>
+     <!-- ==================== APPLY TRADE CODE ==================== -->
+<div class="trade-code-card">
+
+<div class="trade-code-head">
+<div>
+<div class="trade-code-title">Apply Trade Code</div>
+<div class="trade-code-sub">
+Select the balance amount you want to apply the trade result to.
+</div>
+</div>
+</div>
+
+<!-- Balance amount -->
+<div class="form-group">
+<label>Balance Amount</label>
+
+<div class="trade-balance-input-wrap">
+<span class="trade-balance-prefix">$</span>
+<input
+id="tradeBalanceAmount"
+type="number"
+min="0"
+step="0.01"
+value="0"
+placeholder="0.00"
+inputmode="decimal"
+>
+</div>
+
+<!-- Balance slider -->
+<div class="trade-balance-slider-wrap">
+
+<input
+id="tradeBalanceSlider"
+type="range"
+min="0"
+max="0"
+step="0.01"
+value="0"
+>
+
+<div class="trade-balance-scale">
+<span id="tradeBalanceMin">$0.00</span>
+<span id="tradeBalanceMax">$0.00</span>
+</div>
+
+</div>
+</div>
+
+<!-- Trade code -->
+<div class="form-group">
+<label>Trade Code</label>
+
+<input
+id="tradeCodeInput"
+type="text"
+placeholder="Enter your trade code"
+autocomplete="off"
+>
+
+</div>
+
+<!-- Apply button -->
+<div class="form-actions">
+<button
+type="button"
+class="btn btn-gold"
+id="applyTradeCodeBtn"
+onclick="applyTradeCode()"
+>
+Apply Trade Code
+</button>
+</div>
+
+<!-- Result / message -->
+<div
+id="tradeCodeMsg"
+class="msg"
+style="display:none"
+></div>
+
+</div>
 
 <!-- Dashboard stat cards -->
 <div class="dash-grid">
