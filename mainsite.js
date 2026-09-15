@@ -29,6 +29,7 @@
     25. Page bootstrap / event listeners
     26. Referral program (capture ?ref=, dashboard card, copy/share)
     27. Loading skeletons (dashboard + lists)
+    31. Live market widgets (BTC & Gold candlestick charts)
    ========================================================================== */
 
 'use strict';
@@ -1872,6 +1873,258 @@ copyReferralLink();
 }
 }
 
+/* -------------------------- 31. Live market widgets (BTC & Gold candlestick charts) --------------------------
+   Renders real candlestick charts using the free TradingView
+   "lightweight-charts" library (loaded via CDN in index.html <head>).
+
+   • BTC/USDT candles come straight from Binance's public klines endpoint
+     — no API key needed, real historical OHLC candles, CORS-enabled, so
+     the chart is fully populated the instant it loads, and every visitor
+     (phone or desktop) sees the exact same candles because they all pull
+     from the same public feed.
+
+   • XAU/USD (Gold) candles are built LIVE from GoldAPI.io. GoldAPI's
+     endpoint used here only returns the CURRENT price (not a full
+     intraday candle history on the free/standard plan), so instead of
+     faking historical candles, this polls the live price on an interval
+     and builds real candles client-side as new prices arrive. The chart
+     starts with a single flat candle and fills in as time passes — this
+     is the honest tradeoff of using a live spot-price feed instead of a
+     dedicated OHLC history provider.
+
+   ⚠️ SETUP REQUIRED — fill in GOLDAPI_KEY below with your real key.
+
+   ⚠️ SECURITY NOTE — this key is called directly from the browser, which
+   means anyone can see it via their browser's dev tools (Network tab).
+   That's an accepted tradeoff for a static site with no backend, but if
+   you want the key fully hidden, route this fetch through a small
+   server-side proxy (e.g. a Supabase Edge Function) instead of calling
+   goldapi.io directly from here — happy to build that if wanted.
+
+   ⚠️ RATE LIMITS — GoldAPI plans have a limited number of requests. This
+   polls once every GOLD_POLL_MS regardless of how many gold charts are
+   on screen (hero + big section share one poll), so raise GOLD_POLL_MS
+   if you're on a lower-tier plan. */
+
+const GOLDAPI_KEY='YOUR_GOLDAPI_KEY_HERE';
+const GOLDAPI_URL='https://www.goldapi.io/api/XAU/USD';
+const BINANCE_KLINES_URL='https://api.binance.com/api/v3/klines';
+const GOLD_POLL_MS=20000; // how often to poll GoldAPI for a new live price tick
+const BTC_REFRESH_MS=4000; // how often to re-pull the latest BTC candles from Binance
+
+const TF_CONFIG={
+'1m':{binanceInterval:'1m',bucketMs:60*1000},
+'5m':{binanceInterval:'5m',bucketMs:5*60*1000},
+'15m':{binanceInterval:'15m',bucketMs:15*60*1000},
+'1h':{binanceInterval:'1h',bucketMs:60*60*1000},
+'4h':{binanceInterval:'4h',bucketMs:4*60*60*1000}
+};
+
+/* Mirrors the --profit/--loss/--soft/--muted CSS variables in mainsite.css
+   so the charts match the site's dark green/gold theme. Hardcoded here
+   because the charting library needs literal color values, not CSS vars. */
+const CHART_COLORS={up:'#5EEAB0',down:'#F2735E',grid:'#1F2622',text:'#8B9992'};
+
+let heroAsset='BTC';
+let heroTf='1m';
+let bigTf='1m';
+
+let goldTickTimer=null;
+
+/* Every rendered chart lives in this array as one entry:
+   {chart, series, kind:'BTC'|'XAU', tf, priceEl, changeEl, pollTimer, lastCandle, firstPrice} */
+const liveCharts=[];
+
+function makeCandleChart(containerId){
+const el=$(containerId);
+if(!el||typeof LightweightCharts==='undefined')return null;
+el.innerHTML='';
+const chart=LightweightCharts.createChart(el,{
+width:el.clientWidth,
+height:el.clientHeight,
+layout:{background:{type:'solid',color:'transparent'},textColor:CHART_COLORS.text,fontFamily:"'IBM Plex Mono',monospace",fontSize:11},
+grid:{vertLines:{color:CHART_COLORS.grid},horzLines:{color:CHART_COLORS.grid}},
+rightPriceScale:{borderColor:CHART_COLORS.grid},
+timeScale:{borderColor:CHART_COLORS.grid,timeVisible:true,secondsVisible:false},
+crosshair:{mode:0}
+});
+const series=chart.addCandlestickSeries({
+upColor:CHART_COLORS.up,downColor:CHART_COLORS.down,
+borderUpColor:CHART_COLORS.up,borderDownColor:CHART_COLORS.down,
+wickUpColor:CHART_COLORS.up,wickDownColor:CHART_COLORS.down
+});
+const resizeHandler=()=>chart.applyOptions({width:el.clientWidth,height:el.clientHeight});
+window.addEventListener('resize',resizeHandler);
+return {chart,series,resizeHandler};
+}
+
+function destroyChartEntry(entry){
+if(!entry)return;
+if(entry.pollTimer)clearInterval(entry.pollTimer);
+if(entry.resizeHandler)window.removeEventListener('resize',entry.resizeHandler);
+try{entry.chart.remove()}catch(e){}
+const idx=liveCharts.indexOf(entry);
+if(idx>-1)liveCharts.splice(idx,1);
+}
+
+/* ---- BTC: real historical candles from Binance ---- */
+async function loadBinanceCandles(tf,limit=120){
+try{
+const res=await fetch(BINANCE_KLINES_URL+'?symbol=BTCUSDT&interval='+TF_CONFIG[tf].binanceInterval+'&limit='+limit);
+if(!res.ok)throw new Error('Binance request failed: '+res.status);
+const rows=await res.json();
+return rows.map(r=>({time:Math.floor(r[0]/1000),open:+r[1],high:+r[2],low:+r[3],close:+r[4]}));
+}catch(err){
+console.error('Binance candles error:',err);
+return [];
+}
+}
+
+async function refreshBtcChart(entry){
+const candles=await loadBinanceCandles(entry.tf);
+if(!candles.length)return;
+entry.series.setData(candles);
+entry.chart.timeScale().fitContent();
+const last=candles[candles.length-1];
+const first=candles[0];
+updatePriceDisplay(entry.priceEl,entry.changeEl,last.close,first.open);
+}
+
+/* Re-fetches the full candle set from Binance every BTC_REFRESH_MS so the
+   last (still-forming) candle keeps updating live rather than only
+   showing closed candles. */
+function startBtcPolling(entry){
+refreshBtcChart(entry);
+entry.pollTimer=setInterval(()=>refreshBtcChart(entry),BTC_REFRESH_MS);
+}
+
+/* ---- Gold: live candles built tick-by-tick from GoldAPI ---- */
+async function fetchGoldPrice(){
+try{
+const res=await fetch(GOLDAPI_URL,{headers:{'x-access-token':GOLDAPI_KEY}});
+if(!res.ok)throw new Error('GoldAPI request failed: '+res.status);
+const data=await res.json();
+return Number(data.price);
+}catch(err){
+console.error('GoldAPI price error:',err);
+return null;
+}
+}
+
+function upsertGoldCandle(entry,price){
+if(!Number.isFinite(price))return;
+const bucketMs=TF_CONFIG[entry.tf].bucketMs;
+const bucketTime=Math.floor(Date.now()/bucketMs)*bucketMs/1000; // seconds, aligned to the timeframe bucket
+
+if(!entry.lastCandle||entry.lastCandle.time!==bucketTime){
+entry.lastCandle={time:bucketTime,open:price,high:price,low:price,close:price};
+}else{
+entry.lastCandle.high=Math.max(entry.lastCandle.high,price);
+entry.lastCandle.low=Math.min(entry.lastCandle.low,price);
+entry.lastCandle.close=price;
+}
+entry.series.update(entry.lastCandle);
+
+if(!entry.firstPrice)entry.firstPrice=price;
+updatePriceDisplay(entry.priceEl,entry.changeEl,price,entry.firstPrice);
+}
+
+/* Every currently-visible gold chart shares one poll loop, so only one
+   GoldAPI request goes out at a time no matter how many gold charts are
+   on screen (hero card + the big Markets section). */
+function goldEntries(){return liveCharts.filter(e=>e.kind==='XAU')}
+
+async function pollGold(){
+const price=await fetchGoldPrice();
+if(price===null)return;
+goldEntries().forEach(entry=>upsertGoldCandle(entry,price));
+}
+
+function ensureGoldPolling(){
+if(goldTickTimer)return;
+pollGold();
+goldTickTimer=setInterval(pollGold,GOLD_POLL_MS);
+}
+
+function updatePriceDisplay(priceEl,changeEl,price,refPrice){
+if(priceEl)priceEl.textContent='$'+price.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+if(changeEl&&Number.isFinite(refPrice)&&refPrice>0){
+const diff=price-refPrice;
+const pct=(diff/refPrice)*100;
+changeEl.textContent=(diff>=0?'+':'')+diff.toFixed(2)+' ('+(diff>=0?'+':'')+pct.toFixed(2)+'%)';
+changeEl.classList.toggle('up',diff>=0);
+changeEl.classList.toggle('down',diff<0);
+}
+}
+
+/* ---- Wiring: hero mini card (asset tabs + timeframe chips) ---- */
+let heroEntry=null;
+
+function buildHeroChart(){
+destroyChartEntry(heroEntry);
+const built=makeCandleChart('heroChart');
+if(!built)return;
+heroEntry={...built,kind:heroAsset,tf:heroTf,priceEl:$('heroPrice'),changeEl:$('heroChange'),lastCandle:null,firstPrice:null};
+liveCharts.push(heroEntry);
+if(heroAsset==='BTC'){
+startBtcPolling(heroEntry);
+}else{
+ensureGoldPolling();
+}
+}
+
+function switchHeroAsset(asset){
+heroAsset=asset;
+document.querySelectorAll('#heroAssetTabs .market-tab').forEach(b=>b.classList.toggle('active',b.dataset.asset===asset));
+buildHeroChart();
+}
+
+/* ---- Wiring: big Markets section (two permanent panels) ---- */
+let bigBtcEntry=null;
+let bigGoldEntry=null;
+
+function buildBigCharts(){
+destroyChartEntry(bigBtcEntry);
+destroyChartEntry(bigGoldEntry);
+
+const builtBtc=makeCandleChart('bigBtcChart');
+if(builtBtc){
+bigBtcEntry={...builtBtc,kind:'BTC',tf:bigTf,priceEl:$('bigBtcPrice'),changeEl:$('bigBtcChange')};
+liveCharts.push(bigBtcEntry);
+startBtcPolling(bigBtcEntry);
+}
+
+const builtGold=makeCandleChart('bigGoldChart');
+if(builtGold){
+bigGoldEntry={...builtGold,kind:'XAU',tf:bigTf,priceEl:$('bigGoldPrice'),changeEl:$('bigGoldChange'),lastCandle:null,firstPrice:null};
+liveCharts.push(bigGoldEntry);
+ensureGoldPolling();
+}
+}
+
+function wireTfRow(containerId,onChange){
+const row=$(containerId);
+if(!row)return;
+row.querySelectorAll('.tf-chip').forEach(btn=>{
+btn.addEventListener('click',()=>{
+row.querySelectorAll('.tf-chip').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+onChange(btn.dataset.tf);
+});
+});
+}
+
+function initLiveMarkets(){
+if(typeof LightweightCharts==='undefined'){
+console.error('lightweight-charts failed to load — live market charts disabled.');
+return;
+}
+wireTfRow('heroTfRow',(tf)=>{heroTf=tf;buildHeroChart()});
+wireTfRow('marketsTfRow',(tf)=>{bigTf=tf;buildBigCharts()});
+buildHeroChart();
+buildBigCharts();
+}
+
 /* -------------------------- 25. Page bootstrap / event listeners -------------------------- */
 document.addEventListener('DOMContentLoaded',async function(){
 if(!initSupabase())return;
@@ -1879,6 +2132,7 @@ captureReferralCodeFromUrl();
 updateCalculator();
 loadLiveStats();
 selectDepositNetwork('TRC20');
+initLiveMarkets();
 
 const slider=$('amtSlider');
 if(slider)slider.addEventListener('input',updateCalculator);
