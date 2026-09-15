@@ -1,58 +1,84 @@
-const adjustmentType=document.getElementById("adjustmentType");
-const percentage=document.getElementById("percentage");
-const expiryValue=document.getElementById("expiryValue");
-const expiryUnit=document.getElementById("expiryUnit");
-const generatedCode=document.getElementById("generatedCode");
-const generateBtn=document.getElementById("generateBtn");
-const message=document.getElementById("message");
-const historyList=document.getElementById("historyList");
-const logoutBtn=document.getElementById("logoutBtn");
-const SEQUENCE_KEY="pipzone_trade_code_sequence";
-const HISTORY_KEY="pipzone_trade_codes_history";
-let history=JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]");
+'use strict';
 
-function getNextSequence(){let sequence=Number(localStorage.getItem(SEQUENCE_KEY)||"0");sequence++;localStorage.setItem(SEQUENCE_KEY,sequence);return sequence}
-function formatCode(number){return "PZ-TRD-"+String(number).padStart(6,"0")}
-function calculateExpiry(value,unit){const now=new Date();if(unit==="minutes")now.setMinutes(now.getMinutes()+value);if(unit==="hours")now.setHours(now.getHours()+value);if(unit==="days")now.setDate(now.getDate()+value);return now}
-function formatDate(dateString){return new Date(dateString).toLocaleString()}
-function showMessage(text,type){message.textContent=text;message.className="message "+type;setTimeout(()=>{message.textContent="";message.className="message"},3000)}
-function isExpired(item){return new Date()>=new Date(item.expiresAt)}
-function escapeHtml(value){return String(value).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+const SUPABASE_URL='https://nzasmkplxzirnqeteclv.supabase.co';
+const SUPABASE_KEY='sb_publishable_ywmF35YANKsFEdZOs8wDdQ__jIezHTF';
+const client=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const $=id=>document.getElementById(id);
 
-function renderHistory(){
-if(!history.length){historyList.innerHTML='<div class="empty">No codes generated yet.</div>';return}
-historyList.innerHTML=history.slice().reverse().map(item=>{const expired=isExpired(item);return `<div class="history-item"><div class="history-top"><div class="code">${escapeHtml(item.code)}</div><div class="status ${expired?"expired":"active"}">${expired?"Expired":"Active"}</div></div><div class="history-details"><div>Type: ${escapeHtml(item.adjustmentType)}</div><div>Percentage: ${escapeHtml(String(item.percentage))}%</div><div>Created: ${formatDate(item.createdAt)}</div><div>Expires: ${formatDate(item.expiresAt)}</div></div></div>`}).join("")
+const clientSelect=$('clientSelect');
+const adjustmentType=$('adjustmentType');
+const percentage=$('percentage');
+const expiryValue=$('expiryValue');
+const expiryUnit=$('expiryUnit');
+const generatedCode=$('generatedCode');
+const generateBtn=$('generateBtn');
+const refreshBtn=$('refreshBtn');
+const message=$('message');
+const historyList=$('historyList');
+const logoutBtn=$('logoutBtn');
+
+function esc(value){return String(value??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function formatDate(value){return new Date(value).toLocaleString()}
+function showMessage(text,type='success'){message.textContent=text;message.className='message '+type}
+function clearMessage(){message.textContent='';message.className='message'}
+function getStatus(item){if(item.status==='used')return'used';if(new Date()>=new Date(item.expires_at))return'expired';return'active'}
+
+async function checkAdmin(){
+const {data:{session}}=await client.auth.getSession();
+if(!session){location.href='admin.html';return false}
+const {data:profile,error}=await client.from('profiles').select('role').eq('id',session.user.id).maybeSingle();
+if(error||profile?.role!=='admin'){await client.auth.signOut();location.href='admin.html';return false}
+return true;
 }
 
-generateBtn.addEventListener("click",()=>{
+async function loadClients(){
+const {data,error}=await client.from('profiles').select('id,full_name,first_name,last_name').eq('role','client').order('created_at',{ascending:false});
+if(error){showMessage(error.message,'error');clientSelect.innerHTML='<option value="">Unable to load clients</option>';return}
+clientSelect.innerHTML='<option value="">Select client</option>'+(data||[]).map(p=>{const name=p.full_name||[p.first_name,p.last_name].filter(Boolean).join(' ')||'Client';return`<option value="${esc(p.id)}">${esc(name)}</option>`}).join('');
+}
+
+async function loadHistory(){
+const {data,error}=await client.from('trade_codes').select('id,code,adjustment_type,percentage,expiry_value,expiry_unit,created_at,expires_at,status,target_user_id,used_at').order('created_at',{ascending:false});
+if(error){historyList.innerHTML=`<div class="empty">${esc(error.message)}</div>`;return}
+if(!data?.length){historyList.innerHTML='<div class="empty">No codes generated yet.</div>';return}
+const ids=[...new Set(data.map(x=>x.target_user_id).filter(Boolean))];
+let names={};
+if(ids.length){const {data:profiles}=await client.from('profiles').select('id,full_name,first_name,last_name').in('id',ids);(profiles||[]).forEach(p=>{names[p.id]=p.full_name||[p.first_name,p.last_name].filter(Boolean).join(' ')||'Client'})}
+historyList.innerHTML=data.map(item=>{const status=getStatus(item);return`<div class="history-item"><div class="history-top"><div class="code">${esc(item.code)}</div><div class="status ${status}">${status}</div></div><div class="history-details"><div>Client: <strong>${esc(names[item.target_user_id]||'Unknown')}</strong></div><div>Type: <strong>${esc(item.adjustment_type)}</strong></div><div>Percentage: <strong>${esc(item.percentage)}%</strong></div><div>Expiry: <strong>${esc(item.expiry_value)} ${esc(item.expiry_unit)}</strong></div><div>Created: <strong>${esc(formatDate(item.created_at))}</strong></div><div>Expires: <strong>${esc(formatDate(item.expires_at))}</strong></div><div>Used: <strong>${item.used_at?esc(formatDate(item.used_at)):'Not used'}</strong></div></div><div class="history-actions"><button class="delete-btn" type="button" data-delete-code="${esc(item.id)}">Delete</button></div></div>`}).join('');
+}
+
+generateBtn.addEventListener('click',async()=>{
+clearMessage();
+const targetUserId=clientSelect.value;
 const type=adjustmentType.value;
 const percent=Number(percentage.value);
 const expiry=Number(expiryValue.value);
 const unit=expiryUnit.value;
-if(!Number.isFinite(percent)||percent<=0||percent>100){showMessage("Enter a valid percentage.","error");return}
-if(!Number.isInteger(expiry)||expiry<1){showMessage("Enter a valid expiry time.","error");return}
-const code=formatCode(getNextSequence());
-const createdAt=new Date();
-const expiresAt=calculateExpiry(expiry,unit);
-const newCode={code,adjustmentType:type,percentage:percent,expiryValue:expiry,expiryUnit:unit,createdAt:createdAt.toISOString(),expiresAt:expiresAt.toISOString(),status:"active"};
-history.push(newCode);
-localStorage.setItem(HISTORY_KEY,JSON.stringify(history));
-generatedCode.value=code;
-showMessage(`Code generated. Expires ${formatDate(newCode.expiresAt)}`,"success");
-renderHistory();
-});
-
-logoutBtn.addEventListener("click",async()=>{
+if(!targetUserId){showMessage('Select a client first.','error');return}
+if(!Number.isFinite(percent)||percent<=0||percent>100){showMessage('Enter a valid percentage.','error');return}
+if(!Number.isInteger(expiry)||expiry<1){showMessage('Enter a valid expiry time.','error');return}
+generateBtn.disabled=true;generateBtn.textContent='Generating...';
 try{
-if(typeof supabase!=="undefined"&&supabase.auth){
-await supabase.auth.signOut();
-}
-location.href="admin.html";
-}catch(error){
-console.error(error);
-location.href="admin.html";
-}
+const {data,error}=await client.rpc('create_trade_code',{p_adjustment_type:type,p_percentage:percent,p_expiry_value:expiry,p_expiry_unit:unit,p_target_user_id:targetUserId});
+if(error)throw error;
+generatedCode.value=data.code;showMessage(`Code ${data.code} generated. Expires ${formatDate(data.expires_at)}.`,'success');await loadHistory();
+}catch(error){console.error(error);showMessage(error.message||'Unable to generate code.','error')}
+finally{generateBtn.disabled=false;generateBtn.textContent='Generate Code'}
 });
 
-setInterval(renderHistory,30000);
-renderHistory();
+historyList.addEventListener('click',async event=>{
+const button=event.target.closest('[data-delete-code]');
+if(!button)return;
+const id=button.dataset.deleteCode;
+if(!confirm('Delete this trade code history record?'))return;
+button.disabled=true;
+const {data,error}=await client.rpc('delete_trade_code',{p_trade_code_id:id});
+if(error){showMessage(error.message,'error');button.disabled=false;return}
+showMessage(data?'Trade code deleted.':'Trade code was already deleted.','success');await loadHistory();
+});
+
+refreshBtn.addEventListener('click',loadHistory);
+logoutBtn.addEventListener('click',async()=>{await client.auth.signOut();location.href='admin.html'});
+
+(async()=>{if(!(await checkAdmin()))return;await Promise.all([loadClients(),loadHistory()])})();
+setInterval(loadHistory,30000);
