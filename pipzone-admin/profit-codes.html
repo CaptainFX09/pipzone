@@ -1,14 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PipZoNe — Trade Code</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="profit-codes.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>PipZoNe — Trade Code</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="profit-codes.css">
 </head>
+
 <body>
-<script src="profit-codes.js"></script>
+
+  <div class="container">
+
+    <div class="header">
+      <div>
+        <h1>Pip<span>ZoNe</span></h1>
+        <p>Trade Code</p>
+      </div>
+
+      <button class="back-btn" onclick="location.href='admin.html'">
+        Dashboard
+      </button>
+    </div>
+
+
+    <!-- Adjustment Type -->
+    <div class="field">
+      <label for="adjustmentType">Adjustment Type</label>
+
+      <select id="adjustmentType">
+        <option value="increase">Increase</option>
+        <option value="decrease">Decrease</option>
+      </select>
+    </div>
+
+
+    <!-- Adjustment Percentage -->
+    <div class="field">
+      <label for="percentage">Adjustment Percentage</label>
+
+      <input
+        id="percentage"
+        type="number"
+        min="0.01"
+        max="100"
+        step="0.01"
+        placeholder="e.g. 1.50"
+      >
+    </div>
+
+
+    <!-- Generated Code -->
+    <div class="field">
+      <label for="generatedCode">Generated Code</label>
+
+      <input
+        id="generatedCode"
+        type="text"
+        readonly
+        placeholder="PZ-000001"
+      >
+    </div>
+
+
+    <!-- Generate Button -->
+    <button id="generateBtn" class="generate-btn">
+      Generate Code
+    </button>
+
+
+    <div id="message" class="message"></div>
+
+
+    <!-- History -->
+    <div class="history">
+
+      <h2>Generated Codes History</h2>
+
+      <div id="historyList">
+        <div class="empty">
+          No codes generated yet.
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script src="profit-codes.js"></script>
+
 </body>
 </html>
