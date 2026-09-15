@@ -2052,7 +2052,7 @@ else if(data?.session){await loadDashboard()}
     latest.low = Math.min(latest.low, latest.close);
   }
 
-  let currentMarket = "gold";
+    let currentMarket = "gold";
   let candles = [];
   let currentPrice = markets.gold.basePrice;
   let lastPrice = currentPrice;
@@ -2060,7 +2060,21 @@ else if(data?.session){await loadDashboard()}
   let lastTime = 0;
   let elapsed = 0;
 
-  const candleCount = 42;
+  /* Timeframe presets - bigger timeframe = bigger price swings (volMult)
+     and fewer visible candles (candleCount), like a real chart zoomed out. */
+  const TIMEFRAMES = {
+    "5m":  { volMult: 0.4, candleCount: 60 },
+    "15m": { volMult: 1.0, candleCount: 42 },
+    "1H":  { volMult: 2.2, candleCount: 30 },
+    "4H":  { volMult: 4.5, candleCount: 24 }
+  };
+  let currentTimeframe = "15m";
+  let candleCount = TIMEFRAMES[currentTimeframe].candleCount;
+
+  function getVolatility(market) {
+    const mult = TIMEFRAMES[currentTimeframe]?.volMult || 1;
+    return market.volatility * mult;
+  }
 
   function randomBetween(min, max) {
     return Math.random() * (max - min) + min;
@@ -2074,18 +2088,15 @@ else if(data?.session){await loadDashboard()}
 
     for (let i = 0; i < candleCount; i++) {
       const open = price;
-      const movement = randomBetween(
-        -market.volatility,
-        market.volatility
-      );
+            const vol = getVolatility(market);
+      const movement = randomBetween(-vol, vol);
 
       const close = open + movement;
       const high = Math.max(open, close) +
-        randomBetween(0, market.volatility * 0.8);
+        randomBetween(0, vol * 0.8);
 
       const low = Math.min(open, close) -
-        randomBetween(0, market.volatility * 0.8);
-
+        randomBetween(0, vol * 0.8);
       candles.push({ open, close, high, low });
       price = close;
     }
@@ -2226,10 +2237,8 @@ else if(data?.session){await loadDashboard()}
     const market = markets[currentMarket];
     const latest = candles[candles.length - 1];
 
-    const movement = randomBetween(
-      -market.volatility * 0.22,
-      market.volatility * 0.22
-    );
+    const vol = getVolatility(market);
+    const movement = randomBetween(-vol * 0.22, vol * 0.22);
 
     latest.close += movement;
     latest.high = Math.max(latest.high, latest.close);
@@ -2260,16 +2269,14 @@ else if(data?.session){await loadDashboard()}
     const market = markets[currentMarket];
     const open = candles[candles.length - 1].close;
 
-    const close = open + randomBetween(
-      -market.volatility,
-      market.volatility
-    );
+        const vol = getVolatility(market);
+    const close = open + randomBetween(-vol, vol);
 
     const high = Math.max(open, close) +
-      randomBetween(0, market.volatility * 0.7);
+      randomBetween(0, vol * 0.7);
 
     const low = Math.min(open, close) -
-      randomBetween(0, market.volatility * 0.7);
+      randomBetween(0, vol * 0.7);
 
     candles.push({ open, close, high, low });
 
@@ -2337,6 +2344,30 @@ else if(data?.session){await loadDashboard()}
   tabs.forEach(tab => {
     tab.addEventListener("click", function () {
       switchMarket(tab.dataset.market);
+    });
+  });
+
+  /* Timeframe buttons (5m / 15m / 1H / 4H) - switches volatility/candle
+     density and rebuilds the chart from the current live price, same
+     idea as switchMarket() above but for zoom level instead of asset. */
+  const timeframeButtons = document.querySelectorAll(".market-timeframe");
+
+  function switchTimeframe(tf) {
+    if (!TIMEFRAMES[tf]) return;
+    currentTimeframe = tf;
+    candleCount = TIMEFRAMES[tf].candleCount;
+
+    timeframeButtons.forEach(btn => {
+      btn.classList.toggle("active", btn.textContent.trim() === tf);
+    });
+
+    createCandles();
+    resizeCanvas();
+  }
+
+  timeframeButtons.forEach(btn => {
+    btn.addEventListener("click", function () {
+      switchTimeframe(btn.textContent.trim());
     });
   });
 
