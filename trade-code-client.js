@@ -1,3 +1,4 @@
+'use strict';
 (function(){
 const SUPABASE_URL='https://nzasmkplxzirnqeteclv.supabase.co';
 const SUPABASE_KEY='sb_publishable_ywmF35YANKsFEdZOs8wDdQ__jIezHTF';
