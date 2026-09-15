@@ -507,3 +507,71 @@ th{
   font-size:12px;
   color:var(--green)
 }
+/* =========================================================
+   15. CLIENT ANNOUNCEMENT (RICH TEXT EDITOR, CHECKLIST, RESULT)
+========================================================= */
+
+.ann-editor{
+  background:#091525;
+  border-radius:10px;
+  border:1px solid var(--line);
+  min-height:160px
+}
+
+.ql-toolbar.ql-snow{
+  border-color:var(--line);
+  border-radius:10px 10px 0 0;
+  background:#0d1c2f
+}
+
+.ql-container.ql-snow{
+  border-color:var(--line);
+  border-radius:0 0 10px 10px;
+  color:#fff
+}
+
+.ann-recipient-row{
+  display:flex;
+  gap:18px;
+  margin:16px 0
+}
+
+.ann-radio{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  color:var(--text);
+  cursor:pointer
+}
+
+.ann-client-list{
+  max-height:220px;
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:10px;
+  margin-bottom:16px
+}
+
+.ann-client-item{
+  display:block;
+  padding:6px 4px;
+  cursor:pointer
+}
+
+.ann-client-item small{
+  color:var(--muted);
+  margin-left:6px
+}
+
+.ann-result{
+  margin-top:12px;
+  font-size:13px;
+  color:var(--green)
+}
+
+.ann-history-title{
+  margin-top:28px;
+  padding-top:18px;
+  border-top:1px solid var(--line)
+}
