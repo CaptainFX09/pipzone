@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -7,15 +6,29 @@
 <title>PipZoNe — Announcements</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
+<!-- =========================================================
+     EXTERNAL LIBRARY: SUPABASE CLIENT
+========================================================= -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<!-- =========================================================
+     EXTERNAL LIBRARY: QUILL (RICH TEXT EDITOR)
+========================================================= -->
 <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
 
+<!-- =========================================================
+     STYLES (shared admin styles.css)
+========================================================= -->
 <link rel="stylesheet" href="styles.css">
+
 </head>
 
 <body>
+
+<!-- =========================================================
+     LOGIN VIEW
+========================================================= -->
 
 <div id="loginView" class="login">
 
@@ -23,7 +36,9 @@
     Pip<span style="color:var(--gold)">ZoNe</span>
   </h1>
 
-  <p class="sub">Admin Panel Login</p>
+  <p class="sub">
+    Admin Panel Login
+  </p>
 
   <div id="loginMsg" class="notice"></div>
 
@@ -40,24 +55,25 @@
   <div class="field">
     <label>Password</label>
 
-<div class="pw-wrap">
-  <input
-    id="password"
-    type="password"
-    autocomplete="current-password"
-    placeholder="Password"
-  >
+    <div class="pw-wrap">
 
-  <button
-    type="button"
-    class="pw-toggle"
-    onclick="togglePw('password',this)"
-    aria-label="Show password"
-  >
-    👁
-  </button>
-</div>
+      <input
+        id="password"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Password"
+      >
 
+      <button
+        type="button"
+        class="pw-toggle"
+        onclick="togglePw('password',this)"
+        aria-label="Show password"
+      >
+        👁
+      </button>
+
+    </div>
   </div>
 
   <button class="btn" id="loginBtn">
@@ -65,283 +81,203 @@
   </button>
 
   <div class="danger-note">
-    Only an account whose profile role is <b>admin</b> can access this panel.
+    Only an account whose profile role is
+    <b>admin</b>
+    can access this panel.
   </div>
 
 </div>
+
+
+<!-- =========================================================
+     ANNOUNCEMENTS APP
+========================================================= -->
 
 <div id="app" class="hidden">
 
 <div class="wrap">
 
+  <!-- ---- TOP BAR ---- -->
+
   <div class="top">
-<div>
 
-  <div class="brand">
-    PipZoNe <span>Announcements</span>
-  </div>
+    <div>
 
-  <div class="sub" id="adminEmail"></div>
+      <div class="brand">
+        PipZoNe <span>Announcements</span>
+      </div>
 
-</div>
+      <div class="sub" id="adminEmail"></div>
 
-<div>
+    </div>
 
-  <button
-    class="btn"
-    onclick="location.href='index.html'"
-    type="button"
-  >
-    ← Dashboard
-  </button>
+    <div>
 
-  <button
-    class="btn logout"
-    id="logoutBtn"
-    type="button"
-  >
-    Logout
-  </button>
+      <button class="btn" onclick="location.href='index.html'" type="button">
+        ← Dashboard
+      </button>
 
-</div>
+      <button class="btn logout" id="logoutBtn" type="button">
+        Logout
+      </button>
+
+    </div>
 
   </div>
+
 
   <div id="msg" class="notice"></div>
 
-  <!-- =====================================================
-       CLIENT ANNOUNCEMENT
-  ====================================================== -->
+
+  <!-- =========================================================
+       CLIENT ANNOUNCEMENT SECTION
+  ========================================================= -->
 
   <div class="section">
-<h3>📢 Client Announcement</h3>
+
+    <h3>
+      📢 Client Announcement
+    </h3>
 
 
-<!-- EMAIL TYPE -->
+    <!-- =====================================================
+         EMAIL TYPE
+    ====================================================== -->
 
-<div class="field">
+    <div class="field">
 
-  <label>Email Type</label>
+      <label>Email Type</label>
 
-  <div class="ann-email-type-row">
+      <div class="ann-email-type-row">
 
-    <label class="ann-type-option">
+        <label class="ann-type-option">
+
+          <input
+            type="radio"
+            name="annEmailType"
+            value="announcement"
+            id="annEmailTypeAnnouncement"
+            checked
+          >
+
+          <span class="ann-type-content">
+            <strong>📢 Announcement</strong>
+            <small>General news, notices or important information</small>
+          </span>
+
+        </label>
+
+
+        <label class="ann-type-option">
+
+          <input
+            type="radio"
+            name="annEmailType"
+            value="update"
+            id="annEmailTypeUpdate"
+          >
+
+          <span class="ann-type-content">
+            <strong>⚙️ Account Update</strong>
+            <small>Client or account-related update</small>
+          </span>
+
+        </label>
+
+      </div>
+
+    </div>
+
+
+    <div class="field">
+
+      <label>Subject</label>
 
       <input
-        type="radio"
-        name="annEmailType"
-        value="announcement"
-        id="annEmailTypeAnnouncement"
-        checked
+        id="annSubject"
+        type="text"
+        placeholder="e.g. New PipZoNe Feature 🚀"
       >
 
-      <span class="ann-type-content">
-        <strong>📢 Announcement</strong>
-        <small>
-          General news, notices or important information
-        </small>
-      </span>
-
-    </label>
+    </div>
 
 
-    <label class="ann-type-option">
+    <div class="field">
 
-      <input
-        type="radio"
-        name="annEmailType"
-        value="update"
-        id="annEmailTypeUpdate"
-      >
+      <label>Message</label>
 
-      <span class="ann-type-content">
-        <strong>⚙️ Account Update</strong>
-        <small>
-          Client or account-related update
-        </small>
-      </span>
+      <div id="annEditor" class="ann-editor"></div>
 
-    </label>
+    </div>
 
 
-    <!-- NEW -->
+    <div class="ann-recipient-row">
 
-    <label class="ann-type-option">
+      <label class="ann-radio">
 
-      <input
-        type="radio"
-        name="annEmailType"
-        value="trade_code"
-        id="annEmailTypeTradeCode"
-      >
+        <input
+          type="radio"
+          name="annRecipientType"
+          value="all"
+          id="annRecipientAll"
+          checked
+        >
 
-      <span class="ann-type-content">
-        <strong>📈 Today Trade Code</strong>
-        <small>
-          Send today's trade code to clients
-        </small>
-      </span>
+        All Clients
 
-    </label>
-
-  </div>
-
-</div>
+      </label>
 
 
-<!-- =================================================
-     TODAY TRADE CODE FIELDS
-================================================== -->
+      <label class="ann-radio">
 
-<div id="tradeCodeFields" class="hidden">
+        <input
+          type="radio"
+          name="annRecipientType"
+          value="selected"
+          id="annRecipientSelected"
+        >
 
-  <div class="field">
+        Select Clients
 
-    <label>Today's Trade Code</label>
+      </label>
 
-    <input
-      id="tradeCode"
-      type="text"
-      placeholder="e.g. PZ-TRD-000001"
+    </div>
+
+
+    <div id="annClientListWrap" class="ann-client-list hidden"></div>
+
+
+    <button
+      class="btn"
+      id="sendAnnouncementBtn"
+      type="button"
     >
+      Send Announcement
+    </button>
+
+
+    <div id="annResult" class="ann-result"></div>
 
   </div>
 
 
-  <div class="field">
-
-    <label>Adjustment Type</label>
-
-    <select id="tradeAdjustmentType">
-
-      <option value="profit">
-        Profit
-      </option>
-
-      <option value="loss">
-        Loss
-      </option>
-
-    </select>
-
-  </div>
-
-
-  <div class="field">
-
-    <label>Adjustment Percentage (%)</label>
-
-    <input
-      id="tradeAdjustmentPercentage"
-      type="number"
-      step="0.01"
-      placeholder="e.g. 5"
-    >
-
-  </div>
-
-</div>
-
-
-<!-- SUBJECT -->
-
-<div class="field">
-
-  <label>Subject</label>
-
-  <input
-    id="annSubject"
-    type="text"
-    placeholder="e.g. New PipZoNe Feature 🚀"
-  >
-
-</div>
-
-
-<!-- MESSAGE -->
-
-<div class="field">
-
-  <label>Message</label>
-
-  <div
-    id="annEditor"
-    class="ann-editor"
-  ></div>
-
-</div>
-
-
-<!-- RECIPIENT -->
-
-<div class="ann-recipient-row">
-
-  <label class="ann-radio">
-
-    <input
-      type="radio"
-      name="annRecipientType"
-      value="all"
-      id="annRecipientAll"
-      checked
-    >
-
-    All Clients
-
-  </label>
-
-
-  <label class="ann-radio">
-
-    <input
-      type="radio"
-      name="annRecipientType"
-      value="selected"
-      id="annRecipientSelected"
-    >
-
-    Select Clients
-
-  </label>
-
-</div>
-
-
-<div
-  id="annClientListWrap"
-  class="ann-client-list hidden"
-></div>
-
-
-<button
-  class="btn"
-  id="sendAnnouncementBtn"
-  type="button"
->
-  Send Announcement
-</button>
-
-
-<div
-  id="annResult"
-  class="ann-result"
-></div>
-
-  </div>
-
-  <!-- =====================================================
-       ANNOUNCEMENT HISTORY
-  ====================================================== -->
+  <!-- =========================================================
+       ANNOUNCEMENT HISTORY SECTION
+  ========================================================= -->
 
   <div class="section">
-<h3>Announcement History</h3>
 
-<div
-  id="announcementHistoryTable"
-  class="table-wrap"
-></div>
+    <h3>
+      Announcement History
+    </h3>
+
+    <div
+      id="announcementHistoryTable"
+      class="table-wrap"
+    ></div>
 
   </div>
+
 
   <div class="footer">
     PipZoNe Admin Panel • Never put the Supabase service-role key in this file.
@@ -350,6 +286,11 @@
 </div>
 
 </div>
+
+
+<!-- =========================================================
+     APP LOGIC
+========================================================= -->
 
 <script src="announcements.js"></script>
 
