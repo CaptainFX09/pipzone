@@ -9,10 +9,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="this.onerror=null;this.src='https://unpkg.com/@supabase/supabase-js@2'"></script>
 
+<!-- Live candlestick charts (BTC & Gold) — TradingView's free "lightweight-charts" library -->
+<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+
 <!-- MAINSITE STYLES: see mainsite.css for the full stylesheet (organized by section) -->
 <link rel="stylesheet" href="mainsite.css">
-<!-- CANDLESTICK ANIMATION STYLES -->
-<link rel="stylesheet" href="candlestick-chart.css">
 </head>
 
 <body>
@@ -53,73 +54,38 @@
 </div>
 </div>
 
-<!-- ==================== ANIMATED CANDLESTICK MARKET PANEL (illustrative only) ====================
-     Purely decorative — ticker prices and the candlestick chart are
-     generated and animated client-side by candlestick-chart.js.
-     Never fed by any live market feed, never tied to a real account. -->
-<div class="market-animation-panel">
-<div class="market-panel-header">
-<div>
-<span class="market-panel-label">LIVE MARKET</span>
-<h3>Trading Overview</h3>
-</div>
-<span class="market-status">
-<span class="status-dot"></span>
-DEMO
-</span>
-</div>
+<!-- ==================== LIVE MARKET CARD (BTC / Gold) ====================
+     Replaces the old static "Sample account · illustrative" ledger card.
+     Shows a live candlestick chart for BTC/USDT or XAU/USD (Gold), switchable
+     via the tabs, with a shared timeframe row (1m/5m/15m/1h/4h). Wiring is
+     in mainsite.js section 31 (initLiveMarkets / buildHeroChart). -->
+<div class="market-card" id="heroMarketCard">
 
-<div class="market-tabs">
-<button class="market-tab active" data-market="gold">
-<span class="asset-icon gold-icon">Au</span>
-<span>
-<strong>Gold</strong>
-<small>XAUUSD</small>
-</span>
-</button>
-
-<button class="market-tab" data-market="btc">
-<span class="asset-icon btc-icon">₿</span>
-<span>
-<strong>Bitcoin</strong>
-<small>BTCUSD</small>
-</span>
-</button>
+<div class="market-card-top">
+<div class="market-tabs" id="heroAssetTabs">
+<button type="button" class="market-tab active" data-asset="BTC" onclick="switchHeroAsset('BTC')">₿ BTC/USDT</button>
+<button type="button" class="market-tab" data-asset="XAU" onclick="switchHeroAsset('XAU')">🥇 XAU/USD</button>
+</div>
+<div class="live-dot-wrap"><span class="live-dot"></span>Live</div>
 </div>
 
 <div class="market-price-row">
-<div>
-<span id="market-symbol">XAUUSD</span>
-<div class="market-price" id="market-price">$2,650.00</div>
-<span class="market-change positive" id="market-change">+0.00%</span>
-</div>
-<span class="market-timeframe">1m</span>
+<div class="market-price" id="heroPrice">—</div>
+<div class="market-change" id="heroChange">—</div>
 </div>
 
-<div class="candlestick-chart-wrap">
-<div class="chart-y-labels">
-<span>HIGH</span>
-<span>—</span>
-<span>—</span>
-<span>LOW</span>
+<div class="market-tf-row" id="heroTfRow">
+<button type="button" class="tf-chip active" data-tf="1m">1m</button>
+<button type="button" class="tf-chip" data-tf="5m">5m</button>
+<button type="button" class="tf-chip" data-tf="15m">15m</button>
+<button type="button" class="tf-chip" data-tf="1h">1h</button>
+<button type="button" class="tf-chip" data-tf="4h">4h</button>
 </div>
 
-<canvas id="candlestick-chart"></canvas>
-
-<div class="chart-bottom-labels">
-<span>10:00</span>
-<span>10:30</span>
-<span>11:00</span>
-<span>NOW</span>
-</div>
+<div class="market-chart" id="heroChart"></div>
+<div class="note">Live market data — for information only, not trading advice or a signal to invest.</div>
 </div>
 
-<div class="market-panel-footer">
-<span><span class="legend-candle up"></span> Bullish</span>
-<span><span class="legend-candle down"></span> Bearish</span>
-<span class="chart-live-label">● Simulated movement</span>
-</div>
-</div>
 </div>
 </section>
 
@@ -218,6 +184,54 @@ DEMO
 <tr><td>August</td><td><span class="up">+$620</span><div class="bar-track"><div class="bar-fill" style="width:77%"></div></div></td><td>$372</td><td>$248</td></tr>
 </tbody>
 </table>
+</div>
+</section>
+
+<!-- ==================== LIVE MARKETS (BTC & GOLD) ====================
+     Bigger, standalone version of the hero mini-widget — both BTC and
+     Gold shown side by side, sharing one timeframe row. Wiring is in
+     mainsite.js section 31 (initLiveMarkets / buildBigCharts). -->
+<section id="markets">
+<div class="wrap">
+<div class="sec-head">
+<div class="sec-tag">Live <span>Markets</span></div>
+<div>
+<h2>BTC &amp; Gold, updated live.</h2>
+<p class="sec-desc">Bitcoin candles are pulled live from Binance market data. Gold (XAU/USD) price is pulled live from GoldAPI.io and built into candles in real time. Same live feed on every device — mobile or desktop.</p>
+</div>
+</div>
+
+<div class="market-tf-row market-tf-row-big" id="marketsTfRow">
+<button type="button" class="tf-chip active" data-tf="1m">1m</button>
+<button type="button" class="tf-chip" data-tf="5m">5m</button>
+<button type="button" class="tf-chip" data-tf="15m">15m</button>
+<button type="button" class="tf-chip" data-tf="1h">1h</button>
+<button type="button" class="tf-chip" data-tf="4h">4h</button>
+</div>
+
+<div class="markets-grid">
+
+<div class="market-panel">
+<div class="market-panel-head">
+<div class="market-panel-title">₿ BTC / USDT</div>
+<div class="market-panel-price" id="bigBtcPrice">—</div>
+<div class="market-panel-change" id="bigBtcChange">—</div>
+</div>
+<div class="market-chart market-chart-big" id="bigBtcChart"></div>
+</div>
+
+<div class="market-panel">
+<div class="market-panel-head">
+<div class="market-panel-title">🥇 XAU / USD (Gold)</div>
+<div class="market-panel-price" id="bigGoldPrice">—</div>
+<div class="market-panel-change" id="bigGoldChange">—</div>
+</div>
+<div class="market-chart market-chart-big" id="bigGoldChart"></div>
+</div>
+
+</div>
+
+<div class="note" style="margin-top:16px">Market data shown for information only. It is not investment advice and is not connected to your account balance or trading results above.</div>
 </div>
 </section>
 
@@ -751,7 +765,7 @@ PipZoNe is a managed trading arrangement, not a bank or a regulated fund. Tradin
 fills in the address automatically, avoiding copy-paste mistakes. -->
 <div class="form-group" style="text-align:center">
 <label>Scan to Deposit</label>
-<img id="depositQrImage" src="qr-trc20.png" alt="Deposit QR code" style="width:180px;height:180px;border-radius:8px;border:1px solid var(--line);margin-top:6px">
+<img id="depositQrImage" src="qr-trc20.jpg" alt="Deposit QR code" style="width:180px;height:180px;border-radius:8px;border:1px solid var(--line);margin-top:6px">
 </div>
 </div>
 
@@ -1073,8 +1087,6 @@ Remember your password?
 
 <!-- MAINSITE SCRIPT: see mainsite.js for all logic (organized by section) -->
 <script src="mainsite.js"></script>
-<!-- CANDLESTICK ANIMATION SCRIPT -->
-<script src="candlestick-chart.js"></script>
 
 </body>
 </html>
