@@ -28,7 +28,6 @@
 
 <!-- =========================================================
      LOGIN VIEW
-     Shown when there is no active/admin session.
 ========================================================= -->
 
 <div id="loginView" class="login">
@@ -91,15 +90,14 @@
 
 
 <!-- =========================================================
-     ANNOUNCEMENTS APP (main page content)
-     Shown once an authenticated admin session is confirmed.
+     ANNOUNCEMENTS APP
 ========================================================= -->
 
 <div id="app" class="hidden">
 
 <div class="wrap">
 
-  <!-- ---- TOP BAR: brand, admin email, back/logout ---- -->
+  <!-- ---- TOP BAR ---- -->
 
   <div class="top">
 
@@ -133,8 +131,6 @@
 
   <!-- =========================================================
        CLIENT ANNOUNCEMENT SECTION
-       Send an email update to all (or selected) clients via
-       Brevo, through the send-announcement Edge Function.
   ========================================================= -->
 
   <div class="section">
@@ -143,39 +139,122 @@
       📢 Client Announcement
     </h3>
 
+
+    <!-- =====================================================
+         EMAIL TYPE
+    ====================================================== -->
+
     <div class="field">
+
+      <label>Email Type</label>
+
+      <div class="ann-email-type-row">
+
+        <label class="ann-type-option">
+
+          <input
+            type="radio"
+            name="annEmailType"
+            value="announcement"
+            id="annEmailTypeAnnouncement"
+            checked
+          >
+
+          <span class="ann-type-content">
+            <strong>📢 Announcement</strong>
+            <small>General news, notices or important information</small>
+          </span>
+
+        </label>
+
+
+        <label class="ann-type-option">
+
+          <input
+            type="radio"
+            name="annEmailType"
+            value="update"
+            id="annEmailTypeUpdate"
+          >
+
+          <span class="ann-type-content">
+            <strong>⚙️ Account Update</strong>
+            <small>Client or account-related update</small>
+          </span>
+
+        </label>
+
+      </div>
+
+    </div>
+
+
+    <div class="field">
+
       <label>Subject</label>
+
       <input
         id="annSubject"
         type="text"
         placeholder="e.g. New PipZoNe Feature 🚀"
       >
+
     </div>
 
+
     <div class="field">
+
       <label>Message</label>
+
       <div id="annEditor" class="ann-editor"></div>
+
     </div>
+
 
     <div class="ann-recipient-row">
 
       <label class="ann-radio">
-        <input type="radio" name="annRecipientType" value="all" id="annRecipientAll" checked>
+
+        <input
+          type="radio"
+          name="annRecipientType"
+          value="all"
+          id="annRecipientAll"
+          checked
+        >
+
         All Clients
+
       </label>
 
+
       <label class="ann-radio">
-        <input type="radio" name="annRecipientType" value="selected" id="annRecipientSelected">
+
+        <input
+          type="radio"
+          name="annRecipientType"
+          value="selected"
+          id="annRecipientSelected"
+        >
+
         Select Clients
+
       </label>
 
     </div>
 
+
     <div id="annClientListWrap" class="ann-client-list hidden"></div>
 
-    <button class="btn" id="sendAnnouncementBtn" type="button">
+
+    <button
+      class="btn"
+      id="sendAnnouncementBtn"
+      type="button"
+    >
       Send Announcement
     </button>
+
 
     <div id="annResult" class="ann-result"></div>
 
@@ -192,7 +271,10 @@
       Announcement History
     </h3>
 
-    <div id="announcementHistoryTable" class="table-wrap"></div>
+    <div
+      id="announcementHistoryTable"
+      class="table-wrap"
+    ></div>
 
   </div>
 
@@ -207,8 +289,9 @@
 
 
 <!-- =========================================================
-     APP LOGIC (see announcements.js)
+     APP LOGIC
 ========================================================= -->
+
 <script src="announcements.js"></script>
 
 </body>
