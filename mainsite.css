@@ -670,3 +670,208 @@ font-family:'IBM Plex Mono',monospace
 .market-chart{height:140px}
 .market-chart-big{height:240px}
 }
+
+/* -------------------------- 32. Apply Trade Code card -------------------------- */
+
+.trade-code-card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:24px 26px;
+  margin-bottom:18px;
+}
+
+.trade-code-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:22px;
+}
+
+.trade-code-title{
+  font:22px Fraunces;
+  color:var(--text);
+}
+
+.trade-code-sub{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.6;
+  margin-top:6px;
+  max-width:560px;
+}
+
+.trade-code-card .form-group{
+  margin-bottom:18px;
+}
+
+.trade-code-card .form-group label{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:7px;
+}
+
+/* Balance amount input */
+
+.trade-balance-input-wrap{
+  display:flex;
+  align-items:center;
+  background:var(--bg2);
+  border:1px solid var(--line);
+  border-radius:5px;
+  overflow:hidden;
+  transition:border-color .15s ease;
+}
+
+.trade-balance-input-wrap:focus-within{
+  border-color:var(--gold);
+}
+
+.trade-balance-prefix{
+  padding:0 0 0 13px;
+  color:var(--gold);
+  font:16px 'IBM Plex Mono',monospace;
+}
+
+#tradeBalanceAmount{
+  width:100%;
+  min-width:0;
+  padding:12px;
+  background:transparent;
+  border:0;
+  outline:none;
+  color:var(--text);
+  font:15px 'IBM Plex Mono',monospace;
+}
+
+/* Remove number input arrows */
+
+#tradeBalanceAmount::-webkit-outer-spin-button,
+#tradeBalanceAmount::-webkit-inner-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
+
+#tradeBalanceAmount[type=number]{
+  -moz-appearance:textfield;
+}
+
+/* Balance slider */
+
+.trade-balance-slider-wrap{
+  margin-top:16px;
+}
+
+#tradeBalanceSlider{
+  display:block;
+  width:100%;
+  margin:0;
+  cursor:pointer;
+  accent-color:var(--gold);
+}
+
+.trade-balance-scale{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-top:8px;
+  color:var(--muted2);
+  font:11.5px 'IBM Plex Mono',monospace;
+}
+
+#tradeBalanceMin,
+#tradeBalanceMax{
+  word-break:break-word;
+}
+
+/* Trade code input */
+
+#tradeCodeInput{
+  width:100%;
+  padding:12px;
+  background:var(--bg2);
+  border:1px solid var(--line);
+  border-radius:5px;
+  color:var(--text);
+  outline:none;
+  font:14px 'IBM Plex Mono',monospace;
+  transition:border-color .15s ease;
+}
+
+#tradeCodeInput::placeholder{
+  color:var(--muted2);
+}
+
+#tradeCodeInput:focus{
+  border-color:var(--gold);
+}
+
+/* Apply button */
+
+#applyTradeCodeBtn{
+  width:100%;
+  padding:13px 16px;
+  border-radius:6px;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  transition:opacity .15s ease,transform .15s ease;
+}
+
+#applyTradeCodeBtn:hover{
+  opacity:.9;
+}
+
+#applyTradeCodeBtn:active{
+  transform:translateY(1px);
+}
+
+#applyTradeCodeBtn:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+  transform:none;
+}
+
+/* Result message */
+
+#tradeCodeMsg{
+  margin-top:14px;
+  margin-bottom:0;
+  border-radius:5px;
+  line-height:1.5;
+}
+
+#tradeCodeMsg.success{
+  color:var(--profit);
+  background:rgba(94,234,176,.08);
+  border-color:rgba(94,234,176,.25);
+}
+
+#tradeCodeMsg.error{
+  color:var(--loss);
+  background:rgba(242,115,94,.08);
+  border-color:rgba(242,115,94,.25);
+}
+
+/* Mobile layout */
+
+@media(max-width:640px){
+  .trade-code-card{
+    padding:20px;
+  }
+
+  .trade-code-title{
+    font-size:20px;
+  }
+
+  .trade-code-sub{
+    font-size:12.5px;
+  }
+
+  .trade-balance-scale{
+    font-size:11px;
+  }
+}
