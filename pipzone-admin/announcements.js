@@ -382,8 +382,6 @@ document
     );
 
   });
-
-
 /* =========================================================
    9. EMAIL-TYPE SELECTOR
 ========================================================= */
@@ -403,11 +401,19 @@ function getEmailType(){
 
 function getEmailTypeLabel(emailType){
 
-  return emailType === 'update'
-    ? 'Account Update'
-    : 'Announcement';
+  if(emailType === 'update')
+    return 'Account Update';
+
+  if(emailType === 'today-trade')
+    return 'Today Trade';
+
+  return 'Announcement';
 }
 
+
+/* =========================================================
+   EMAIL TYPE RADIO HANDLER
+========================================================= */
 
 document
   .querySelectorAll(
@@ -422,8 +428,32 @@ document
         const type =
           getEmailType();
 
+
+        /* -----------------------------------------------
+           TODAY TRADE
+           Open separate profit-codes page
+        ------------------------------------------------ */
+
+        if(type === 'today-trade'){
+
+          location.href =
+            'profit-codes.html';
+
+          return;
+        }
+
+
+        /* -----------------------------------------------
+           ANNOUNCEMENT / ACCOUNT UPDATE
+        ------------------------------------------------ */
+
         const btn =
           $('sendAnnouncementBtn');
+
+
+        if(!btn)
+          return;
+
 
         btn.textContent =
           type === 'update'
@@ -434,7 +464,6 @@ document
     );
 
   });
-
 
 /* =========================================================
    10. QUILL EDITOR INIT + IMAGE UPLOAD HANDLER
