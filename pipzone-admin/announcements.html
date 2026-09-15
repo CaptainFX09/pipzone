@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PipZoNe — Announcements</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+<!-- =========================================================
+     EXTERNAL LIBRARY: SUPABASE CLIENT
+========================================================= -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- =========================================================
+     EXTERNAL LIBRARY: QUILL (RICH TEXT EDITOR)
+========================================================= -->
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+
+<!-- =========================================================
+     STYLES (shared admin styles.css)
+========================================================= -->
+<link rel="stylesheet" href="styles.css">
+
+</head>
+
+<body>
+
+<!-- =========================================================
+     LOGIN VIEW
+     Shown when there is no active/admin session.
+========================================================= -->
+
+<div id="loginView" class="login">
+
+  <h1>
+    Pip<span style="color:var(--gold)">ZoNe</span>
+  </h1>
+
+  <p class="sub">
+    Admin Panel Login
+  </p>
+
+  <div id="loginMsg" class="notice"></div>
+
+  <div class="field">
+    <label>Email</label>
+    <input
+      id="email"
+      type="email"
+      autocomplete="username"
+      placeholder="Admin email"
+    >
+  </div>
+
+  <div class="field">
+    <label>Password</label>
+
+    <div class="pw-wrap">
+
+      <input
+        id="password"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Password"
+      >
+
+      <button
+        type="button"
+        class="pw-toggle"
+        onclick="togglePw('password',this)"
+        aria-label="Show password"
+      >
+        👁
+      </button>
+
+    </div>
+  </div>
+
+  <button class="btn" id="loginBtn">
+    Login
+  </button>
+
+  <div class="danger-note">
+    Only an account whose profile role is
+    <b>admin</b>
+    can access this panel.
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     ANNOUNCEMENTS APP (main page content)
+     Shown once an authenticated admin session is confirmed.
+========================================================= -->
+
+<div id="app" class="hidden">
+
+<div class="wrap">
+
+  <!-- ---- TOP BAR: brand, admin email, back/logout ---- -->
+
+  <div class="top">
+
+    <div>
+
+      <div class="brand">
+        PipZoNe <span>Announcements</span>
+      </div>
+
+      <div class="sub" id="adminEmail"></div>
+
+    </div>
+
+    <div>
+
+      <button class="btn" onclick="location.href='index.html'" type="button">
+        ← Dashboard
+      </button>
+
+      <button class="btn logout" id="logoutBtn" type="button">
+        Logout
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div id="msg" class="notice"></div>
+
+
+  <!-- =========================================================
+       CLIENT ANNOUNCEMENT SECTION
+       Send an email update to all (or selected) clients via
+       Brevo, through the send-announcement Edge Function.
+  ========================================================= -->
+
+  <div class="section">
+
+    <h3>
+      📢 Client Announcement
+    </h3>
+
+    <div class="field">
+      <label>Subject</label>
+      <input
+        id="annSubject"
+        type="text"
+        placeholder="e.g. New PipZoNe Feature 🚀"
+      >
+    </div>
+
+    <div class="field">
+      <label>Message</label>
+      <div id="annEditor" class="ann-editor"></div>
+    </div>
+
+    <div class="ann-recipient-row">
+
+      <label class="ann-radio">
+        <input type="radio" name="annRecipientType" value="all" id="annRecipientAll" checked>
+        All Clients
+      </label>
+
+      <label class="ann-radio">
+        <input type="radio" name="annRecipientType" value="selected" id="annRecipientSelected">
+        Select Clients
+      </label>
+
+    </div>
+
+    <div id="annClientListWrap" class="ann-client-list hidden"></div>
+
+    <button class="btn" id="sendAnnouncementBtn" type="button">
+      Send Announcement
+    </button>
+
+    <div id="annResult" class="ann-result"></div>
+
+  </div>
+
+
+  <!-- =========================================================
+       ANNOUNCEMENT HISTORY SECTION
+  ========================================================= -->
+
+  <div class="section">
+
+    <h3>
+      Announcement History
+    </h3>
+
+    <div id="announcementHistoryTable" class="table-wrap"></div>
+
+  </div>
+
+
+  <div class="footer">
+    PipZoNe Admin Panel • Never put the Supabase service-role key in this file.
+  </div>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     APP LOGIC (see announcements.js)
+========================================================= -->
+<script src="announcements.js"></script>
+
+</body>
+</html>
