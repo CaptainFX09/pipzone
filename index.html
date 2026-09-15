@@ -9,6 +9,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="this.onerror=null;this.src='https://unpkg.com/@supabase/supabase-js@2'"></script>
 
+<!-- Live candlestick charts (BTC & Gold) — TradingView's free "lightweight-charts" library -->
+<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+
 <!-- MAINSITE STYLES: see mainsite.css for the full stylesheet (organized by section) -->
 <link rel="stylesheet" href="mainsite.css">
 </head>
@@ -51,14 +54,38 @@
 </div>
 </div>
 
-<div class="ledger-card">
-<div class="lc-title">Sample account · illustrative</div>
-<div class="lc-row"><span class="lc-label">Deposited capital</span><span class="lc-value">$500.00</span></div>
-<div class="lc-row"><span class="lc-label">August result</span><span class="lc-value" style="color:var(--profit)">+$100.00</span></div>
-<div class="lc-row"><span class="lc-label">Your share (60%)</span><span class="lc-value gold">$60.00</span></div>
-<div class="lc-row"><span class="lc-label">Closing balance</span><span class="lc-value">$560.00</span></div>
-<div class="note">Figures are illustrative only. Actual results vary month to month and losses are possible.</div>
+<!-- ==================== LIVE MARKET CARD (BTC / Gold) ====================
+     Replaces the old static "Sample account · illustrative" ledger card.
+     Shows a live candlestick chart for BTC/USDT or XAU/USD (Gold), switchable
+     via the tabs, with a shared timeframe row (1m/5m/15m/1h/4h). Wiring is
+     in mainsite.js section 31 (initLiveMarkets / buildHeroChart). -->
+<div class="market-card" id="heroMarketCard">
+
+<div class="market-card-top">
+<div class="market-tabs" id="heroAssetTabs">
+<button type="button" class="market-tab active" data-asset="BTC" onclick="switchHeroAsset('BTC')">₿ BTC/USDT</button>
+<button type="button" class="market-tab" data-asset="XAU" onclick="switchHeroAsset('XAU')">🥇 XAU/USD</button>
 </div>
+<div class="live-dot-wrap"><span class="live-dot"></span>Live</div>
+</div>
+
+<div class="market-price-row">
+<div class="market-price" id="heroPrice">—</div>
+<div class="market-change" id="heroChange">—</div>
+</div>
+
+<div class="market-tf-row" id="heroTfRow">
+<button type="button" class="tf-chip active" data-tf="1m">1m</button>
+<button type="button" class="tf-chip" data-tf="5m">5m</button>
+<button type="button" class="tf-chip" data-tf="15m">15m</button>
+<button type="button" class="tf-chip" data-tf="1h">1h</button>
+<button type="button" class="tf-chip" data-tf="4h">4h</button>
+</div>
+
+<div class="market-chart" id="heroChart"></div>
+<div class="note">Live market data — for information only, not trading advice or a signal to invest.</div>
+</div>
+
 </div>
 </section>
 
@@ -157,6 +184,54 @@
 <tr><td>August</td><td><span class="up">+$620</span><div class="bar-track"><div class="bar-fill" style="width:77%"></div></div></td><td>$372</td><td>$248</td></tr>
 </tbody>
 </table>
+</div>
+</section>
+
+<!-- ==================== LIVE MARKETS (BTC & GOLD) ====================
+     Bigger, standalone version of the hero mini-widget — both BTC and
+     Gold shown side by side, sharing one timeframe row. Wiring is in
+     mainsite.js section 31 (initLiveMarkets / buildBigCharts). -->
+<section id="markets">
+<div class="wrap">
+<div class="sec-head">
+<div class="sec-tag">Live <span>Markets</span></div>
+<div>
+<h2>BTC &amp; Gold, updated live.</h2>
+<p class="sec-desc">Bitcoin candles are pulled live from Binance market data. Gold (XAU/USD) price is pulled live from GoldAPI.io and built into candles in real time. Same live feed on every device — mobile or desktop.</p>
+</div>
+</div>
+
+<div class="market-tf-row market-tf-row-big" id="marketsTfRow">
+<button type="button" class="tf-chip active" data-tf="1m">1m</button>
+<button type="button" class="tf-chip" data-tf="5m">5m</button>
+<button type="button" class="tf-chip" data-tf="15m">15m</button>
+<button type="button" class="tf-chip" data-tf="1h">1h</button>
+<button type="button" class="tf-chip" data-tf="4h">4h</button>
+</div>
+
+<div class="markets-grid">
+
+<div class="market-panel">
+<div class="market-panel-head">
+<div class="market-panel-title">₿ BTC / USDT</div>
+<div class="market-panel-price" id="bigBtcPrice">—</div>
+<div class="market-panel-change" id="bigBtcChange">—</div>
+</div>
+<div class="market-chart market-chart-big" id="bigBtcChart"></div>
+</div>
+
+<div class="market-panel">
+<div class="market-panel-head">
+<div class="market-panel-title">🥇 XAU / USD (Gold)</div>
+<div class="market-panel-price" id="bigGoldPrice">—</div>
+<div class="market-panel-change" id="bigGoldChange">—</div>
+</div>
+<div class="market-chart market-chart-big" id="bigGoldChart"></div>
+</div>
+
+</div>
+
+<div class="note" style="margin-top:16px">Market data shown for information only. It is not investment advice and is not connected to your account balance or trading results above.</div>
 </div>
 </section>
 
