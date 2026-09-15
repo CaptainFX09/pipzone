@@ -12,7 +12,7 @@
    8. Recipient-type toggle
    9. Email-type selector
    10. Quill editor init + image upload handler
-   11. Send Announcement / Update action
+   11. Send Announcement / Update / Today Trade action
    12. Announcement history table renderer
    13. Login / logout event handlers
    14. Auth state listener & app start
@@ -382,6 +382,8 @@ document
     );
 
   });
+
+
 /* =========================================================
    9. EMAIL-TYPE SELECTOR
 ========================================================= */
@@ -413,6 +415,20 @@ function getEmailTypeLabel(emailType){
 
 /* =========================================================
    EMAIL TYPE RADIO HANDLER
+
+   Announcement:
+   📢 Announcement
+
+   Account Update:
+   ⚙️ Account Update
+
+   Today Trade:
+   📈 Today Trade
+
+   IMPORTANT:
+   Today Trade does NOT redirect anywhere.
+   It remains on this page and uses the same
+   email sending flow.
 ========================================================= */
 
 document
@@ -429,24 +445,6 @@ document
           getEmailType();
 
 
-        /* -----------------------------------------------
-           TODAY TRADE
-           Open separate profit-codes page
-        ------------------------------------------------ */
-
-        if(type === 'today-trade'){
-
-          location.href =
-            'profit-codes.html';
-
-          return;
-        }
-
-
-        /* -----------------------------------------------
-           ANNOUNCEMENT / ACCOUNT UPDATE
-        ------------------------------------------------ */
-
         const btn =
           $('sendAnnouncementBtn');
 
@@ -455,15 +453,28 @@ document
           return;
 
 
-        btn.textContent =
-          type === 'update'
-          ? 'Send Account Update'
-          : 'Send Announcement';
+        if(type === 'update'){
+
+          btn.textContent =
+            'Send Account Update';
+
+        }else if(type === 'today-trade'){
+
+          btn.textContent =
+            'Send Trade Code';
+
+        }else{
+
+          btn.textContent =
+            'Send Announcement';
+
+        }
 
       }
     );
 
   });
+
 
 /* =========================================================
    10. QUILL EDITOR INIT + IMAGE UPLOAD HANDLER
@@ -576,7 +587,7 @@ async function annImageHandler(){
 
 
 /* =========================================================
-   11. SEND ANNOUNCEMENT / UPDATE ACTION
+   11. SEND ANNOUNCEMENT / UPDATE / TODAY TRADE ACTION
 ========================================================= */
 
 $('sendAnnouncementBtn')
@@ -779,10 +790,27 @@ $('sendAnnouncementBtn')
 
         btn.disabled = false;
 
-        btn.textContent =
-          getEmailType() === 'update'
-          ? 'Send Account Update'
-          : 'Send Announcement';
+
+        const currentType =
+          getEmailType();
+
+
+        if(currentType === 'update'){
+
+          btn.textContent =
+            'Send Account Update';
+
+        }else if(currentType === 'today-trade'){
+
+          btn.textContent =
+            'Send Trade Code';
+
+        }else{
+
+          btn.textContent =
+            'Send Announcement';
+
+        }
 
       }
 
@@ -846,6 +874,8 @@ function renderAnnouncementHistory(rows){
             ${
               r.email_type === 'update'
               ? '⚙️ Account Update'
+              : r.email_type === 'today-trade'
+              ? '📈 Today Trade'
               : '📢 Announcement'
             }
 
