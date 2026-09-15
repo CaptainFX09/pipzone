@@ -1974,6 +1974,7 @@ else if(data?.session){await loadDashboard()}
 /* =====================================================
    PIPZONE — ANIMATED CANDLESTICK ENGINE
    Gold + Bitcoin demo market animation
+   NOW LIVE-PRICE-ANCHORED via the market-prices Edge Function
 ====================================================== */
 
 (function () {
@@ -1990,6 +1991,11 @@ else if(data?.session){await loadDashboard()}
 
   const tabs = document.querySelectorAll(".market-tab");
 
+  /* basePrice below is only the STARTING fallback shown for a split
+     second before the first live fetch completes — fetchLivePrices()
+     overwrites both of these with real numbers from the Edge Function
+     before createCandles() ever runs, so the chart never actually
+     opens on these hardcoded values. */
   const markets = {
     gold: {
       symbol: "XAUUSD",
@@ -2004,6 +2010,47 @@ else if(data?.session){await loadDashboard()}
       volatility: 110
     }
   };
+
+  /* ---- Live price wiring ----
+     SUPABASE_URL is already declared earlier in this same file (section 1
+     — Config/constants), so this closure can read it directly without
+     redefining it. The Edge Function itself keeps the GoldAPI key
+     server-side and proxies CoinGecko for Bitcoin — see
+     supabase/functions/market-prices/index.ts. */
+  const MARKET_PRICES_ENDPOINT = SUPABASE_URL + "/functions/v1/market-prices";
+  const LIVE_PRICE_REFRESH_MS = 45000;
+
+  /* Fetches the current Gold/Bitcoin prices and updates each market's
+     basePrice with the real number. Never throws — on any network/API
+     failure it just leaves the previous basePrice in place (which is
+     itself either a prior live value or the hardcoded fallback above),
+     so the animation keeps running smoothly either way. */
+  async function fetchLivePrices() {
+    try {
+      const res = await fetch(MARKET_PRICES_ENDPOINT);
+      if (!res.ok) throw new Error("market-prices status " + res.status);
+      const data = await res.json();
+      if (data?.gold?.price) markets.gold.basePrice = Number(data.gold.price);
+      if (data?.bitcoin?.price) markets.btc.basePrice = Number(data.bitcoin.price);
+      return data;
+    } catch (err) {
+      console.error("Live market price fetch error:", err);
+      return null;
+    }
+  }
+
+  /* Pulls the currently-forming candle's close price 35% of the way
+     toward a freshly-fetched live price, instead of snapping to it —
+     keeps the visual movement smooth on every refresh rather than
+     causing a visible jump every 45 seconds. Only touches the candle
+     set if that market is the one currently on screen. */
+  function nudgeLatestCandleToward(marketName, livePrice) {
+    if (currentMarket !== marketName || !candles.length || !Number.isFinite(livePrice)) return;
+    const latest = candles[candles.length - 1];
+    latest.close = latest.close + (livePrice - latest.close) * 0.35;
+    latest.high = Math.max(latest.high, latest.close);
+    latest.low = Math.min(latest.low, latest.close);
+  }
 
   let currentMarket = "gold";
   let candles = [];
@@ -2279,6 +2326,10 @@ else if(data?.session){await loadDashboard()}
       );
     });
 
+    /* markets[marketName].basePrice already holds the latest live price
+       fetched by fetchLivePrices() (or refreshLivePrices() since), so
+       switching tabs rebuilds candles anchored to real data — no extra
+       fetch needed here. */
     createCandles();
     resizeCanvas();
   }
@@ -2291,10 +2342,29 @@ else if(data?.session){await loadDashboard()}
 
   window.addEventListener("resize", resizeCanvas);
 
-  createCandles();
-  resizeCanvas();
+  /* ---- Periodic live refresh ----
+     Re-fetches every LIVE_PRICE_REFRESH_MS and gently nudges whichever
+     market is currently showing toward the new real price. Both markets'
+     basePrice fields are updated every time regardless of which tab is
+     active, so switching tabs later always shows the latest real price
+     immediately instead of a stale one. */
+  async function refreshLivePrices() {
+    const data = await fetchLivePrices();
+    if (!data) return;
+    nudgeLatestCandleToward("gold", data.gold?.price);
+    nudgeLatestCandleToward("btc", data.bitcoin?.price);
+  }
 
-  // Start animation
-  animationFrame = requestAnimationFrame(animate);
+  /* ---- Startup ----
+     Fetch real prices FIRST so both markets' basePrice reflect actual
+     Gold/Bitcoin values before the very first candle is ever drawn, then
+     start the animation loop and the recurring live-refresh timer. */
+  (async function initWithLivePrices() {
+    await fetchLivePrices();
+    createCandles();
+    resizeCanvas();
+    animationFrame = requestAnimationFrame(animate);
+    setInterval(refreshLivePrices, LIVE_PRICE_REFRESH_MS);
+  })();
 
 })();
