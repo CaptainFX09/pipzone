@@ -203,7 +203,7 @@ const {error}=await client.auth.signOut();
 
 if(error)throw error;
 
-location.replace('admin.html');
+location.reload();
 
 }catch(error){
 console.error(error);
