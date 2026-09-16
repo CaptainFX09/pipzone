@@ -37,10 +37,12 @@ let ALL_CLIENT_PROFILES = [];
 
 const TODAY_TRADE_TEMPLATE =
 '<p>Dear PipZoNe Client,</p>' +
-'<p>Your <strong>Today Trade Code</strong> is now available and ready to be applied to your account.</p>' +
+'<p>Your <strong>Today Trade Code</strong> is ready to apply to your account.</p>' +
+'<p><strong>Trade Code:</strong> {{TRADE_CODE}}</p>' +
 '<p>Please log in to your PipZoNe Client Dashboard and enter the code in the <strong>Trade Code</strong> section.</p>' +
 '<p>⏳ <strong>Important:</strong> This trade code will expire in <strong>10 minutes</strong>. Please apply it before the expiration time.</p>' +
-'<p>Once successfully applied, the trade code will update your account accordingly.</p>';
+'<p>Once successfully applied, the trade code will update your account accordingly.</p>' +
+'<p>For your security, please do not share your trade code with anyone.</p>';
 
 /* ---- 3. UI MESSAGES ---- */
 function showMsg(text, error = false) {
