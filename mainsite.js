@@ -1204,47 +1204,36 @@ return '<div class="tx-card">'
 
 /* -------------------------- 21. Notification bell + popup (server-synced read state, incl. per-item read) -------------------------- */
 
-/*
-There is no dedicated notifications table — the feed is built by
-combining the client's own deposits, withdrawals and profit_entries
-rows into one timeline, newest first.
+/* ==========================================================================
+   PATCH — add Trade Code applications to the notification feed
+   ==========================================================================
+   Replace your EXISTING loadNotifications() function (section 21 of
+   mainsite.js) with this version. It adds one more query — to
+   trade_code_applications — and pushes one notification item per
+   applied trade code, using the exact columns confirmed from your
+   Supabase table:
+     trade_code_id, user_id, account_id, selected_amount,
+     adjustment_amount, balance_before, balance_after,
+     adjustment_type, percentage, code_snapshot, applied_at
 
-Read state has TWO layers, both stored server-side (so it follows the
-client across devices/browsers instead of resetting per-browser like the
-old localStorage approach):
-
-  1) profiles.notifications_seen_at — a bulk "seen up to this time"
-     timestamp, set by "Mark all as read".
-  2) profiles.read_notification_keys — a JSONB array of individual
-     notification "keys" the client has opened one-by-one (via
-     openNotifDetail). THIS is the fix for the reported bug: previously,
-     clicking a single notification only opened its popup and never
-     changed its read-state, so it stayed in the "unread" bucket forever
-     until "Mark all as read" was used.
-
-A notification is UNREAD only if BOTH:
-  - it is newer than notifications_seen_at, AND
-  - its key is not present in read_notification_keys.
-
-Each notification's "key" is a stable id built from its source table and
-created_at timestamp, since there is no dedicated notifications table
-with row ids to key off of.
-*/
+   Nothing else in the notification system (read/unread tracking,
+   the bell badge, the detail popup) needs to change — it all keys
+   off each item's `date` and `key` fields, which this sets the same
+   way as the existing deposit/withdrawal/profit items.
+   ========================================================================== */
 
 async function loadNotifications(){
 if(!currentUser||!supabaseReady)return;
 
-/* Same shimmer treatment as loadRequests() above — the notification
-   popup shows placeholder cards the instant it's opened / reloaded,
-   instead of a plain "Loading..." line. */
 const listEl=$('notifList');
 if(listEl)listEl.innerHTML=skeletonRowsHtml(3);
 
 try{
-const [d,w,p]=await Promise.all([
+const [d,w,p,tc]=await Promise.all([
 supabaseClient.from('deposits').select('amount,status,created_at').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(10),
 supabaseClient.from('withdrawals').select('amount,status,created_at').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(10),
-supabaseClient.from('profit_entries').select('client_share,entry_date,created_at').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(10)
+supabaseClient.from('profit_entries').select('client_share,entry_date,created_at').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(10),
+supabaseClient.from('trade_code_applications').select('adjustment_amount,adjustment_type,percentage,code_snapshot,applied_at').eq('user_id',currentUser.id).order('applied_at',{ascending:false}).limit(10)
 ]);
 
 const items=[];
@@ -1265,10 +1254,23 @@ items.push({icon,text:statusText+' — $'+Number(x.amount).toFixed(2),date:x.cre
 items.push({icon:'📈',text:'Daily profit updated — +$'+Number(x.client_share||0).toFixed(2),date:x.created_at||x.entry_date,key:'profit-'+(x.created_at||x.entry_date)});
 });
 
+/* NEW: Trade Code applications */
+(tc.data||[]).forEach(x=>{
+const amt=Number(x.adjustment_amount||0);
+const isIncrease=x.adjustment_type==='increase';
+const sign=amt>=0?'+':'-';
+const icon=isIncrease?'📈':'📉';
+const label=isIncrease?'Trade code applied — profit added':'Trade code applied — loss applied';
+items.push({
+icon,
+text:label+' — '+sign+'$'+Math.abs(amt).toFixed(2)+' ('+esc_pct(x.percentage)+'%, '+(x.code_snapshot||'')+')',
+date:x.applied_at,
+key:'tradecode-'+x.code_snapshot+'-'+x.applied_at
+});
+});
+
 items.sort((a,b)=>new Date(b.date)-new Date(a.date));
 
-/* Kept around (module-level) so a click on a row can look itself up by
-   index and open its own detail popup — see openNotifDetail(). */
 currentNotificationItems=items.slice(0,20);
 
 renderNotifications(currentNotificationItems);
@@ -1276,6 +1278,12 @@ renderNotifications(currentNotificationItems);
 }catch(err){
 console.error('Notifications load error:',err);
 }
+}
+
+/* small helper so the percentage prints cleanly (e.g. "1" instead of
+   "1.0000") inside the notification text above */
+function esc_pct(n){
+return Number(n||0).toString();
 }
 
 /* Returns true if the given notification item is still unread, checking
