@@ -18,7 +18,7 @@
 <div class="header-buttons">
 <button class="back-btn" onclick="location.href='announcements.html'" type="button">📢 Announcements</button>
 <button class="back-btn" type="button" onclick="location.href='index.html'">Dashboard</button>
-<button class="back-btn" id="logoutBtn" type="button">Logout</button>
+<button class="logout-btn" id="logoutBtn" type="button">Logout</button>
 </div>
 </div>
 
@@ -57,8 +57,12 @@
 <label for="generatedCode">Generated Code</label>
 <input id="generatedCode" type="text" readonly placeholder="PZ-TRD-000001">
 </div>
+<div class="generated-actions">
+<button id="copyBtn" class="copy-btn" type="button" disabled>Copy Code</button>
 <button id="generateBtn" class="generate-btn" type="button">Generate Code</button>
 </div>
+</div>
+
 <div id="message" class="message"></div>
 </div>
 
@@ -68,11 +72,12 @@
 <div class="card-title">Generated Codes History</div>
 <div class="card-sub">Stored in Supabase. Test records can be deleted from here.</div>
 </div>
-<button id="refreshBtn" class="back-btn" type="button">Refresh</button>
+<button id="refreshBtn" class="back-btn refresh-btn" type="button">Refresh</button>
 </div>
 <div id="historyList"><div class="empty">Loading...</div></div>
 </div>
 </div>
+
 <script src="profit-codes.js"></script>
 </body>
 </html>
