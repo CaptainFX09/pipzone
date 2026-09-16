@@ -1263,10 +1263,9 @@ const icon=isIncrease?'📈':'📉';
 const label=isIncrease?'Trade code applied — profit added':'Trade code applied — loss applied';
 items.push({
 icon,
-text:label+' — '+sign+'$'+Math.abs(amt).toFixed(2)+' ('+esc_pct(x.percentage)+'%, '+(x.code_snapshot||'')+')',
+text:label+' — '+sign+'$'+Math.abs(amt).toFixed(2),
 date:x.applied_at,
 key:'tradecode-'+x.code_snapshot+'-'+x.applied_at
-});
 });
 
 items.sort((a,b)=>new Date(b.date)-new Date(a.date));
