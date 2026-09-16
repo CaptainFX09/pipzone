@@ -27,7 +27,7 @@ async function checkAdmin(){
 const {data:{session}}=await client.auth.getSession();
 
 if(!session){
-location.href='admin.html';
+location.href='index.html';
 return false;
 }
 
@@ -35,7 +35,7 @@ const {data:profile,error}=await client.from('profiles').select('role').eq('id',
 
 if(error||profile?.role!=='admin'){
 await client.auth.signOut();
-location.href='admin.html';
+location.href='index.html';
 return false;
 }
 
