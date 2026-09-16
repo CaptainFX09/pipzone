@@ -67,7 +67,14 @@ const ADMIN_UID =
 
 let ALL_CLIENT_PROFILES = [];
 
-
+const TODAY_TRADE_TEMPLATE =
+'<p>Dear PipZoNe Client,</p>' +
+'<p>Your trade code has been generated and is ready to be applied to your account.</p>' +
+'<p><strong>Trade Code:</strong> {{TRADE_CODE}}</p>' +
+'<p>Please log in to your PipZoNe Client Dashboard and enter the code in the Trade Code section.</p>' +
+'<p>⏳ <strong>Important:</strong> This trade code will expire in <strong>10 minutes</strong>. Please apply it before it expires.</p>' +
+'<p>Once the code is successfully applied, your account will be updated accordingly.</p>' +
+'<p>For security, please do not share your trade code with anyone.</p>';
 /* =========================================================
    3. UI MESSAGES
 ========================================================= */
@@ -462,6 +469,28 @@ document
 
           btn.textContent =
             'Send Trade Code';
+
+          /* Auto-fill the Today Trade template — only if the editor
+             is currently empty, so it never overwrites something
+             the admin already typed. */
+          const currentHtml =
+            annQuill.root.innerHTML.trim();
+
+          if(
+            !currentHtml ||
+            currentHtml === '<p><br></p>'
+          ){
+
+            annQuill.clipboard.dangerouslyPasteHTML(
+              TODAY_TRADE_TEMPLATE
+            );
+
+            if(!$('annSubject').value.trim()){
+              $('annSubject').value =
+                'Your PipZoNe Trade Code';
+            }
+
+          }
 
         }else{
 
