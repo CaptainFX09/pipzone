@@ -1267,7 +1267,7 @@ text:label+' — '+sign+'$'+Math.abs(amt).toFixed(2),
 date:x.applied_at,
 key:'tradecode-'+x.code_snapshot+'-'+x.applied_at
 });
-
+});
 items.sort((a,b)=>new Date(b.date)-new Date(a.date));
 
 currentNotificationItems=items.slice(0,20);
