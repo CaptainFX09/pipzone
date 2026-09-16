@@ -515,6 +515,13 @@ th{
   }
 
 }
+@media(max-width:430px){
+
+  .top-buttons #refreshBtn{
+    grid-column:1/-1
+  }
+
+}
 
 
 /* =========================================================
