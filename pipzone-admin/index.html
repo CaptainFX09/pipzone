@@ -6,145 +6,65 @@
 <title>PipZoNe — Admin Panel</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
-<!-- =========================================================
-     EXTERNAL LIBRARY: SUPABASE CLIENT
-========================================================= -->
+<!-- EXTERNAL LIBRARY: SUPABASE CLIENT -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- =========================================================
-     STYLES (see styles.css)
-========================================================= -->
+<!-- STYLES (see styles.css) -->
 <link rel="stylesheet" href="styles.css">
-
 </head>
 
 <body>
 
-<!-- =========================================================
-     LOGIN VIEW
-     Shown when there is no active/admin session.
-========================================================= -->
-
+<!-- LOGIN VIEW — shown when there is no active/admin session -->
 <div id="loginView" class="login">
-
-  <h1>
-    Pip<span style="color:var(--gold)">ZoNe</span>
-  </h1>
-
-  <p class="sub">
-    Admin Panel Login
-  </p>
+  <h1>Pip<span style="color:var(--gold)">ZoNe</span></h1>
+  <p class="sub">Admin Panel Login</p>
 
   <div id="loginMsg" class="notice"></div>
 
   <div class="field">
     <label>Email</label>
-    <input
-      id="email"
-      type="email"
-      autocomplete="username"
-      placeholder="Admin email"
-    >
+    <input id="email" type="email" autocomplete="username" placeholder="Admin email">
   </div>
 
   <div class="field">
     <label>Password</label>
-
     <div class="pw-wrap">
-
-      <input
-        id="password"
-        type="password"
-        autocomplete="current-password"
-        placeholder="Password"
-      >
-
-      <button
-        type="button"
-        class="pw-toggle"
-        onclick="togglePw('password',this)"
-        aria-label="Show password"
-      >
-        👁
-      </button>
-
+      <input id="password" type="password" autocomplete="current-password" placeholder="Password">
+      <button type="button" class="pw-toggle" onclick="togglePw('password',this)" aria-label="Show password">👁</button>
     </div>
   </div>
 
-  <button class="btn" id="loginBtn">
-    Login
-  </button>
+  <button class="btn" id="loginBtn">Login</button>
 
   <div class="danger-note">
-    Only an account whose profile role is
-    <b>admin</b>
-    can access this panel.
+    Only an account whose profile role is <b>admin</b> can access this panel.
   </div>
-
 </div>
 
 
-<!-- =========================================================
-     ADMIN APP (main dashboard)
-     Shown once an authenticated admin session is confirmed.
-========================================================= -->
-
+<!-- ADMIN APP (main dashboard) — shown once an authenticated admin session is confirmed -->
 <div id="app" class="hidden">
-
 <div class="wrap">
 
-  <!-- ---- TOP BAR: brand, admin email, /logout ---- -->
-
+  <!-- TOP BAR: brand, admin email, buttons -->
   <div class="top">
-
     <div>
-
-      <div class="brand">
-        PipZoNe <span>Admin</span>
-      </div>
-
+      <div class="brand">PipZoNe <span>Admin</span></div>
       <div class="sub" id="adminEmail"></div>
-
-    </div>
-     <div class="top-buttons">
-     <button class="btn" onclick="location.href='profit-codes.html'" type="button">Trade Code</button>
-      <button class="btn" onclick="location.href='announcements.html'" type="button">
-        📢 Announcements
-      </button>
-
-      <button class="btn" id="refreshBtn" type="button">
-        Refresh
-      </button>
-
-      <button class="btn logout" id="logoutBtn" type="button">
-        Logout
-      </button>
-
     </div>
 
-   <!-- <div>
-
-      <button class="btn" id="refreshBtn" type="button">
-        Refresh
-      </button>
-
-      <button class="btn logout" id="logoutBtn" type="button">
-        Logout
-      </button>
-
-    </div> -->
-
+    <div class="top-buttons">
+      <button class="btn" onclick="location.href='profit-codes.html'" type="button">Trade Code</button>
+      <button class="btn" onclick="location.href='announcements.html'" type="button">📢 Announcements</button>
+      <button class="btn" id="refreshBtn" type="button">Refresh</button>
+      <button class="btn logout" id="logoutBtn" type="button">Logout</button>
+    </div>
   </div>
-
 
   <div id="msg" class="notice"></div>
 
-
-  <!-- =========================================================
-       SUMMARY CARDS
-       High-level dashboard stats (clients, deposits, profit, etc).
-  ========================================================= -->
-
+  <!-- SUMMARY CARDS — high-level dashboard stats -->
   <div class="cards">
 
     <div class="stat">
@@ -157,11 +77,11 @@
       <h2 id="deposits">$0.00</h2>
     </div>
 
-     <div class="stat">
+    <div class="stat">
       <small>Total Withdrawal Paid</small>
       <h2 id="withdrawalpaid">$0.00</h2>
     </div>
-       
+
     <div class="stat">
       <small>Pending Deposit</small>
       <h2 id="pendingDp">$0.00</h2>
@@ -187,8 +107,7 @@
       <h2 id="deskProfit">$0.00</h2>
     </div>
 
-    <!-- ================= REFERRAL PROGRAM SUMMARY ================= -->
-
+    <!-- REFERRAL PROGRAM SUMMARY -->
     <div class="stat">
       <small>Total Referrals</small>
       <h2 id="totalReferrals">0</h2>
@@ -211,155 +130,58 @@
 
   </div>
 
-
-  <!-- =========================================================
-       DEPOSIT REQUESTS SECTION
-  ========================================================= -->
-
+  <!-- DEPOSIT REQUESTS SECTION -->
   <div class="section">
-
-    <h3>
-      Deposit Requests
-    </h3>
-
-    <div
-      id="depositTable"
-      class="table-wrap"
-    ></div>
-
+    <h3>Deposit Requests</h3>
+    <div id="depositTable" class="table-wrap"></div>
   </div>
 
-
-  <!-- =========================================================
-       WITHDRAWAL REQUESTS SECTION
-  ========================================================= -->
-
+  <!-- WITHDRAWAL REQUESTS SECTION -->
   <div class="section">
-
-    <h3>
-      Withdrawal Requests
-    </h3>
-
-    <div
-      id="withdrawalTable"
-      class="table-wrap"
-    ></div>
-
+    <h3>Withdrawal Requests</h3>
+    <div id="withdrawalTable" class="table-wrap"></div>
   </div>
 
-
-  <!-- =========================================================
-       CLIENT ACCOUNTS SECTION
-  ========================================================= -->
-
+  <!-- CLIENT ACCOUNTS SECTION -->
   <div class="section">
-
-    <h3>
-      Client Accounts
-    </h3>
-
-    <div
-      id="accountTable"
-      class="table-wrap"
-    ></div>
-
+    <h3>Client Accounts</h3>
+    <div id="accountTable" class="table-wrap"></div>
   </div>
 
-
-  <!-- =========================================================
-       REFERRAL PROGRAM SECTION
-       Commission rate control + per-client referral breakdown
-  ========================================================= -->
-
+  <!-- REFERRAL PROGRAM SECTION — commission rate control + per-client breakdown -->
   <div class="section">
+    <h3>Referral Program</h3>
 
-    <h3>
-      Referral Program
-    </h3>
-
-    <!-- ---- Commission rate editor ---- -->
     <div class="referral-rate-row">
-
-      <label for="commissionRateInput">
-        Commission Rate (%)
-      </label>
-
-      <input
-        id="commissionRateInput"
-        type="number"
-        step="0.1"
-        min="0"
-        max="100"
-        placeholder="e.g. 2"
-      >
-
-      <button class="btn" id="saveRateBtn" type="button">
-        Save Rate
-      </button>
-
+      <label for="commissionRateInput">Commission Rate (%)</label>
+      <input id="commissionRateInput" type="number" step="0.1" min="0" max="100" placeholder="e.g. 2">
+      <button class="btn" id="saveRateBtn" type="button">Save Rate</button>
       <span id="rateSavedNote" class="rate-saved-note"></span>
-
     </div>
 
-    <!-- ---- Per-client referral breakdown table ---- -->
-    <div
-      id="referralTable"
-      class="table-wrap"
-    ></div>
-
+    <div id="referralTable" class="table-wrap"></div>
   </div>
 
-
-  <!-- =========================================================
-       DAILY RESULTS SECTION
-  ========================================================= -->
-
+  <!-- DAILY RESULTS SECTION -->
   <div class="section">
-
-    <h3>
-      Daily Results
-    </h3>
-
-    <div
-      id="profitTable"
-      class="table-wrap"
-    ></div>
-
+    <h3>Daily Results</h3>
+    <div id="profitTable" class="table-wrap"></div>
   </div>
 
-
-  <!-- =========================================================
-       TRANSACTIONS SECTION
-  ========================================================= -->
-
+  <!-- TRANSACTIONS SECTION -->
   <div class="section">
-
-    <h3>
-      Transactions
-    </h3>
-
-    <div
-      id="transactionTable"
-      class="table-wrap"
-    ></div>
-
+    <h3>Transactions</h3>
+    <div id="transactionTable" class="table-wrap"></div>
   </div>
-
 
   <div class="footer">
     PipZoNe Admin Panel • Never put the Supabase service-role key in this file.
   </div>
 
 </div>
-
 </div>
 
-
-<!-- =========================================================
-     APP LOGIC (see script.js)
-     Loaded last so all DOM elements above already exist
-     when the script runs.
-========================================================= -->
+<!-- APP LOGIC (see script.js) — loaded last so all DOM elements above already exist -->
 <script src="script.js"></script>
 
 </body>
