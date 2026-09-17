@@ -56,24 +56,104 @@ header{position:sticky;top:0;z-index:50;background:rgba(14,20,32,.9);backdrop-fi
 .btn-gold{background:var(--gold);color:#161008;border-color:var(--gold)}
 
 /* -------------------------- 3. Hero section -------------------------- */
-.hero{padding:96px 0 72px;border-bottom:1px solid var(--soft)}
-.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:64px;align-items:end}
-@media(max-width:860px){.navlinks{display:none}.hero-grid{grid-template-columns:1fr}}
-.eyebrow{color:var(--gold);font-size:13px;margin-bottom:22px}
-.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--profit);margin-right:8px}
-h1{font:500 clamp(38px,5.2vw,60px)/1.08 Fraunces;margin-bottom:22px}
+.hero{position:relative;overflow:hidden;padding:88px 0 76px;border-bottom:1px solid var(--soft);background:radial-gradient(circle at 78% 45%,rgba(47,191,131,.08),transparent 34%),radial-gradient(circle at 15% 25%,rgba(47,191,131,.035),transparent 28%)}
+.hero-bg-grid{position:absolute;inset:0;pointer-events:none;opacity:.28;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:54px 54px;mask-image:linear-gradient(to bottom,transparent,#000 15%,#000 75%,transparent)}
+.hero-glow{position:absolute;border-radius:50%;pointer-events:none;filter:blur(70px);animation:heroGlowMove 7s ease-in-out infinite}
+.hero-glow-one{width:280px;height:280px;right:8%;top:18%;background:rgba(47,191,131,.09)}
+.hero-glow-two{width:180px;height:180px;right:42%;bottom:0;background:rgba(47,191,131,.045);animation-delay:-3s}
+@keyframes heroGlowMove{0%,100%{transform:translate3d(0,0,0);opacity:.55}50%{transform:translate3d(0,-18px,0);opacity:1}}
+.hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:.82fr 1.18fr;gap:54px;align-items:center}
+.hero-copy{position:relative;z-index:3}
+.eyebrow{color:var(--gold);font-size:13px;margin-bottom:22px;letter-spacing:.2px}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--profit);margin-right:8px;box-shadow:0 0 0 4px rgba(92,185,138,.08)}
+h1{font:500 clamp(38px,5.2vw,60px)/1.08 Fraunces;margin-bottom:22px;letter-spacing:-1px}
 h1 em{color:var(--gold)}
-.hero-sub{color:var(--muted);font-size:17px;max-width:480px;line-height:1.65;margin-bottom:34px}
+.hero-sub{color:var(--muted);font-size:17px;max-width:500px;line-height:1.65;margin-bottom:34px}
 .hero-actions{display:flex;gap:14px}
-.ledger-card,.calc-in{background:var(--panel);border:1px solid var(--line);padding:28px}
-.lc-title{font-size:12px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px}
-.lc-row,.out-row{display:flex;justify-content:space-between;padding:14px 0;border-top:1px solid var(--soft)}
-.lc-row:first-of-type,.out-row:first-child{border-top:0}
-.lc-label,.out-label{color:var(--muted);font-size:14px}
-.lc-value,.out-value{font:16px 'IBM Plex Mono'}
-.gold{color:var(--gold)}
-.note{color:var(--muted2);font-size:12px;margin-top:18px}
-
+.hero-terminal-wrap{position:relative;perspective:1200px}
+.hero-terminal{position:relative;background:linear-gradient(145deg,rgba(20,28,24,.98),rgba(11,16,14,.99));border:1px solid rgba(47,191,131,.26);padding:20px;box-shadow:0 28px 80px rgba(0,0,0,.42),0 0 60px rgba(47,191,131,.06),inset 0 1px 0 rgba(255,255,255,.035);overflow:hidden;animation:terminalFloat 6s ease-in-out infinite;transform-style:preserve-3d}
+@keyframes terminalFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.hero-terminal:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(135deg,rgba(47,191,131,.045),transparent 35%,transparent 70%,rgba(47,191,131,.025));}
+.terminal-scanline{position:absolute;left:0;right:0;top:-30%;height:25%;pointer-events:none;background:linear-gradient(to bottom,transparent,rgba(47,191,131,.035),transparent);animation:scanLine 7s linear infinite;z-index:4}
+@keyframes scanLine{0%{top:-30%}100%{top:115%}}
+.terminal-corner{position:absolute;width:18px;height:18px;border-color:rgba(47,191,131,.65);z-index:5;pointer-events:none}
+.terminal-corner-tl{top:7px;left:7px;border-top:1px solid;border-left:1px solid}
+.terminal-corner-tr{top:7px;right:7px;border-top:1px solid;border-right:1px solid}
+.terminal-corner-bl{bottom:7px;left:7px;border-bottom:1px solid;border-left:1px solid}
+.terminal-corner-br{bottom:7px;right:7px;border-bottom:1px solid;border-right:1px solid}
+.terminal-head{position:relative;z-index:6;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:0 4px 16px;border-bottom:1px solid var(--soft)}
+.terminal-brand{display:flex;align-items:center;gap:8px;color:var(--muted);font:11px 'IBM Plex Mono';letter-spacing:.8px}
+.terminal-live-dot{width:7px;height:7px;border-radius:50%;background:var(--profit);box-shadow:0 0 0 4px rgba(92,185,138,.08),0 0 12px rgba(92,185,138,.4);animation:livePulse 1.8s ease-in-out infinite}
+@keyframes livePulse{0%,100%{opacity:1;box-shadow:0 0 0 4px rgba(92,185,138,.08),0 0 12px rgba(92,185,138,.4)}50%{opacity:.55;box-shadow:0 0 0 7px rgba(92,185,138,.025),0 0 20px rgba(92,185,138,.18)}}
+.terminal-status{color:var(--muted2);font:10px 'IBM Plex Mono';letter-spacing:.7px;display:flex;align-items:center;gap:6px}
+.terminal-status-dot{width:5px;height:5px;border-radius:50%;background:var(--profit)}
+.terminal-market-bar{position:relative;z-index:6;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px}
+.market-tabs{display:flex;gap:7px}
+.market-tab{background:rgba(255,255,255,.015);border:1px solid var(--line);color:var(--muted);padding:8px 13px;border-radius:5px;font-size:12px;cursor:pointer;white-space:nowrap;transition:.2s}
+.market-tab:hover{border-color:var(--gold);color:var(--text)}
+.market-tab.active{border-color:var(--gold);color:var(--gold);background:rgba(47,191,131,.08);box-shadow:0 0 18px rgba(47,191,131,.06)}
+.terminal-pair{color:var(--muted2);font:10px 'IBM Plex Mono';letter-spacing:.7px}
+.terminal-price-row{position:relative;z-index:6;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;padding:19px 2px 14px}
+.terminal-price-label{font:9px 'IBM Plex Mono';color:var(--muted2);letter-spacing:1px;margin-bottom:5px}
+.market-price{font:36px 'IBM Plex Mono';color:var(--text);line-height:1.05;letter-spacing:-1px}
+.market-change{font:14px 'IBM Plex Mono';color:var(--muted);white-space:nowrap}
+.market-change.up{color:var(--profit)}
+.market-change.down{color:var(--loss)}
+.terminal-change-box{text-align:right}
+.terminal-chart-head{position:relative;z-index:6;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.terminal-chart-label{display:flex;align-items:center;gap:7px;color:var(--muted2);font:9px 'IBM Plex Mono';letter-spacing:.8px}
+.chart-pulse{width:5px;height:5px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px rgba(47,191,131,.5);animation:chartPulse 1.4s ease-in-out infinite}
+@keyframes chartPulse{50%{opacity:.35;transform:scale(.7)}}
+.market-tf-row{display:flex;gap:5px;margin-bottom:14px;flex-wrap:wrap}
+.terminal-tf-row{margin-bottom:0}
+.tf-chip{background:var(--bg2);border:1px solid var(--line);color:var(--muted);padding:5px 9px;border-radius:4px;font-size:10px;cursor:pointer;transition:.15s}
+.tf-chip.active{border-color:var(--gold);color:var(--gold);background:rgba(47,191,131,.08)}
+.tf-chip:hover{border-color:var(--gold);color:var(--gold)}
+.market-chart{height:160px;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--bg2)}
+.terminal-chart{position:relative;z-index:6;height:285px;border-color:rgba(47,191,131,.13);box-shadow:inset 0 0 35px rgba(0,0,0,.18)}
+.terminal-bottom{position:relative;z-index:6;margin-top:14px;padding-top:13px;border-top:1px solid var(--soft)}
+.terminal-micro-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.terminal-micro-stats div{display:flex;flex-direction:column;gap:3px}
+.terminal-micro-stats span{font:8px 'IBM Plex Mono';color:var(--muted2);letter-spacing:.7px}
+.terminal-micro-stats b{font:10px 'IBM Plex Mono';color:var(--text);font-weight:400}
+.terminal-micro-stats .terminal-online{color:var(--profit)}
+.hero-trade-actions{display:flex;gap:9px}
+.hero-trade-actions .btn{flex:1;text-align:center}
+.hero-sell-btn{border-color:var(--loss);color:var(--loss);background:rgba(242,115,94,.025)}
+.hero-sell-btn:hover{background:rgba(242,115,94,.08)}
+.terminal-footer{position:relative;z-index:6;display:flex;justify-content:space-between;gap:10px;margin-top:12px;color:var(--muted2);font:8px 'IBM Plex Mono';letter-spacing:.6px}
+.terminal-footer span:first-child{color:var(--profit)}
+.note{color:var(--muted2);font-size:11px;margin-top:11px;line-height:1.5}
+@media(max-width:980px){
+.hero-grid{grid-template-columns:1fr;gap:48px}
+.hero-copy{max-width:700px}
+.hero-sub{max-width:650px}
+.hero-terminal-wrap{max-width:760px;width:100%;margin:0 auto}
+}
+@media(max-width:640px){
+.hero{padding:65px 0 55px}
+.hero-grid{gap:36px}
+h1{font-size:clamp(38px,11vw,52px);letter-spacing:-.5px}
+.hero-sub{font-size:15px}
+.hero-actions{flex-direction:column;gap:9px}
+.hero-actions .btn{width:100%;text-align:center}
+.hero-terminal{padding:15px}
+.terminal-head{align-items:flex-start;flex-direction:column;gap:8px}
+.terminal-status{font-size:9px}
+.terminal-market-bar{align-items:flex-start;flex-direction:column}
+.terminal-pair{display:none}
+.market-tabs{width:100%}
+.market-tab{flex:1;text-align:center;padding:9px 7px}
+.terminal-price-row{padding:17px 1px 12px}
+.market-price{font-size:27px}
+.market-change{font-size:12px}
+.terminal-chart-head{align-items:flex-start;flex-direction:column;gap:8px}
+.terminal-tf-row{width:100%}
+.terminal-tf-row .tf-chip{flex:1;text-align:center}
+.terminal-chart{height:255px}
+.terminal-micro-stats{gap:6px}
+.terminal-footer{font-size:7px}
+}
 /* -------------------------- 4. Stats strip -------------------------- */
 .stats{border-bottom:1px solid var(--soft)}
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr)}
@@ -625,52 +705,59 @@ font-family:'IBM Plex Mono',monospace
    Both are driven by mainsite.js section 31 (initLiveMarkets and friends),
    which renders actual candlesticks via the lightweight-charts library. */
 
+/* -------------------------- 31. Live market widgets -------------------------- */
 .market-card{background:var(--panel);border:1px solid var(--line);padding:28px}
-
 .market-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:18px}
-
 .market-tabs{display:flex;gap:8px}
 .market-tab{background:none;border:1px solid var(--line);color:var(--muted);padding:7px 12px;border-radius:20px;font-size:12.5px;cursor:pointer;white-space:nowrap}
 .market-tab.active{border-color:var(--gold);color:var(--gold);background:rgba(47,191,131,.08)}
-
 .live-dot-wrap{display:flex;align-items:center;gap:6px;color:var(--muted2);font-size:12px;white-space:nowrap}
 .live-dot-wrap .live-dot{width:6px;height:6px;border-radius:50%;background:var(--profit);box-shadow:0 0 0 3px rgba(92,185,138,.15)}
-
 .market-price-row{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;flex-wrap:wrap}
 .market-price{font:32px Fraunces;color:var(--text)}
 .market-change{font:14px 'IBM Plex Mono';color:var(--muted)}
 .market-change.up{color:var(--profit)}
 .market-change.down{color:var(--loss)}
-
 .market-tf-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 .tf-chip{background:var(--bg2);border:1px solid var(--line);color:var(--muted);padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer}
 .tf-chip.active{border-color:var(--gold);color:var(--gold);background:rgba(47,191,131,.08)}
 .tf-chip:hover{border-color:var(--gold)}
-
 .market-chart{height:160px;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--bg2)}
 
-/* -- big "Live Markets" section -- */
-.market-tf-row-big{margin-bottom:28px;justify-content:center}
-.markets-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-.market-panel{background:var(--panel);border:1px solid var(--line);padding:22px}
-.market-panel-head{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;flex-wrap:wrap}
-.market-panel-title{font:16px Fraunces;color:var(--text)}
-.market-panel-price{font:19px 'IBM Plex Mono';color:var(--text)}
-.market-panel-change{font:13px 'IBM Plex Mono';color:var(--muted)}
-.market-panel-change.up{color:var(--profit)}
-.market-panel-change.down{color:var(--loss)}
-.market-chart-big{height:300px}
+/* -- single large Live Markets screen -- */
+.market-switch-row{display:flex;justify-content:center;gap:10px;margin-bottom:24px;flex-wrap:wrap}
+.market-switch{background:var(--bg2);border:1px solid var(--line);color:var(--muted);padding:10px 18px;border-radius:24px;font-size:13px;cursor:pointer;transition:.15s}
+.market-switch:hover{border-color:var(--gold)}
+.market-switch.active{border-color:var(--gold);color:var(--gold);background:rgba(47,191,131,.08)}
+.market-main-panel{background:var(--panel);border:1px solid var(--line);padding:26px}
+.market-main-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:18px}
+.market-main-title{font:19px Fraunces;color:var(--text)}
+.market-main-price{font:30px 'IBM Plex Mono';color:var(--text);margin-top:6px}
+.market-main-change{font:13px 'IBM Plex Mono';color:var(--muted);margin-top:4px}
+.market-main-change.up{color:var(--profit)}
+.market-main-change.down{color:var(--loss)}
+.market-tf-row-big{justify-content:center;margin-bottom:20px}
+.market-chart-big{height:420px}
+.market-chart-single{width:100%}
 
 @media(max-width:760px){
-.markets-grid{grid-template-columns:1fr}
+.market-main-panel{padding:20px}
+.market-main-head{gap:12px}
+.market-main-price{font-size:24px}
+.market-chart-big{height:320px}
 }
+
 @media(max-width:640px){
 .market-card{padding:20px}
 .market-price{font:26px Fraunces}
 .market-chart{height:140px}
-.market-chart-big{height:240px}
+.market-main-head{flex-direction:column}
+.market-main-title{font-size:17px}
+.market-main-price{font-size:22px}
+.market-chart-big{height:260px}
+.market-switch-row{margin-bottom:18px}
+.market-switch{flex:1;min-width:130px;text-align:center}
 }
-
 /* -------------------------- 32. Apply Trade Code card -------------------------- */
 
 .trade-code-card{
