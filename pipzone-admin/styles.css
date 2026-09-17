@@ -112,6 +112,9 @@ button,input{
   color:#ffb6b6
 }
 
+.section h3 {
+  cursor: pointer;
+}
 
 /* =========================================================
    4. DASHBOARD SUMMARY CARDS
