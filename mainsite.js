@@ -177,37 +177,67 @@ function initSupabase() {
 }
 
 /* -------------------------- 5. Live stats strip (homepage) -------------------------- */
+
 async function loadLiveStats() {
+
   if (!supabaseReady) return;
+
   try {
+
     const { data, error } = await supabaseClient.rpc('get_public_stats');
+
     if (error) {
       console.error('Live stats error:', error);
       return;
     }
+
     const clientsEl = $('liveClients'),
       depositsEl = $('liveDeposits'),
       withdrawalsEl = $('liveWithdrawals');
-    if (clientsEl) clientsEl.textContent = Number(data.total_clients || 0).toLocaleString();
-    if (depositsEl)
+
+    /* ---------------------------------------------
+       VERIFIED CLIENT NUMBER
+       ---------------------------------------------
+       Database se latest verified client number
+       milega.
+
+       Current:
+       3508
+
+       Next approved new client:
+       3509
+
+       Uske baad:
+       3510, 3511...
+       --------------------------------------------- */
+
+    if (clientsEl) {
+      clientsEl.textContent =
+        Number(data.total_clients || 3500).toLocaleString();
+    }
+
+    if (depositsEl) {
       depositsEl.textContent =
         '$' +
         Number(data.total_verified_deposits || 0).toLocaleString(undefined, {
           minimumFractionDigits: 0,
           maximumFractionDigits: 0,
         });
-    if (withdrawalsEl)
+    }
+
+    if (withdrawalsEl) {
       withdrawalsEl.textContent =
         '$' +
         Number(data.total_verified_withdrawals || 0).toLocaleString(undefined, {
           minimumFractionDigits: 0,
           maximumFractionDigits: 0,
         });
+    }
+
   } catch (err) {
     console.error('Live stats error:', err);
   }
 }
-
 /* -------------------------- 6. Deposit address copy helper -------------------------- */
 function copyDepositAddress() {
   const field = $('depositAddressField');
@@ -2266,233 +2296,225 @@ function shareReferralLink() {
    Real candlestick charts via the free TradingView "lightweight-charts"
    library (loaded via CDN in index.html <head>).
 
-   Both BTC/USDT and ETH/USDT candles come straight from Binance's public
-   klines endpoint — no API key needed, real historical OHLC candles,
-   CORS-enabled. Same fetch/poll logic is shared by both assets (see
-   BINANCE_SYMBOLS below), just pointed at a different trading pair. */
+   Hero and Live Markets both use Binance public klines.
+   Live Markets uses one large shared chart that switches between BTC and ETH. */
 
-const BINANCE_KLINES_URL = 'https://api.binance.com/api/v3/klines';
-const BINANCE_REFRESH_MS = 4000; // how often to re-pull the latest candles from Binance
-const BINANCE_SYMBOLS = { BTC: 'BTCUSDT', ETH: 'ETHUSDT' };
+const BINANCE_KLINES_URL='https://api.binance.com/api/v3/klines';
+const BINANCE_REFRESH_MS=4000;
+const BINANCE_SYMBOLS={BTC:'BTCUSDT',ETH:'ETHUSDT'};
 
-const TF_CONFIG = {
-  '1m': { binanceInterval: '1m', bucketMs: 60 * 1000 },
-  '5m': { binanceInterval: '5m', bucketMs: 5 * 60 * 1000 },
-  '15m': { binanceInterval: '15m', bucketMs: 15 * 60 * 1000 },
-  '1h': { binanceInterval: '1h', bucketMs: 60 * 60 * 1000 },
-  '4h': { binanceInterval: '4h', bucketMs: 4 * 60 * 60 * 1000 },
+const TF_CONFIG={
+  '1m':{binanceInterval:'1m',bucketMs:60*1000},
+  '5m':{binanceInterval:'5m',bucketMs:5*60*1000},
+  '15m':{binanceInterval:'15m',bucketMs:15*60*1000},
+  '1h':{binanceInterval:'1h',bucketMs:60*60*1000},
+  '4h':{binanceInterval:'4h',bucketMs:4*60*60*1000}
 };
 
-/* Mirrors the --profit/--loss/--soft/--muted CSS variables in mainsite.css
-   so charts match the site's theme. Hardcoded since the charting library
-   needs literal color values, not CSS vars. */
-const CHART_COLORS = { up: '#5EEAB0', down: '#F2735E', grid: '#1F2622', text: '#8B9992' };
+const CHART_COLORS={up:'#5EEAB0',down:'#F2735E',grid:'#1F2622',text:'#8B9992'};
 
-let heroAsset = 'BTC';
-let heroTf = '1m';
-let bigTf = '1m';
+let heroAsset='BTC';
+let heroTf='1m';
+let mainMarketAsset='BTC';
+let bigTf='1m';
 
-/* Every rendered chart lives in this array as one entry:
-   {chart, series, kind:'BTC'|'ETH', tf, priceEl, changeEl, pollTimer} */
-const liveCharts = [];
+const liveCharts=[];
 
-function makeCandleChart(containerId) {
-  const el = $(containerId);
-  if (!el || typeof LightweightCharts === 'undefined') return null;
-  el.innerHTML = '';
-  const chart = LightweightCharts.createChart(el, {
-    width: el.clientWidth,
-    height: el.clientHeight,
-    layout: {
-      background: { type: 'solid', color: 'transparent' },
-      textColor: CHART_COLORS.text,
-      fontFamily: "'IBM Plex Mono',monospace",
-      fontSize: 11,
+function makeCandleChart(containerId){
+  const el=$(containerId);
+  if(!el||typeof LightweightCharts==='undefined')return null;
+  el.innerHTML='';
+  const chart=LightweightCharts.createChart(el,{
+    width:el.clientWidth,
+    height:el.clientHeight,
+    layout:{
+      background:{type:'solid',color:'transparent'},
+      textColor:CHART_COLORS.text,
+      fontFamily:"'IBM Plex Mono',monospace",
+      fontSize:11
     },
-    grid: { vertLines: { color: CHART_COLORS.grid }, horzLines: { color: CHART_COLORS.grid } },
-    rightPriceScale: { borderColor: CHART_COLORS.grid },
-    timeScale: { borderColor: CHART_COLORS.grid, timeVisible: true, secondsVisible: false },
-    crosshair: { mode: 0 },
+    grid:{
+      vertLines:{color:CHART_COLORS.grid},
+      horzLines:{color:CHART_COLORS.grid}
+    },
+    rightPriceScale:{borderColor:CHART_COLORS.grid},
+    timeScale:{
+      borderColor:CHART_COLORS.grid,
+      timeVisible:true,
+      secondsVisible:false
+    },
+    crosshair:{mode:0}
   });
-  const series = chart.addCandlestickSeries({
-    upColor: CHART_COLORS.up,
-    downColor: CHART_COLORS.down,
-    borderUpColor: CHART_COLORS.up,
-    borderDownColor: CHART_COLORS.down,
-    wickUpColor: CHART_COLORS.up,
-    wickDownColor: CHART_COLORS.down,
+  const series=chart.addCandlestickSeries({
+    upColor:CHART_COLORS.up,
+    downColor:CHART_COLORS.down,
+    borderUpColor:CHART_COLORS.up,
+    borderDownColor:CHART_COLORS.down,
+    wickUpColor:CHART_COLORS.up,
+    wickDownColor:CHART_COLORS.down
   });
-  const resizeHandler = () =>
-    chart.applyOptions({ width: el.clientWidth, height: el.clientHeight });
-  window.addEventListener('resize', resizeHandler);
-  return { chart, series, resizeHandler };
+  const resizeHandler=()=>chart.applyOptions({width:el.clientWidth,height:el.clientHeight});
+  window.addEventListener('resize',resizeHandler);
+  return{chart,series,resizeHandler};
 }
 
-function destroyChartEntry(entry) {
-  if (!entry) return;
-  if (entry.pollTimer) clearInterval(entry.pollTimer);
-  if (entry.resizeHandler) window.removeEventListener('resize', entry.resizeHandler);
-  try {
-    entry.chart.remove();
-  } catch (e) {}
-  const idx = liveCharts.indexOf(entry);
-  if (idx > -1) liveCharts.splice(idx, 1);
+function destroyChartEntry(entry){
+  if(!entry)return;
+  if(entry.pollTimer)clearInterval(entry.pollTimer);
+  if(entry.resizeHandler)window.removeEventListener('resize',entry.resizeHandler);
+  try{entry.chart.remove()}catch(e){}
+  const idx=liveCharts.indexOf(entry);
+  if(idx>-1)liveCharts.splice(idx,1);
 }
 
-/* ---- BTC & ETH: real historical candles from Binance ---- */
-async function loadBinanceCandles(symbol, tf, limit = 120) {
-  try {
-    const res = await fetch(
-      BINANCE_KLINES_URL +
-        '?symbol=' +
-        symbol +
-        '&interval=' +
-        TF_CONFIG[tf].binanceInterval +
-        '&limit=' +
-        limit,
+async function loadBinanceCandles(symbol,tf,limit=120){
+  try{
+    const res=await fetch(
+      BINANCE_KLINES_URL+
+      '?symbol='+symbol+
+      '&interval='+TF_CONFIG[tf].binanceInterval+
+      '&limit='+limit
     );
-    if (!res.ok) throw new Error('Binance request failed: ' + res.status);
-    const rows = await res.json();
-    return rows.map((r) => ({
-      time: Math.floor(r[0] / 1000),
-      open: +r[1],
-      high: +r[2],
-      low: +r[3],
-      close: +r[4],
+    if(!res.ok)throw new Error('Binance request failed: '+res.status);
+    const rows=await res.json();
+    return rows.map(r=>({
+      time:Math.floor(r[0]/1000),
+      open:+r[1],
+      high:+r[2],
+      low:+r[3],
+      close:+r[4]
     }));
-  } catch (err) {
-    console.error('Binance candles error:', err);
-    return [];
+  }catch(err){
+    console.error('Binance candles error:',err);
+    return[];
   }
 }
 
-async function refreshBinanceChart(entry) {
-  const symbol = BINANCE_SYMBOLS[entry.kind];
-  const candles = await loadBinanceCandles(symbol, entry.tf);
-  if (!candles.length) return;
+async function refreshBinanceChart(entry){
+  const symbol=BINANCE_SYMBOLS[entry.kind];
+  const candles=await loadBinanceCandles(symbol,entry.tf);
+  if(!candles.length)return;
   entry.series.setData(candles);
   entry.chart.timeScale().fitContent();
-  const last = candles[candles.length - 1];
-  const first = candles[0];
-  updatePriceDisplay(entry.priceEl, entry.changeEl, last.close, first.open);
+  const last=candles[candles.length-1];
+  const first=candles[0];
+  updatePriceDisplay(entry.priceEl,entry.changeEl,last.close,first.open);
 }
 
-/* Re-fetches the full candle set from Binance every BINANCE_REFRESH_MS so
-   the last (still-forming) candle keeps updating live. */
-function startBinancePolling(entry) {
+function startBinancePolling(entry){
   refreshBinanceChart(entry);
-  entry.pollTimer = setInterval(() => refreshBinanceChart(entry), BINANCE_REFRESH_MS);
+  entry.pollTimer=setInterval(()=>refreshBinanceChart(entry),BINANCE_REFRESH_MS);
 }
 
-function updatePriceDisplay(priceEl, changeEl, price, refPrice) {
-  if (priceEl)
-    priceEl.textContent =
-      '$' + price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  if (changeEl && Number.isFinite(refPrice) && refPrice > 0) {
-    const diff = price - refPrice;
-    const pct = (diff / refPrice) * 100;
-    changeEl.textContent =
-      (diff >= 0 ? '+' : '') +
-      diff.toFixed(2) +
-      ' (' +
-      (diff >= 0 ? '+' : '') +
-      pct.toFixed(2) +
+function updatePriceDisplay(priceEl,changeEl,price,refPrice){
+  if(priceEl){
+    priceEl.textContent='$'+price.toLocaleString(undefined,{
+      minimumFractionDigits:2,
+      maximumFractionDigits:2
+    });
+  }
+  if(changeEl&&Number.isFinite(refPrice)&&refPrice>0){
+    const diff=price-refPrice;
+    const pct=(diff/refPrice)*100;
+    changeEl.textContent=
+      (diff>=0?'+':'')+
+      diff.toFixed(2)+
+      ' ('+
+      (diff>=0?'+':'')+
+      pct.toFixed(2)+
       '%)';
-    changeEl.classList.toggle('up', diff >= 0);
-    changeEl.classList.toggle('down', diff < 0);
+    changeEl.classList.toggle('up',diff>=0);
+    changeEl.classList.toggle('down',diff<0);
   }
 }
 
-/* ---- Wiring: hero mini card (asset tabs + timeframe chips) ---- */
-let heroEntry = null;
+/* ---- Hero mini card ---- */
+let heroEntry=null;
 
-function buildHeroChart() {
+function buildHeroChart(){
   destroyChartEntry(heroEntry);
-  const built = makeCandleChart('heroChart');
-  if (!built) return;
-  heroEntry = {
+  const built=makeCandleChart('heroChart');
+  if(!built)return;
+  heroEntry={
     ...built,
-    kind: heroAsset,
-    tf: heroTf,
-    priceEl: $('heroPrice'),
-    changeEl: $('heroChange'),
+    kind:heroAsset,
+    tf:heroTf,
+    priceEl:$('heroPrice'),
+    changeEl:$('heroChange')
   };
   liveCharts.push(heroEntry);
   startBinancePolling(heroEntry);
 }
 
-function switchHeroAsset(asset) {
-  heroAsset = asset;
-  document
-    .querySelectorAll('#heroAssetTabs .market-tab')
-    .forEach((b) => b.classList.toggle('active', b.dataset.asset === asset));
+function switchHeroAsset(asset){
+  heroAsset=asset;
+  document.querySelectorAll('#heroAssetTabs .market-tab').forEach(b=>{
+    b.classList.toggle('active',b.dataset.asset===asset);
+  });
   buildHeroChart();
 }
 
-/* ---- Wiring: big Markets section (two permanent panels) ---- */
-let bigBtcEntry = null;
-let bigEthEntry = null;
+/* ---- Single large Live Markets chart ---- */
+let mainMarketEntry=null;
 
-function buildBigCharts() {
-  destroyChartEntry(bigBtcEntry);
-  destroyChartEntry(bigEthEntry);
-
-  const builtBtc = makeCandleChart('bigBtcChart');
-  if (builtBtc) {
-    bigBtcEntry = {
-      ...builtBtc,
-      kind: 'BTC',
-      tf: bigTf,
-      priceEl: $('bigBtcPrice'),
-      changeEl: $('bigBtcChange'),
-    };
-    liveCharts.push(bigBtcEntry);
-    startBinancePolling(bigBtcEntry);
+function buildMainMarketChart(){
+  destroyChartEntry(mainMarketEntry);
+  const built=makeCandleChart('mainMarketChart');
+  if(!built)return;
+  mainMarketEntry={
+    ...built,
+    kind:mainMarketAsset,
+    tf:bigTf,
+    priceEl:$('mainMarketPrice'),
+    changeEl:$('mainMarketChange')
+  };
+  const titleEl=$('mainMarketTitle');
+  if(titleEl){
+    titleEl.textContent=mainMarketAsset==='BTC'?'₿ BTC / USDT':'Ξ ETH / USDT';
   }
-
-  const builtEth = makeCandleChart('bigEthChart');
-  if (builtEth) {
-    bigEthEntry = {
-      ...builtEth,
-      kind: 'ETH',
-      tf: bigTf,
-      priceEl: $('bigEthPrice'),
-      changeEl: $('bigEthChange'),
-    };
-    liveCharts.push(bigEthEntry);
-    startBinancePolling(bigEthEntry);
-  }
+  liveCharts.push(mainMarketEntry);
+  startBinancePolling(mainMarketEntry);
 }
 
-function wireTfRow(containerId, onChange) {
-  const row = $(containerId);
-  if (!row) return;
-  row.querySelectorAll('.tf-chip').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      row.querySelectorAll('.tf-chip').forEach((b) => b.classList.remove('active'));
+function switchMarketAsset(asset){
+  mainMarketAsset=asset;
+  document.querySelectorAll('.market-switch').forEach(b=>{
+    b.classList.toggle('active',b.dataset.asset===asset);
+  });
+  buildMainMarketChart();
+}
+
+function wireTfRow(containerId,onChange){
+  const row=$(containerId);
+  if(!row)return;
+  row.querySelectorAll('.tf-chip').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      row.querySelectorAll('.tf-chip').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
       onChange(btn.dataset.tf);
     });
   });
 }
 
-function initLiveMarkets() {
-  if (typeof LightweightCharts === 'undefined') {
+function initLiveMarkets(){
+  if(typeof LightweightCharts==='undefined'){
     console.error('lightweight-charts failed to load — live market charts disabled.');
     return;
   }
-  wireTfRow('heroTfRow', (tf) => {
-    heroTf = tf;
+
+  wireTfRow('heroTfRow',tf=>{
+    heroTf=tf;
     buildHeroChart();
   });
-  wireTfRow('marketsTfRow', (tf) => {
-    bigTf = tf;
-    buildBigCharts();
-  });
-  buildHeroChart();
-  buildBigCharts();
-}
 
+  wireTfRow('marketsTfRow',tf=>{
+    bigTf=tf;
+    buildMainMarketChart();
+  });
+
+  buildHeroChart();
+  buildMainMarketChart();
+}
 /* -------------------------- 25. Page bootstrap / event listeners -------------------------- */
 document.addEventListener('DOMContentLoaded', async function () {
   if (!initSupabase()) return;
