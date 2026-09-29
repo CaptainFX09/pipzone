@@ -962,3 +962,24 @@ font-family:'IBM Plex Mono',monospace
     font-size:11px;
   }
 }
+
+/* ==================== APP LAUNCH ==================== */
+.app-launch{padding:34px 0 10px}
+.app-launch-card{display:flex;align-items:center;gap:36px;background:#101513;border:1px solid rgba(47,191,131,.16);border-radius:18px;padding:22px;overflow:hidden}
+.app-launch-image{flex:1;min-width:0}
+.app-launch-image img{display:block;width:100%;height:auto;border-radius:12px}
+.app-launch-content{flex:1;padding:10px 12px}
+.app-launch-label{font-size:12px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#2FBF83;margin-bottom:10px}
+.app-launch-content h2{margin:0 0 10px;font-family:Fraunces,serif;font-size:32px;line-height:1.15;color:#fff}
+.app-launch-content p{margin:0 0 22px;color:#AAB3AE;font-size:15px;line-height:1.6}
+.app-launch-ios{display:flex;align-items:center;gap:10px}
+.app-launch-ios span{color:#AAB3AE;font-size:14px}
+.app-launch-ios strong{color:#2FBF83;font-size:14px}
+@media(max-width:760px){
+.app-launch{padding:24px 0 8px}
+.app-launch-card{flex-direction:column;gap:20px;padding:14px}
+.app-launch-content{padding:4px 6px 8px}
+.app-launch-content h2{font-size:26px}
+.app-launch-content p{font-size:14px;margin-bottom:16px}
+.app-launch-image img{border-radius:10px}
+}
