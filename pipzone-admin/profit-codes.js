@@ -118,7 +118,7 @@ generatedCode.value=data.code;
 copyBtn.disabled=false;
 copyBtn.classList.remove('copied');
 copyBtn.textContent='Copy Code';
-
+localStorage.setItem('pipzone_trade_expiry',`${expiry} ${unit}`);
 showMessage(`Code ${data.code} generated. Expires ${formatDate(data.expires_at)}.`,'success');
 
 await loadHistory();
