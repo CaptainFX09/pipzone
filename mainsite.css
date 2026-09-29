@@ -962,6 +962,18 @@ font-family:'IBM Plex Mono',monospace
     font-size:11px;
   }
 }
+/* ==================== Website Logo ==================== */
+.logo-img{
+  width:32px;
+  height:32px;
+  object-fit:contain;
+  border-radius:6px;
+  vertical-align:middle;
+  margin-right:6px
+}
+
+
+
 
 /* ==================== APP LAUNCH ==================== */
 .app-launch{padding:34px 0 10px}
