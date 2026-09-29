@@ -257,7 +257,7 @@ $('sendAnnouncementBtn').addEventListener('click', async () => {
   const emailType = getEmailType();
   const emailTypeLabel = getEmailTypeLabel(emailType);
   const recipientType = $('annRecipientAll').checked ? 'all' : 'selected';
-
+  const expireTime = localStorage.getItem('pipzone_trade_expiry') || '';
   let recipientIds = [];
   if (recipientType === 'selected') {
     recipientIds = Array.from(document.querySelectorAll('.annClientCheckbox:checked')).map(cb => cb.value);
@@ -280,7 +280,7 @@ $('sendAnnouncementBtn').addEventListener('click', async () => {
 
   try {
     const { data, error } = await client.functions.invoke('send-announcement', {
-      body: { subject, message, emailType, recipientType, recipientIds }
+      body: { subject, message, emailType, recipientType, recipientIds, expireTime }
     });
 
     if (error) { showMsg(error.message || 'Failed to send email.', true); return; }
