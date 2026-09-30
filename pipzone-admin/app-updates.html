@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,174 +11,198 @@
 
 <div class="page">
 
-<div class="page-header">
-    <div>
-        <div class="eyebrow">PIPZONE ADMIN</div>
-        <h1>App Updates</h1>
-        <p>Publish and manage Android app updates.</p>
-    </div>
+    <div class="page-header">
+        <div>
+            <div class="eyebrow">PIPZONE ADMIN</div>
+            <h1>App Updates</h1>
+            <p>Publish and manage Android app updates.</p>
+        </div>
+
         <div class="top-buttons">
-      <button class="btn" onclick="location.href='profit-codes.html'" type="button">Trade Code</button>
-      <button class="btn" onclick="location.href='index.html'" type="button">← Dashboard</button>
-      <button class="btn logout" id="logoutBtn" type="button">Logout</button>
+            <button class="btn" onclick="location.href='profit-codes.html'" type="button">Trade Code</button>
+            <button class="btn" onclick="location.href='index.html'" type="button">← Dashboard</button>
+            <button class="btn logout" id="logoutBtn" type="button">Logout</button>
+        </div>
     </div>
-  </div>
 
     <div class="latest-badge" id="latestBadge">
         Latest: Loading...
     </div>
-</div>
 
-<div class="card">
+    <div class="card">
 
-    <div class="card-header">
-        <div>
-            <h2>Publish New Update</h2>
-            <p>Add a new PipZoNe Android app version.</p>
+        <div class="card-header">
+            <div>
+                <h2 id="formTitle">Publish New Update</h2>
+                <p id="formSubtitle">Add a new PipZoNe Android app version.</p>
+            </div>
+
+            <button
+                type="button"
+                class="refresh-btn"
+                id="newUpdateBtn"
+                style="display:none"
+            >
+                + New Update
+            </button>
         </div>
-    </div>
 
-    <form id="updateForm">
+        <form id="updateForm">
 
-        <div class="form-grid">
+            <div class="form-grid">
 
-            <div class="field">
-                <label for="versionCode">Version Code</label>
-                <input
-                    type="number"
-                    id="versionCode"
-                    min="1"
-                    placeholder="e.g. 5"
-                    required
+                <div class="field">
+                    <label for="versionCode">Version Code</label>
+                    <input
+                        type="number"
+                        id="versionCode"
+                        min="1"
+                        placeholder="e.g. 5"
+                        required
+                    >
+                    <small>Android versionCode must be higher than the previous release.</small>
+                </div>
+
+                <div class="field">
+                    <label for="versionName">Version Name</label>
+                    <input
+                        type="text"
+                        id="versionName"
+                        placeholder="e.g. 1.4"
+                        required
+                    >
+                    <small>User-facing version name.</small>
+                </div>
+
+                <div class="field full">
+                    <label for="apkUrl">APK URL</label>
+                    <input
+                        type="url"
+                        id="apkUrl"
+                        placeholder="https://nzasmkplxzirnqeteclv.supabase.co/storage/v1/object/public/app-updates/PipZoNe-1.4.apk"
+                        required
+                    >
+                    <small>Public URL of the APK stored in Supabase Storage.</small>
+                </div>
+
+                <div class="field full">
+                    <label for="updateMessage">Update Message</label>
+                    <textarea
+                        id="updateMessage"
+                        rows="4"
+                        placeholder="New improvements and features are available."
+                        required
+                    ></textarea>
+                </div>
+
+            </div>
+
+            <div class="settings-row">
+
+                <label class="switch-row">
+                    <input type="checkbox" id="isRequired">
+                    <span class="switch"></span>
+                    <span>
+                        <strong>Required Update</strong>
+                        <small>Users should not be able to skip this update.</small>
+                    </span>
+                </label>
+
+                <label class="switch-row">
+                    <input type="checkbox" id="isActive" checked>
+                    <span class="switch"></span>
+                    <span>
+                        <strong>Active</strong>
+                        <small>Make this update available to clients.</small>
+                    </span>
+                </label>
+
+            </div>
+
+            <div id="formMessage" class="form-message"></div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+
+                <button
+                    type="submit"
+                    class="publish-btn"
+                    id="publishBtn"
                 >
-                <small>Android versionCode must be higher than the previous release.</small>
-            </div>
+                    Publish Update
+                </button>
 
-            <div class="field">
-                <label for="versionName">Version Name</label>
-                <input
-                    type="text"
-                    id="versionName"
-                    placeholder="e.g. 1.4"
-                    required
+                <button
+                    type="button"
+                    class="refresh-btn"
+                    id="cancelEditBtn"
+                    style="display:none"
                 >
-                <small>User-facing version name.</small>
+                    Cancel Edit
+                </button>
+
             </div>
 
-            <div class="field full">
-                <label for="apkUrl">APK URL</label>
-                <input
-                    type="url"
-                    id="apkUrl"
-                    placeholder="https://nzasmkplxzirnqeteclv.supabase.co/storage/v1/object/public/app-updates/PipZoNe-1.4.apk"
-                    required
-                >
-                <small>Public URL of the APK stored in Supabase Storage.</small>
-            </div>
-
-            <div class="field full">
-                <label for="updateMessage">Update Message</label>
-                <textarea
-                    id="updateMessage"
-                    rows="4"
-                    placeholder="New improvements and features are available."
-                    required
-                ></textarea>
-            </div>
-
-        </div>
-
-        <div class="settings-row">
-
-            <label class="switch-row">
-                <input type="checkbox" id="isRequired">
-                <span class="switch"></span>
-                <span>
-                    <strong>Required Update</strong>
-                    <small>Users should not be able to skip this update.</small>
-                </span>
-            </label>
-
-            <label class="switch-row">
-                <input type="checkbox" id="isActive" checked>
-                <span class="switch"></span>
-                <span>
-                    <strong>Active</strong>
-                    <small>Make this update available to clients.</small>
-                </span>
-            </label>
-
-        </div>
-
-        <div id="formMessage" class="form-message"></div>
-
-        <button
-            type="submit"
-            class="publish-btn"
-            id="publishBtn"
-        >
-            Publish Update
-        </button>
-
-    </form>
-
-</div>
-
-<div class="card">
-
-    <div class="card-header history-header">
-        <div>
-            <h2>Update History</h2>
-            <p>Previously published PipZoNe versions.</p>
-        </div>
-
-        <button
-            type="button"
-            class="refresh-btn"
-            id="refreshBtn"
-        >
-            Refresh
-        </button>
-    </div>
-
-    <div class="latest-version" id="latestVersion">
-        <div class="latest-loading">
-            Loading latest version...
-        </div>
-    </div>
-
-    <div class="table-wrap">
-
-        <table>
-
-            <thead>
-                <tr>
-                    <th>Version Code</th>
-                    <th>Version</th>
-                    <th>Date</th>
-                    <th>Required</th>
-                    <th>Active</th>
-                </tr>
-            </thead>
-
-            <tbody id="historyBody">
-                <tr>
-                    <td colspan="5" class="loading">
-                        Loading history...
-                    </td>
-                </tr>
-            </tbody>
-
-        </table>
+        </form>
 
     </div>
 
-</div>
+    <div class="card">
+
+        <div class="card-header history-header">
+            <div>
+                <h2>Update History</h2>
+                <p>Click any release to load its complete data into the form.</p>
+            </div>
+
+            <button
+                type="button"
+                class="refresh-btn"
+                id="refreshBtn"
+            >
+                Refresh
+            </button>
+        </div>
+
+        <div class="latest-version" id="latestVersion">
+            <div class="latest-loading">
+                Loading latest version...
+            </div>
+        </div>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Version Code</th>
+                        <th>Version Name</th>
+                        <th>APK URL</th>
+                        <th>Update Message</th>
+                        <th>Required</th>
+                        <th>Active</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody id="historyBody">
+                    <tr>
+                        <td colspan="8" class="loading">
+                            Loading history...
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="app-updates.js"></script>
 
 </body>
