@@ -381,7 +381,6 @@ font-size: 13px;
 padding: 22px 15px 45px;
 }
 
-```
 .page-header {
     align-items: flex-start;
     flex-direction: column;
@@ -403,6 +402,77 @@ padding: 22px 15px 45px;
 .card {
     padding: 18px;
 }
-```
 
 }
+
+/* =========================================================
+   APP UPDATES — TOP BUTTONS
+   Matches Main Admin Panel index.html
+========================================================= */
+
+.page-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:22px
+}
+
+.top-buttons{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  justify-content:flex-end
+}
+
+.top-buttons .btn{
+  border:1px solid var(--line);
+  background:#122238;
+  color:#fff;
+  border-radius:10px;
+  padding:10px 15px;
+  cursor:pointer
+}
+
+.top-buttons .btn:hover{
+  border-color:#39506d
+}
+
+.top-buttons .logout{
+  border-color:#5b2930;
+  color:#ffb6b6
+}
+
+@media(max-width:720px){
+
+  .page-header{
+    flex-direction:column;
+    align-items:flex-start
+  }
+
+  .top-buttons{
+    width:100%;
+    justify-content:flex-start
+  }
+
+  .top-buttons .btn{
+    flex:1 1 auto;
+    min-width:0
+  }
+
+}
+
+@media(max-width:430px){
+
+  .top-buttons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px
+  }
+
+  .top-buttons .logout{
+    grid-column:1/-1
+  }
+
+}
+
