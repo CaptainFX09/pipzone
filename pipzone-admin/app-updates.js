@@ -3,8 +3,9 @@ const SUPABASE_KEY='sb_publishable_ywmF35YANKsFEdZOs8wDdQ__jIezHTF';
 
 const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
-    SUPABASE_ANON_KEY
+    SUPABASE_KEY
 );
+
 
 const updateForm = document.getElementById("updateForm");
 const publishBtn = document.getElementById("publishBtn");
