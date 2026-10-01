@@ -995,3 +995,32 @@ font-family:'IBM Plex Mono',monospace
 .app-launch-content p{font-size:14px;margin-bottom:16px}
 .app-launch-image img{border-radius:10px}
 }
+
+
+/* ==================== APP DOWNLOAD ==================== */
+.app-download-row{
+width:100%;
+margin:0 0 14px;
+}
+
+.app-download-btn{
+width:100%;
+display:block;
+padding:14px 18px;
+text-align:center;
+font-size:15px;
+font-weight:600;
+}
+
+@media(max-width:600px){
+.app-download-row{
+width:100%;
+margin-bottom:12px;
+}
+
+.app-download-btn{
+width:100%;
+padding:13px 16px;
+font-size:14px;
+}
+}
