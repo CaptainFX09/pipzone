@@ -337,7 +337,8 @@ async function checkAdmin(){
 let LATEST_ACCOUNTS_BY_USER = {};
 
 /* Current referral commission rate (%), loaded from app_settings */
-let CURRENT_COMMISSION_RATE = 0;
+let CURRENT_COMMISSION_RATE_LOW = 0;
+let CURRENT_COMMISSION_RATE_HIGH = 0;
 
 
 async function loadAll(){
@@ -717,22 +718,35 @@ async function loadAll(){
        Stored in app_settings as key = 'referral_commission_rate'
     */
 
-    const rateRow =
-      (appSettings.data || []).find(
-        x => x.key === 'referral_commission_rate'
-      );
+const lowRateRow =
+  (appSettings.data || []).find(
+    x => x.key === 'referral_commission_rate_low'
+  );
+
+const highRateRow =
+  (appSettings.data || []).find(
+    x => x.key === 'referral_commission_rate_high'
+  );
 
 
-    CURRENT_COMMISSION_RATE =
-      rateRow
-      ? Number(rateRow.value)
-      : 0;
+CURRENT_COMMISSION_RATE_LOW =
+  lowRateRow
+  ? Number(lowRateRow.value)
+  : 0;
 
 
-    $('commissionRateInput').value =
-      CURRENT_COMMISSION_RATE;
+CURRENT_COMMISSION_RATE_HIGH =
+  highRateRow
+  ? Number(highRateRow.value)
+  : 0;
 
 
+$('commissionRateLowInput').value =
+  CURRENT_COMMISSION_RATE_LOW;
+
+
+$('commissionRateHighInput').value =
+  CURRENT_COMMISSION_RATE_HIGH;
     /* =====================================================
        RENDER TABLES
     ===================================================== */
@@ -2732,15 +2746,17 @@ client.auth.onAuthStateChange(
 
 loadAll();
 
-
 /* =========================================================
-   16. REFERRAL PROGRAM — SAVE COMMISSION RATE ACTION
+   16. REFERRAL PROGRAM — SAVE TIERED COMMISSION RATES
 ========================================================= */
 
-$('saveRateBtn').addEventListener('click', async()=>{
+
+/* ---------- 16a. SAVE $100 → $499.99 RATE ---------- */
+
+$('saveLowRateBtn').addEventListener('click', async()=>{
 
   const input =
-    $('commissionRateInput');
+    $('commissionRateLowInput');
 
   const newRate =
     parseFloat(input.value);
@@ -2762,7 +2778,7 @@ $('saveRateBtn').addEventListener('click', async()=>{
 
 
   const btn =
-    $('saveRateBtn');
+    $('saveLowRateBtn');
 
   btn.disabled = true;
 
@@ -2776,10 +2792,10 @@ $('saveRateBtn').addEventListener('click', async()=>{
       .from('app_settings')
       .upsert(
         {
-          key:'referral_commission_rate',
+          key:'referral_commission_rate_low',
           value:String(newRate)
         },
-        { onConflict:'key' }
+        {onConflict:'key'}
       );
 
 
@@ -2794,15 +2810,16 @@ $('saveRateBtn').addEventListener('click', async()=>{
     }
 
 
-    CURRENT_COMMISSION_RATE =
+    CURRENT_COMMISSION_RATE_LOW =
       newRate;
 
 
     const note =
-      $('rateSavedNote');
+      $('lowRateSavedNote');
 
     note.textContent =
       'Saved ✓';
+
 
     setTimeout(
       () => note.textContent = '',
@@ -2811,7 +2828,7 @@ $('saveRateBtn').addEventListener('click', async()=>{
 
 
     showMsg(
-      'Commission rate updated to ' +
+      '$100–$499.99 commission rate updated to ' +
       newRate +
       '%.'
     );
@@ -2819,11 +2836,130 @@ $('saveRateBtn').addEventListener('click', async()=>{
 
   }catch(err){
 
-    console.error('Save rate error:', err);
+    console.error(
+      'Save low referral rate error:',
+      err
+    );
+
 
     showMsg(
       'Failed to save commission rate: ' +
-      (err && err.message ? err.message : String(err)),
+      (
+        err && err.message
+        ? err.message
+        : String(err)
+      ),
+      true
+    );
+
+
+  }finally{
+
+    btn.disabled = false;
+
+  }
+
+});
+
+
+/* ---------- 16b. SAVE $500+ RATE ---------- */
+
+$('saveHighRateBtn').addEventListener('click', async()=>{
+
+  const input =
+    $('commissionRateHighInput');
+
+  const newRate =
+    parseFloat(input.value);
+
+
+  if(
+    isNaN(newRate) ||
+    newRate < 0 ||
+    newRate > 100
+  ){
+
+    showMsg(
+      'Enter a valid commission rate between 0 and 100.',
+      true
+    );
+
+    return;
+  }
+
+
+  const btn =
+    $('saveHighRateBtn');
+
+  btn.disabled = true;
+
+
+  try{
+
+    const {
+      error
+    } =
+    await client
+      .from('app_settings')
+      .upsert(
+        {
+          key:'referral_commission_rate_high',
+          value:String(newRate)
+        },
+        {onConflict:'key'}
+      );
+
+
+    if(error){
+
+      showMsg(
+        error.message,
+        true
+      );
+
+      return;
+    }
+
+
+    CURRENT_COMMISSION_RATE_HIGH =
+      newRate;
+
+
+    const note =
+      $('highRateSavedNote');
+
+    note.textContent =
+      'Saved ✓';
+
+
+    setTimeout(
+      () => note.textContent = '',
+      3000
+    );
+
+
+    showMsg(
+      '$500+ commission rate updated to ' +
+      newRate +
+      '%.'
+    );
+
+
+  }catch(err){
+
+    console.error(
+      'Save high referral rate error:',
+      err
+    );
+
+
+    showMsg(
+      'Failed to save commission rate: ' +
+      (
+        err && err.message
+        ? err.message
+        : String(err)
+      ),
       true
     );
 
