@@ -2636,3 +2636,11 @@ document.addEventListener('DOMContentLoaded', async function () {
     console.error('Session check error:', err);
   }
 });
+
+
+function downloadApp(){
+  window.open(
+    'https://nzasmkplxzirnqeteclv.supabase.co/storage/v1/object/public/app-updates/PipZoNe.apk',
+    '_blank'
+  );
+}
