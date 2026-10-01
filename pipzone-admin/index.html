@@ -155,17 +155,26 @@
 </div>
 
   <!-- REFERRAL PROGRAM SECTION — commission rate control + per-client breakdown -->
-  <div class="section" id="referralSection">
+<!-- REFERRAL PROGRAM SECTION — tiered commission rate control + per-client breakdown -->
+<div class="section" id="referralSection">
   <h3 onclick="window.scrollTo({top:0,behavior:'smooth'})">Referral Program</h3>
-    <div class="referral-rate-row">
-      <label for="commissionRateInput">Commission Rate (%)</label>
-      <input id="commissionRateInput" type="number" step="0.1" min="0" max="100" placeholder="e.g. 2">
-      <button class="btn" id="saveRateBtn" type="button">Save Rate</button>
-      <span id="rateSavedNote" class="rate-saved-note"></span>
-    </div>
 
-    <div id="referralTable" class="table-wrap"></div>
+  <div class="referral-rate-row">
+    <label for="commissionRateLowInput">$100 → $499.99 Commission Rate (%)</label>
+    <input id="commissionRateLowInput" type="number" step="0.1" min="0" max="100" placeholder="e.g. 1">
+    <button class="btn" id="saveLowRateBtn" type="button">Save Rate</button>
+    <span id="lowRateSavedNote" class="rate-saved-note"></span>
   </div>
+
+  <div class="referral-rate-row">
+    <label for="commissionRateHighInput">$500+ Commission Rate (%)</label>
+    <input id="commissionRateHighInput" type="number" step="0.1" min="0" max="100" placeholder="e.g. 6">
+    <button class="btn" id="saveHighRateBtn" type="button">Save Rate</button>
+    <span id="highRateSavedNote" class="rate-saved-note"></span>
+  </div>
+
+  <div id="referralTable" class="table-wrap"></div>
+</div>
 
   <!-- DAILY RESULTS SECTION -->
   <div class="section">
