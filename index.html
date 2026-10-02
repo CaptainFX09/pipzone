@@ -187,7 +187,7 @@ CANDLESTICK / LIVE
 </div>
 </div>
 <div class="steps">
-<div class="step"><div class="step-num">01</div><div class="step-title">Create your account</div><div class="step-desc">Register with your details and verify your email.</div></div>
+<div class="step"><div class="step-num">01</div><div class="step-title">Create your account</div><div class="step-desc">Register with your details and verify your email using a 6-digit code..</div></div>
 <div class="step"><div class="step-num">02</div><div class="step-title">Deposit capital</div><div class="step-desc">Send a minimum of $100 in USDT via TRC20 or BEP20 to your account's deposit address. Funds are credited after confirmation.</div></div>
 <div class="step"><div class="step-num">03</div><div class="step-title">Capital is traded</div><div class="step-desc">Client-provided capital is used for forex and crypto trading under the agreed trading structure. Trading can result in both profits and losses.</div></div>
 <div class="step"><div class="step-num">04</div><div class="step-title">Daily settlement</div><div class="step-desc">Each day's actual trading result is calculated according to the agreed 60/40 profit-sharing structure. When a profit is generated, your applicable profit share may be requested for withdrawal according to the withdrawal terms. Your original deposit unlocks 40 days after it is credited. Forex markets are closed on Saturdays and Sundays, so no result is recorded on those two days each week.</div></div>
@@ -917,20 +917,52 @@ Your profit share can be withdrawn on demand, any time, with no minimum amount â
 <button type="button" class="btn btn-gold" onclick="signup()">Create account</button>
 </div>
 </div>
+  <div id="signupOtpForm" style="display:none">
+<h2>Verify your account</h2>
+<p class="auth-sub">Enter the 6-digit code sent to your email.</p>
+<div class="msg" id="signupOtpMsg"></div>
+<div class="form-group">
+<label>Verification Code</label>
+<input id="signupOtp" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="Enter 6-digit code">
+</div>
+<div class="form-actions">
+<button type="button" class="btn btn-gold" onclick="verifySignupOtp()">Verify account</button>
+</div>
+<div class="switch">
+Didn't receive the code?
+<button type="button" onclick="resendSignupOtp()">Resend code</button>
+</div>
+</div>
 <div id="resetPasswordForm" style="display:none">
 <h2>Reset password</h2>
-<p class="auth-sub">Enter your account email and we'll send you a password reset link.</p>
+<p class="auth-sub">Enter your account email and we'll send you a 6-digit verification code.</p>
 <div class="msg" id="resetMsg"></div>
 <div class="form-group">
 <label>Email</label>
 <input id="resetEmail" type="email" autocomplete="email" placeholder="Your account email">
 </div>
 <div class="form-actions">
-<button type="button" class="btn btn-gold" onclick="sendResetEmail()">Send reset link</button>
+<button type="button" class="btn btn-gold" onclick="sendResetEmail()">Send code</button>
 </div>
 <div class="switch">
 Remember your password?
 <button type="button" onclick="showLogin()">Client login</button>
+</div>
+</div>
+  <div id="resetOtpForm" style="display:none">
+<h2>Verify code</h2>
+<p class="auth-sub">Enter the 6-digit code sent to your email.</p>
+<div class="msg" id="resetOtpMsg"></div>
+<div class="form-group">
+<label>Verification Code</label>
+<input id="resetOtp" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="Enter 6-digit code">
+</div>
+<div class="form-actions">
+<button type="button" class="btn btn-gold" onclick="verifyResetOtp()">Verify code</button>
+</div>
+<div class="switch">
+Didn't receive the code?
+<button type="button" onclick="resendResetOtp()">Resend code</button>
 </div>
 </div>
 <div id="newPasswordForm" style="display:none">
