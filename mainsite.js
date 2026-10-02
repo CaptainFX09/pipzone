@@ -323,7 +323,9 @@ function closeAuth() {
 function hideAuthForms() {
   $('loginForm').style.display = 'none';
   $('signupForm').style.display = 'none';
+  $('signupOtpForm').style.display = 'none';
   $('resetPasswordForm').style.display = 'none';
+  $('resetOtpForm').style.display = 'none';
   $('newPasswordForm').style.display = 'none';
 }
 
@@ -343,6 +345,18 @@ function showLogin() {
   setActiveAuthTab('login');
 }
 
+function showSignupOtpForm() {
+  modal.classList.add('show');
+  document.body.classList.add('modal-open');
+  hideAuthForms();
+  $('signupOtpForm').style.display = 'block';
+  clearMessages();
+  hideAuthTabs();
+  setTimeout(() => {
+    $('signupOtp')?.focus();
+  }, 50);
+}
+
 function showResetPassword() {
   modal.classList.add('show');
   document.body.classList.add('modal-open');
@@ -350,12 +364,26 @@ function showResetPassword() {
   $('resetPasswordForm').style.display = 'block';
   clearMessages();
   hideAuthTabs();
+
   const loginEmail = $('loginEmail')?.value.trim();
   if (loginEmail) {
     $('resetEmail').value = loginEmail;
   }
+
   setTimeout(() => {
     $('resetEmail')?.focus();
+  }, 50);
+}
+
+function showResetOtpForm() {
+  modal.classList.add('show');
+  document.body.classList.add('modal-open');
+  hideAuthForms();
+  $('resetOtpForm').style.display = 'block';
+  clearMessages();
+  hideAuthTabs();
+  setTimeout(() => {
+    $('resetOtp')?.focus();
   }, 50);
 }
 
@@ -372,11 +400,12 @@ function showNewPasswordForm() {
 }
 
 /* ---- Auth tabs (Sign in / Create account) ----
-   Shown above #loginForm/#signupForm, hidden for the reset/new-password
+   Shown above #loginForm/#signupForm, hidden for the reset/OTP/new-password
    flows below since those have their own heading instead. */
 function showAuthTabs() {
   const t = $('authTitle');
   if (t) t.style.display = 'block';
+
   const b = $('authTabs');
   if (b) b.style.display = 'flex';
 }
@@ -384,6 +413,7 @@ function showAuthTabs() {
 function hideAuthTabs() {
   const t = $('authTitle');
   if (t) t.style.display = 'none';
+
   const b = $('authTabs');
   if (b) b.style.display = 'none';
 }
@@ -396,92 +426,214 @@ function setActiveAuthTab(which) {
 /* -------------------------- 9. Password reset flow -------------------------- */
 async function sendResetEmail() {
   clearMessages();
+
   if (!supabaseReady) {
     showMsg('resetMsg', 'Connection is not ready. Please refresh the page and try again.');
     return;
   }
-  const email = $('resetEmail').value.trim();
+
+  const email = $('resetEmail')?.value.trim() || '';
+
   if (!email) {
     showMsg('resetMsg', 'Please enter your account email.');
     return;
   }
-  const button = $('resetPasswordForm').querySelector('.form-actions .btn');
+
+  const button = $('resetPasswordForm')?.querySelector('.form-actions .btn');
+
   if (button) {
     button.disabled = true;
     button.textContent = 'Sending...';
   }
+
   try {
-    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin,
-    });
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+
     if (error) {
       console.error('Reset email error:', error);
       showMsg('resetMsg', error.message);
       return;
     }
+
+    window.pendingResetEmail = email;
+
+    showResetOtpForm();
+  } catch (err) {
+    console.error(err);
+    showMsg('resetMsg', 'Unable to send reset code right now. Please try again.');
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = 'Send code';
+    }
+  }
+}
+
+async function verifyResetOtp() {
+  clearMessages();
+
+  if (!supabaseReady) {
+    showMsg('resetOtpMsg', 'Connection is not ready. Please refresh the page and try again.');
+    return;
+  }
+
+  const email = window.pendingResetEmail || $('resetEmail')?.value.trim() || '';
+  const token = $('resetOtp')?.value.trim() || '';
+
+  if (!email) {
+    showMsg('resetOtpMsg', 'Please enter your account email again.');
+    return;
+  }
+
+  if (!/^\d{6}$/.test(token)) {
+    showMsg('resetOtpMsg', 'Please enter the 6-digit verification code.');
+    return;
+  }
+
+  const button = $('resetOtpForm')?.querySelector('.form-actions .btn');
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Verifying...';
+  }
+
+  try {
+    const { error } = await supabaseClient.auth.verifyOtp({
+      email,
+      token,
+      type: 'recovery',
+    });
+
+    if (error) {
+      console.error('Reset OTP error:', error);
+      showMsg('resetOtpMsg', 'Invalid or expired verification code.');
+      return;
+    }
+
+    $('resetOtp').value = '';
+    showNewPasswordForm();
+  } catch (err) {
+    console.error(err);
+    showMsg('resetOtpMsg', 'Unable to verify the code right now. Please try again.');
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = 'Verify code';
+    }
+  }
+}
+
+async function resendResetOtp() {
+  clearMessages();
+
+  if (!supabaseReady) {
+    showMsg('resetOtpMsg', 'Connection is not ready. Please refresh the page and try again.');
+    return;
+  }
+
+  const email = window.pendingResetEmail || $('resetEmail')?.value.trim() || '';
+
+  if (!email) {
+    showMsg('resetOtpMsg', 'Please enter your account email again.');
+    return;
+  }
+
+  const button = $('resetOtpForm')?.querySelector('.switch button');
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Sending...';
+  }
+
+  try {
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+
+    if (error) {
+      console.error('Resend reset OTP error:', error);
+      showMsg('resetOtpMsg', error.message);
+      return;
+    }
+
     showMsg(
-      'resetMsg',
-      'Password reset link has been sent to your email. Please check your inbox and spam folder.',
+      'resetOtpMsg',
+      'A new 6-digit verification code has been sent to your email.',
       false,
     );
   } catch (err) {
     console.error(err);
-    showMsg('resetMsg', 'Unable to send reset email right now. Please try again.');
+    showMsg('resetOtpMsg', 'Unable to resend the code right now. Please try again.');
   } finally {
     if (button) {
       button.disabled = false;
-      button.textContent = 'Send reset link';
+      button.textContent = 'Resend code';
     }
   }
 }
 
 async function updatePassword() {
   clearMessages();
+
   if (!supabaseReady) {
     showMsg('newPasswordMsg', 'Connection is not ready. Please refresh the page and try again.');
     return;
   }
+
   const password = $('newPassword').value;
   const confirm = $('confirmNewPassword').value;
+
   if (!password) {
     showMsg('newPasswordMsg', 'Please enter your new password.');
     return;
   }
+
   if (password.length < 6) {
     showMsg('newPasswordMsg', 'Password must be at least 6 characters.');
     return;
   }
+
   if (!confirm) {
     showMsg('newPasswordMsg', 'Please confirm your new password.');
     return;
   }
+
   if (password !== confirm) {
     showMsg('newPasswordMsg', 'Passwords do not match.');
     return;
   }
+
   const button = $('newPasswordForm').querySelector('.form-actions .btn');
+
   if (button) {
     button.disabled = true;
     button.textContent = 'Updating...';
   }
+
   try {
-    const { error } = await supabaseClient.auth.updateUser({ password: password });
+    const { error } = await supabaseClient.auth.updateUser({
+      password: password,
+    });
+
     if (error) {
       console.error('Password update error:', error);
       showMsg('newPasswordMsg', error.message);
       return;
     }
+
     $('newPassword').value = '';
     $('confirmNewPassword').value = '';
+    window.pendingResetEmail = '';
+
     showMsg(
       'newPasswordMsg',
       'Password updated successfully. You can now login with your new password.',
       false,
     );
+
     setTimeout(() => {
       try {
         window.history.replaceState({}, document.title, window.location.pathname);
       } catch (e) {}
+
       showLogin();
     }, 1500);
   } catch (err) {
@@ -565,7 +717,8 @@ function updatePasswordRulesUI(pw) {
 
 /* -------------------------- 11. Signup -------------------------- */
 /* Signup requires only Email and Password.
-   Profile details are added later from Client Dashboard > Profile. */
+   Profile details are added later from Client Dashboard > Profile.
+   Email verification is completed with a 6-digit OTP. */
 
 async function signup() {
   clearMessages();
@@ -606,19 +759,15 @@ async function signup() {
 
   try {
     const manualPartnerCode = $('partnerCode')?.value.trim() || '';
-
     const referredByCode = manualPartnerCode || getStoredReferralCode();
 
     const { data, error } = await supabaseClient.auth.signUp({
       email,
       password: pass,
-
       options: {
         data: {
           referred_by_code: referredByCode || null,
         },
-
-        emailRedirectTo: window.location.origin,
       },
     });
 
@@ -643,13 +792,12 @@ async function signup() {
     if (data && data.session) {
       closeAuth();
       await loadDashboard();
-    } else {
-      showMsg(
-        'signupMsg',
-        'Account created. Please check your email to verify your account.',
-        false,
-      );
+      return;
     }
+
+    window.pendingSignupEmail = email;
+
+    showSignupOtpForm();
   } catch (err) {
     console.error('Signup error:', err);
 
@@ -662,6 +810,127 @@ async function signup() {
   }
 }
 
+async function verifySignupOtp() {
+  clearMessages();
+
+  if (!supabaseReady) {
+    showMsg('signupOtpMsg', 'Connection is not ready. Please refresh the page and try again.');
+    return;
+  }
+
+  const email = window.pendingSignupEmail || $('signupEmail')?.value.trim() || '';
+  const token = $('signupOtp')?.value.trim() || '';
+
+  if (!email) {
+    showMsg('signupOtpMsg', 'Please enter your signup email again.');
+    return;
+  }
+
+  if (!/^\d{6}$/.test(token)) {
+    showMsg('signupOtpMsg', 'Please enter the 6-digit verification code.');
+    return;
+  }
+
+  const button = $('signupOtpForm')?.querySelector('.form-actions .btn');
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Verifying...';
+  }
+
+  try {
+    const { data, error } = await supabaseClient.auth.verifyOtp({
+      email,
+      token,
+      type: 'email',
+    });
+
+    if (error) {
+      console.error('Signup OTP error:', error);
+      showMsg('signupOtpMsg', 'Invalid or expired verification code.');
+      return;
+    }
+
+    if (!data?.session) {
+      showMsg(
+        'signupOtpMsg',
+        'Verification completed. Please login to continue.',
+        false,
+      );
+
+      setTimeout(() => {
+        window.pendingSignupEmail = '';
+        showLogin();
+      }, 1200);
+
+      return;
+    }
+
+    $('signupOtp').value = '';
+    window.pendingSignupEmail = '';
+
+    closeAuth();
+    await loadDashboard();
+  } catch (err) {
+    console.error('Signup OTP verification error:', err);
+    showMsg('signupOtpMsg', 'Unable to verify the code right now. Please try again.');
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = 'Verify account';
+    }
+  }
+}
+
+async function resendSignupOtp() {
+  clearMessages();
+
+  if (!supabaseReady) {
+    showMsg('signupOtpMsg', 'Connection is not ready. Please refresh the page and try again.');
+    return;
+  }
+
+  const email = window.pendingSignupEmail || $('signupEmail')?.value.trim() || '';
+
+  if (!email) {
+    showMsg('signupOtpMsg', 'Please enter your signup email again.');
+    return;
+  }
+
+  const button = $('signupOtpForm')?.querySelector('.switch button');
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Sending...';
+  }
+
+  try {
+    const { error } = await supabaseClient.auth.resend({
+      type: 'signup',
+      email,
+    });
+
+    if (error) {
+      console.error('Resend signup OTP error:', error);
+      showMsg('signupOtpMsg', error.message);
+      return;
+    }
+
+    showMsg(
+      'signupOtpMsg',
+      'A new 6-digit verification code has been sent to your email.',
+      false,
+    );
+  } catch (err) {
+    console.error('Resend signup OTP error:', err);
+    showMsg('signupOtpMsg', 'Unable to resend the code right now. Please try again.');
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = 'Resend code';
+    }
+  }
+}
 /* -------------------------- 12. Login -------------------------- */
 async function login() {
   clearMessages();
