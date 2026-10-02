@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Page Meta -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>PipZoNe — Trade Code</title>
@@ -10,6 +11,7 @@
 </head>
 <body>
 <div class="container">
+<!-- Header -->
 <div class="header">
 <div>
 <h1>Pip<span>ZoNe</span></h1>
@@ -22,10 +24,31 @@
 </div>
 </div>
 
+<!-- Trade Code Generator -->
 <div class="card">
 <div class="card-title">Generate Trade Code</div>
 <div class="card-sub">Create a one-time code for a specific client. The server controls expiry, balance limits and one-time use.</div>
 
+<!-- Trade Direction & Currency -->
+<div class="trade-selection-row">
+<div class="field">
+<label for="tradeDirection">Trade Direction</label>
+<select id="tradeDirection">
+<option value="buy">BUY</option>
+<option value="sell">SELL</option>
+</select>
+</div>
+<div class="field">
+<label for="tradeCurrency">Currency / Asset</label>
+<select id="tradeCurrency"></select>
+<div class="currency-actions">
+<button id="addCurrencyBtn" class="back-btn" type="button">+ Add Currency</button>
+<button id="deleteCurrencyBtn" class="delete-btn" type="button">Delete Currency</button>
+</div>
+</div>
+</div>
+
+<!-- Adjustment Settings -->
 <div class="field">
 <label for="adjustmentType">Adjustment Type</label>
 <select id="adjustmentType">
@@ -39,6 +62,7 @@
 <input id="percentage" type="number" min="0.01" max="100" step="0.01" placeholder="e.g. 1.50">
 </div>
 
+<!-- Code Expiry -->
 <div class="field full">
 <label for="expiryValue">Code Expiry Time</label>
 <div class="expiry-row">
@@ -52,6 +76,7 @@
 </div>
 </div>
 
+<!-- Generated Code -->
 <div class="generated-row">
 <div class="field">
 <label for="generatedCode">Generated Code</label>
@@ -63,9 +88,11 @@
 </div>
 </div>
 
+<!-- Status Message -->
 <div id="message" class="message"></div>
 </div>
 
+<!-- Generated Codes History -->
 <div class="history card">
 <div class="history-head">
 <div>
@@ -78,6 +105,7 @@
 </div>
 </div>
 
+<!-- Page Script -->
 <script src="profit-codes.js"></script>
 </body>
 </html>
