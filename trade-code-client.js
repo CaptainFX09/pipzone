@@ -3,18 +3,20 @@
 const SUPABASE_URL='https://nzasmkplxzirnqeteclv.supabase.co';
 const SUPABASE_KEY='sb_publishable_ywmF35YANKsFEdZOs8wDdQ__jIezHTF';
 
+
 const ACTIVE_TRADE_STORAGE_KEY='pipzone_active_trade_cycle';
-
 const $=id=>document.getElementById(id);
-
 let client=null;
 let currentAccount=null;
 let initialized=false;
 let syncing=false;
 let activeCycleId=null;
 let countdownTimer=null;
+let settleTimer=null;
 let settling=false;
 let tradePopup=null;
+let pendingSettlementResult=null;
+let countdownFinished=false;
 
 function money(value){
 return '$'+Number(value||0).toFixed(2);
@@ -22,9 +24,7 @@ return '$'+Number(value||0).toFixed(2);
 
 function showMessage(text,error=false){
 const el=$('tradeMsg')||$('tradeCodeMsg');
-
 if(!el)return;
-
 el.textContent=text;
 el.style.color=error?'var(--loss)':'var(--profit)';
 el.classList.add('show');
@@ -33,335 +33,150 @@ el.style.display='block';
 
 function clearMessage(){
 const el=$('tradeMsg')||$('tradeCodeMsg');
-
 if(!el)return;
-
 el.textContent='';
 el.classList.remove('show');
 el.style.display='none';
 }
 
 function setTradeButtonsDisabled(disabled){
-const buttons=[
-$('buyTradeBtn'),
-$('sellTradeBtn')
-];
-
-buttons.forEach(button=>{
-if(button){
-button.disabled=disabled;
-}
+[$('buyTradeBtn'),$('sellTradeBtn')].forEach(button=>{
+if(button)button.disabled=disabled;
 });
 }
 
 function createTradePopup(){
-if(tradePopup){
-return tradePopup;
-}
+if(tradePopup)return tradePopup;
 
 const overlay=document.createElement('div');
-
 overlay.id='pipzoneTradePopup';
-
-overlay.style.cssText=[
-'position:fixed',
-'inset:0',
-'z-index:99999',
-'display:none',
-'align-items:center',
-'justify-content:center',
-'padding:20px',
-'background:rgba(0,0,0,.78)',
-'backdrop-filter:blur(8px)',
-'-webkit-backdrop-filter:blur(8px)'
-].join(';');
+overlay.style.cssText='position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)';
 
 const card=document.createElement('div');
-
-card.style.cssText=[
-'width:min(420px,100%)',
-'background:var(--panel,#171F1B)',
-'border:1px solid var(--line,#283029)',
-'border-radius:22px',
-'padding:28px 22px',
-'text-align:center',
-'box-shadow:0 25px 80px rgba(0,0,0,.5)'
-].join(';');
+card.style.cssText='width:min(420px,100%);background:var(--panel,#171F1B);border:1px solid var(--line,#283029);border-radius:22px;padding:28px 22px;text-align:center;box-shadow:0 25px 80px rgba(0,0,0,.5)';
 
 const title=document.createElement('div');
-
 title.textContent='Trade in Progress';
-
-title.style.cssText=[
-'font-family:var(--font-display,inherit)',
-'font-size:24px',
-'font-weight:700',
-'color:var(--text,#ECF3EE)',
-'margin-bottom:8px'
-].join(';');
+title.style.cssText='font-family:var(--font-display,inherit);font-size:24px;font-weight:700;color:var(--text,#ECF3EE);margin-bottom:8px';
 
 const subtitle=document.createElement('div');
-
 subtitle.id='pipzoneTradePopupSubtitle';
-
 subtitle.textContent='Your trade is being processed.';
-
-subtitle.style.cssText=[
-'font-size:14px',
-'color:var(--muted,#8B9992)',
-'margin-bottom:24px'
-].join(';');
+subtitle.style.cssText='font-size:14px;color:var(--muted,#8B9992);margin-bottom:24px';
 
 const countdown=document.createElement('div');
-
 countdown.id='pipzoneTradePopupCountdown';
-
 countdown.textContent='30';
-
-countdown.style.cssText=[
-'font-family:var(--font-mono,monospace)',
-'font-size:64px',
-'line-height:1',
-'font-weight:700',
-'color:var(--gold,#2FBF83)',
-'margin:10px 0 24px'
-].join(';');
+countdown.style.cssText='font-family:var(--font-mono,monospace);font-size:64px;line-height:1;font-weight:700;color:var(--gold,#2FBF83);margin:10px 0 24px';
 
 const countdownLabel=document.createElement('div');
-
 countdownLabel.id='pipzoneTradePopupCountdownLabel';
-
 countdownLabel.textContent='SECONDS';
-
-countdownLabel.style.cssText=[
-'font-size:11px',
-'letter-spacing:2px',
-'color:var(--muted,#8B9992)',
-'margin-top:-16px',
-'margin-bottom:20px'
-].join(';');
+countdownLabel.style.cssText='font-size:11px;letter-spacing:2px;color:var(--muted,#8B9992);margin-top:-16px;margin-bottom:20px';
 
 const result=document.createElement('div');
-
 result.id='pipzoneTradePopupResult';
-
-result.style.cssText=[
-'display:none',
-'font-size:20px',
-'font-weight:700',
-'line-height:1.7',
-'white-space:pre-line'
-].join(';');
-
-const closeButton=document.createElement('button');
-
-closeButton.type='button';
-closeButton.id='pipzoneTradePopupClose';
-closeButton.textContent='Close';
-
-closeButton.style.cssText=[
-'display:none',
-'margin-top:22px',
-'width:100%',
-'border:0',
-'border-radius:12px',
-'padding:13px 18px',
-'font-size:14px',
-'font-weight:700',
-'cursor:pointer',
-'background:var(--gold,#2FBF83)',
-'color:#07110C'
-].join(';');
-
-closeButton.addEventListener(
-'click',
-closeTradePopup
-);
+result.style.cssText='display:none;font-size:20px;font-weight:700;line-height:1.7;white-space:pre-line';
 
 card.appendChild(title);
 card.appendChild(subtitle);
 card.appendChild(countdown);
 card.appendChild(countdownLabel);
 card.appendChild(result);
-card.appendChild(closeButton);
-
 overlay.appendChild(card);
-
 document.body.appendChild(overlay);
 
-tradePopup={
-overlay,
-subtitle,
-countdown,
-countdownLabel,
-result,
-closeButton
-};
-
+tradePopup={overlay,subtitle,countdown,countdownLabel,result};
 return tradePopup;
 }
 
 function showTradePopup(){
 const popup=createTradePopup();
-
 popup.overlay.style.display='flex';
-
 popup.countdown.style.display='block';
 popup.countdownLabel.style.display='block';
-
 popup.result.style.display='none';
-popup.closeButton.style.display='none';
-
-popup.countdown.style.color=
-'var(--gold,#2FBF83)';
-
-popup.subtitle.textContent=
-'Your trade is being processed.';
-
+popup.countdown.style.color='var(--gold,#2FBF83)';
+popup.subtitle.textContent='Your trade is being processed.';
 document.body.style.overflow='hidden';
 }
 
 function updateTradePopupCountdown(value){
 const popup=createTradePopup();
-
-popup.countdown.textContent=
-String(
-Math.max(
-0,
-Number(value)||0
-)
-);
+popup.countdown.textContent=String(Math.max(0,Number(value)||0));
 }
 
-function showTradePopupResult(
-resultText,
-amount,
-balance
-){
+function showTradePopupResult(resultText,amount,balance){
 const popup=createTradePopup();
-
-const isProfit=
-resultText==='PROFIT';
+const isProfit=resultText==='PROFIT';
 
 popup.countdown.style.display='none';
 popup.countdownLabel.style.display='none';
-
-popup.subtitle.textContent=
-'Trade completed';
-
+popup.subtitle.textContent='Trade completed';
 popup.result.style.display='block';
+popup.result.style.color=isProfit?'var(--profit,#5EEAB0)':'var(--loss,#F2735E)';
 
-popup.result.style.color=
-isProfit
-?'var(--profit,#5EEAB0)'
-:'var(--loss,#F2735E)';
-
-const signedAmount=
-(isProfit?'+':'-')+
-money(Math.abs(Number(amount)||0));
+const signedAmount=(isProfit?'+':'-')+money(Math.abs(Number(amount)||0));
 
 popup.result.textContent=
-resultText+
-'\n'+
+resultText+'\n'+
 signedAmount+
-'\n\nBalance: '+
-money(balance);
-
-popup.closeButton.style.display='block';
+'\n\nBalance: '+money(balance);
 }
 
 function closeTradePopup(){
-if(!tradePopup){
-return;
-}
-
+if(!tradePopup)return;
 tradePopup.overlay.style.display='none';
-
 document.body.style.overflow='';
-
-if(!activeCycleId){
-setTradeButtonsDisabled(false);
-}
 }
 
 function saveActiveCycle(cycleId,settleAt){
 try{
-
 localStorage.setItem(
 ACTIVE_TRADE_STORAGE_KEY,
 JSON.stringify({
 cycleId:Number(cycleId),
-settleAt:String(settleAt)
+settleAt:String(settleAt),
+startedAt:Date.now()
 })
 );
-
 }catch(error){
-
-console.warn(
-'Unable to save active trade:',
-error
-);
-
+console.warn('Unable to save active trade:',error);
 }
 }
 
 function getSavedActiveCycle(){
 try{
-
-const raw=
-localStorage.getItem(
-ACTIVE_TRADE_STORAGE_KEY
-);
-
-if(!raw){
-return null;
-}
+const raw=localStorage.getItem(ACTIVE_TRADE_STORAGE_KEY);
+if(!raw)return null;
 
 const data=JSON.parse(raw);
 
-const cycleId=
-Number(data?.cycleId);
+const cycleId=Number(data?.cycleId);
+const settleAt=data?.settleAt;
+const startedAt=Number(data?.startedAt);
 
-const settleAt=
-data?.settleAt;
-
-if(
-!Number.isFinite(cycleId)||
-!settleAt
-){
+if(!Number.isFinite(cycleId)||!settleAt){
 return null;
 }
 
 return{
 cycleId,
-settleAt
+settleAt,
+startedAt:Number.isFinite(startedAt)?startedAt:null
 };
 
 }catch(error){
-
-console.warn(
-'Unable to read active trade:',
-error
-);
-
+console.warn('Unable to read active trade:',error);
 return null;
 }
 }
 
 function clearSavedActiveCycle(){
 try{
-
-localStorage.removeItem(
-ACTIVE_TRADE_STORAGE_KEY
-);
-
+localStorage.removeItem(ACTIVE_TRADE_STORAGE_KEY);
 }catch(error){
-
-console.warn(
-'Unable to clear active trade:',
-error
-);
-
+console.warn('Unable to clear active trade:',error);
 }
 }
 
@@ -369,94 +184,55 @@ function showCountdown(value){
 const box=$('tradeCountdownBox');
 const text=$('tradeCountdown');
 
-if(box){
-box.style.display='block';
-}
-
-if(text){
-text.textContent=String(
-Math.max(
-0,
-Number(value)||0
-)
-);
-}
+if(box)box.style.display='block';
+if(text)text.textContent=String(Math.max(0,Number(value)||0));
 
 updateTradePopupCountdown(value);
 }
 
 function hideCountdown(){
 const box=$('tradeCountdownBox');
-
-if(box){
-box.style.display='none';
-}
+if(box)box.style.display='none';
 }
 
 function showResult(text,amount,balance){
 const box=$('tradeResultBox');
 const result=$('tradeResult');
 
-if(box){
-box.style.display='block';
-}
+if(box)box.style.display='block';
+if(!result)return;
 
-if(!result){
-return;
-}
-
-const numericAmount=
-Math.abs(
-Number(amount)||0
-);
-
-const numericBalance=
-Number(balance)||0;
-
-const isProfit=
-text==='PROFIT';
+const numericAmount=Math.abs(Number(amount)||0);
+const numericBalance=Number(balance)||0;
+const isProfit=text==='PROFIT';
 
 result.textContent=
-text+
-' '+
+text+' '+
 (isProfit?'+':'-')+
 money(numericAmount)+
 ' — Balance: '+
 money(numericBalance);
 
-result.style.color=
-isProfit
-?'var(--profit)'
-:'var(--loss)';
+result.style.color=isProfit?'var(--profit)':'var(--loss)';
 }
 
 function hideResult(){
 const box=$('tradeResultBox');
 const result=$('tradeResult');
 
-if(box){
-box.style.display='none';
-}
-
-if(result){
-result.textContent='';
-}
+if(box)box.style.display='none';
+if(result)result.textContent='';
 }
 
 async function initSupabase(){
-if(client){
-return true;
-}
+if(client)return true;
 
 if(!window.supabase){
-console.error(
-'Supabase library not loaded.'
-);
+console.error('Supabase library not loaded.');
 return false;
 }
 
-client=
-window.supabase.createClient(
+client=window.supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
@@ -465,52 +241,27 @@ return true;
 }
 
 async function loadAccount(){
-if(!client){
+if(!client)return false;
+
+const {data:{session},error:sessionError}=await client.auth.getSession();
+
+if(sessionError||!session||!session.user){
 return false;
 }
 
-const {
-data:{
-session
-},
-error:sessionError
-}=await client.auth.getSession();
-
-if(
-sessionError||
-!session||
-!session.user
-){
-return false;
-}
-
-const {
-data,
-error
-}=await client
+const {data,error}=await client
 .from('accounts')
-.select(
-'id,balance,initial_balance,profit,first_deposit_at,total_withdrawn'
-)
-.eq(
-'user_id',
-session.user.id
-)
+.select('id,balance,initial_balance,profit,first_deposit_at,total_withdrawn')
+.eq('user_id',session.user.id)
 .limit(1)
 .maybeSingle();
 
 if(error){
-
-console.error(
-'Trade account load error:',
-error
-);
-
+console.error('Trade account load error:',error);
 return false;
 }
 
-currentAccount=
-data||null;
+currentAccount=data||null;
 
 return !!currentAccount;
 }
@@ -518,76 +269,43 @@ return !!currentAccount;
 function getBalance(){
 return Math.max(
 0,
-Number(
-currentAccount?.balance||0
-)
+Number(currentAccount?.balance||0)
 );
 }
 
 function syncAmount(value){
 const max=getBalance();
+const numericValue=Number(value);
 
-const numericValue=
-Number(value);
-
-const safe=
-Math.max(
+const safe=Math.max(
 0,
 Math.min(
 max,
-Number.isFinite(numericValue)
-?numericValue
-:0
+Number.isFinite(numericValue)?numericValue:0
 )
 );
 
-const input=
-$('tradeBalanceAmount');
-
-const slider=
-$('tradeBalanceSlider');
+const input=$('tradeBalanceAmount');
+const slider=$('tradeBalanceSlider');
 
 if(input){
-
-input.max=
-max.toFixed(2);
-
-input.value=
-safe.toFixed(2);
-
+input.max=max.toFixed(2);
+input.value=safe.toFixed(2);
 }
 
 if(slider){
-
 slider.min='0';
-
-slider.max=
-max.toFixed(2);
-
+slider.max=max.toFixed(2);
 slider.step='0.01';
-
-slider.value=
-safe.toFixed(2);
-
-slider.disabled=
-max<=0;
-
+slider.value=safe.toFixed(2);
+slider.disabled=max<=0;
 }
 
-const min=
-$('tradeBalanceMin');
+const min=$('tradeBalanceMin');
+const maxEl=$('tradeBalanceMax');
 
-const maxEl=
-$('tradeBalanceMax');
-
-if(min){
-min.textContent='$0.00';
-}
-
-if(maxEl){
-maxEl.textContent=
-money(max);
-}
+if(min)min.textContent='$0.00';
+if(maxEl)maxEl.textContent=money(max);
 }
 
 function getTradeCode(){
@@ -600,190 +318,44 @@ $('tradeBalanceAmount')?.value
 );
 }
 
-function startCountdown(
-settleAt,
-cycleId
-){
-
-const settleTime=
-Date.parse(settleAt);
-
-if(
-!Number.isFinite(settleTime)
-){
-return false;
-}
-
+function stopTimers(){
 if(countdownTimer){
-
-clearInterval(
-countdownTimer
-);
-
+clearInterval(countdownTimer);
 countdownTimer=null;
-
 }
 
-const update=()=>{
-
-if(
-activeCycleId!==cycleId
-){
-
-if(countdownTimer){
-
-clearInterval(
-countdownTimer
-);
-
-countdownTimer=null;
-
-}
-
-return;
-}
-
-const millisecondsLeft=
-settleTime-Date.now();
-
-const secondsLeft=
-Math.ceil(
-millisecondsLeft/1000
-);
-
-if(secondsLeft<=0){
-
-showCountdown(0);
-
-if(countdownTimer){
-
-clearInterval(
-countdownTimer
-);
-
-countdownTimer=null;
-
-}
-
-return;
-}
-
-showCountdown(
-Math.min(
-30,
-secondsLeft
-)
-);
-
-};
-
-update();
-
-countdownTimer=
-setInterval(
-update,
-250
-);
-
-return true;
-}
-
-function stopCountdown(){
-
-if(countdownTimer){
-
-clearInterval(
-countdownTimer
-);
-
-countdownTimer=null;
-
+if(settleTimer){
+clearTimeout(settleTimer);
+settleTimer=null;
 }
 }
 
-async function settleTradeCycle(
-cycleId
-){
-
-if(settling){
-return;
-}
-
-settling=true;
-
-try{
-
-const {
-data,
-error
-}=await client.rpc(
-'settle_trade_cycle',
-{
-p_cycle_id:cycleId
-}
-);
-
-if(error){
-throw error;
-}
-
-const result=
-data||{};
-
-const success=
-result.success===undefined
-?true
-:Boolean(result.success);
-
-if(!success){
-
-showMessage(
-'Trade could not be settled.',
-true
-);
-
-settling=false;
-
-return;
-}
+function applySettlementResult(result){
+if(!result)return;
 
 const resultText=
-String(
-result.result||''
-).toLowerCase();
+String(result.result||'')
+.toLowerCase();
 
 const adjustment=
-Number(
-result.adjustment_amount||0
-);
+Number(result.adjustment_amount||0);
 
 const balanceAfter=
-Number(
-result.balance_after||0
-);
+Number(result.balance_after||0);
 
-currentAccount.balance=
-balanceAfter;
+currentAccount.balance=balanceAfter;
 
-if(
-result.profit_after!==undefined
-){
-
+if(result.profit_after!==undefined){
 currentAccount.profit=
-Number(
-result.profit_after||0
-);
-
+Number(result.profit_after||0);
 }
-
-stopCountdown();
-
-showCountdown(0);
 
 const finalResult=
 resultText==='profit'
 ?'PROFIT'
 :'LOSS';
+
+showCountdown(0);
 
 showResult(
 finalResult,
@@ -797,65 +369,91 @@ adjustment,
 balanceAfter
 );
 
-if(
-$('tradeCodeInput')
-){
-
+if($('tradeCodeInput')){
 $('tradeCodeInput').value='';
-
 }
 
 syncAmount(0);
 
 activeCycleId=null;
-
 clearSavedActiveCycle();
 
 setTradeButtonsDisabled(false);
 
-if(
-typeof window.renderAccountSummary===
-'function'
-){
+settling=false;
+pendingSettlementResult=null;
+countdownFinished=false;
 
-try{
-
-await window.renderAccountSummary(
-currentAccount
-);
-
-}catch(e){
-
+if(typeof window.renderAccountSummary==='function'){
+window.renderAccountSummary(currentAccount)
+.catch(e=>{
 console.warn(
 'Account summary refresh failed:',
 e
 );
-
+});
 }
 
-}
-
-if(
-typeof window.loadNotifications===
-'function'
-){
-
-try{
-
-await window.loadNotifications();
-
-}catch(e){
-
+if(typeof window.loadNotifications==='function'){
+window.loadNotifications()
+.catch(e=>{
 console.warn(
 'Notification refresh failed:',
 e
 );
-
+});
 }
 
+/*
+ * Result is shown immediately.
+ * No extra 2.5 second delay.
+ */
+setTimeout(()=>{
+closeTradePopup();
+hideCountdown();
+},800);
 }
 
+async function settleTradeCycle(cycleId){
+if(settling)return;
+
+if(activeCycleId!==cycleId)return;
+
+settling=true;
+
+try{
+
+const {data,error}=await client.rpc(
+'settle_trade_cycle',
+{
+p_cycle_id:cycleId
+}
+);
+
+if(error)throw error;
+
+const result=data||{};
+
+if(result.success===false){
+throw new Error(
+'Trade could not be settled.'
+);
+}
+
+/*
+ * If countdown has not finished yet,
+ * keep the result ready in memory.
+ * It will be displayed exactly when
+ * the 30 second countdown reaches 0.
+ */
+if(!countdownFinished){
+
+pendingSettlementResult=result;
 settling=false;
+return;
+}
+
+applySettlementResult(result);
 
 }catch(error){
 
@@ -868,6 +466,7 @@ const errorText=
 error?.message?.toLowerCase()||'';
 
 if(
+errorText.includes('still running')||
 errorText.includes('too early')||
 errorText.includes('not ready')||
 errorText.includes('30')
@@ -875,22 +474,18 @@ errorText.includes('30')
 
 settling=false;
 
-setTimeout(
-()=>{
-
+/*
+ * Backend is not ready yet.
+ * Retry after 1 second.
+ */
+setTimeout(()=>{
 if(
-activeCycleId===cycleId
+activeCycleId===cycleId&&
+countdownFinished
 ){
-
-settleTradeCycle(
-cycleId
-);
-
+settleTradeCycle(cycleId);
 }
-
-},
-1000
-);
+},1000);
 
 return;
 }
@@ -901,22 +496,112 @@ true
 );
 
 settling=false;
-
 }
+}
+
+function startBackgroundSettlement(cycleId){
+if(settleTimer){
+clearTimeout(settleTimer);
+settleTimer=null;
+}
+
+/*
+ * Start settlement slightly before the
+ * 30 second UI countdown finishes.
+ *
+ * This gives Supabase/network time to
+ * calculate the result so it is ready
+ * when the countdown reaches 0.
+ */
+settleTimer=setTimeout(()=>{
+settleTimer=null;
+
+if(
+activeCycleId===cycleId&&
+!settling
+){
+settleTradeCycle(cycleId);
+}
+},29500);
+}
+
+function startCountdown(settleAt,cycleId){
+if(countdownTimer){
+clearInterval(countdownTimer);
+countdownTimer=null;
+}
+
+countdownFinished=false;
+pendingSettlementResult=null;
+
+let secondsLeft=30;
+
+const update=()=>{
+
+if(activeCycleId!==cycleId){
+
+if(countdownTimer){
+clearInterval(countdownTimer);
+countdownTimer=null;
+}
+
+return;
+}
+
+showCountdown(secondsLeft);
+
+if(secondsLeft<=0){
+
+clearInterval(countdownTimer);
+countdownTimer=null;
+
+countdownFinished=true;
+
+/*
+ * If backend result is already ready,
+ * show it immediately at 0.
+ */
+if(pendingSettlementResult){
+
+const result=pendingSettlementResult;
+pendingSettlementResult=null;
+
+applySettlementResult(result);
+
+return;
+}
+
+/*
+ * Otherwise ask backend now.
+ * If it says too early/not ready,
+ * settleTradeCycle() automatically retries.
+ */
+if(!settling){
+settleTradeCycle(cycleId);
+}
+
+return;
+}
+
+secondsLeft--;
+
+};
+
+update();
+
+countdownTimer=
+setInterval(update,1000);
+
+return true;
 }
 
 async function recoverActiveTrade(){
-
-if(!client){
-return;
-}
+if(!client)return;
 
 const saved=
 getSavedActiveCycle();
 
-if(!saved){
-return;
-}
+if(!saved)return;
 
 const cycleId=
 Number(saved.cycleId);
@@ -928,128 +613,129 @@ if(
 !Number.isFinite(cycleId)||
 !settleAt
 ){
-
 clearSavedActiveCycle();
-
 return;
 }
 
-activeCycleId=
-cycleId;
-
+activeCycleId=cycleId;
 settling=false;
+pendingSettlementResult=null;
+countdownFinished=false;
 
 setTradeButtonsDisabled(true);
-
 showTradePopup();
 
-const settleTime=
-Date.parse(settleAt);
+/*
+ * If page was refreshed during a trade,
+ * continue based on the original start time.
+ */
+if(saved.startedAt){
 
-if(
-!Number.isFinite(settleTime)
-){
-
-clearSavedActiveCycle();
-
-activeCycleId=null;
-
-setTradeButtonsDisabled(false);
-
-closeTradePopup();
-
-return;
-}
+const elapsed=
+Math.floor(
+(Date.now()-saved.startedAt)/1000
+);
 
 const remaining=
-settleTime-Date.now();
+Math.max(
+0,
+30-elapsed
+);
 
 if(remaining<=0){
 
+countdownFinished=true;
 showCountdown(0);
 
-await new Promise(
-resolve=>{
-setTimeout(
-resolve,
-300
-);
+settleTradeCycle(cycleId);
+
+return;
 }
-);
 
-if(
-activeCycleId===cycleId
-){
+if(countdownTimer){
+clearInterval(countdownTimer);
+countdownTimer=null;
+}
 
-await settleTradeCycle(
-cycleId
-);
+let secondsLeft=remaining;
 
+const update=()=>{
+
+if(activeCycleId!==cycleId){
+clearInterval(countdownTimer);
+countdownTimer=null;
+return;
+}
+
+showCountdown(secondsLeft);
+
+if(secondsLeft<=0){
+
+clearInterval(countdownTimer);
+countdownTimer=null;
+
+countdownFinished=true;
+
+if(pendingSettlementResult){
+const result=pendingSettlementResult;
+pendingSettlementResult=null;
+applySettlementResult(result);
+}else{
+settleTradeCycle(cycleId);
 }
 
 return;
 }
 
+secondsLeft--;
+};
+
+update();
+
+countdownTimer=
+setInterval(update,1000);
+
+/*
+ * Start backend settlement before
+ * the 30 seconds finish.
+ */
+const backgroundDelay=
+Math.max(
+0,
+(30-elapsed-0.5)*1000
+);
+
+settleTimer=
+setTimeout(()=>{
+settleTimer=null;
+
+if(
+activeCycleId===cycleId&&
+!settling
+){
+settleTradeCycle(cycleId);
+}
+},backgroundDelay);
+
+return;
+}
+
+/*
+ * Old saved trade without startedAt.
+ * Fall back to normal 30 second countdown.
+ */
 startCountdown(
 settleAt,
 cycleId
 );
 
-const waitAndSettle=async()=>{
-
-if(
-activeCycleId!==cycleId
-){
-return;
-}
-
-const left=
-settleTime-Date.now();
-
-if(left>0){
-
-setTimeout(
-waitAndSettle,
-Math.min(
-250,
-left
-)
-);
-
-return;
-}
-
-await new Promise(
-resolve=>{
-setTimeout(
-resolve,
-500
-);
-}
-);
-
-if(
-activeCycleId===cycleId
-){
-
-await settleTradeCycle(
+startBackgroundSettlement(
 cycleId
 );
-
 }
 
-};
-
-waitAndSettle();
-}
-
-async function startTradeCycle(
-clientDirection
-){
-
-if(syncing){
-return;
-}
+async function startTradeCycle(clientDirection){
+if(syncing)return;
 
 clearMessage();
 hideResult();
@@ -1098,9 +784,7 @@ true
 return;
 }
 
-if(
-amount>max+0.001
-){
+if(amount>max+0.001){
 
 showMessage(
 'Selected amount cannot exceed your current balance.',
@@ -1123,9 +807,8 @@ return;
 }
 
 const direction=
-String(
-clientDirection||''
-).toLowerCase();
+String(clientDirection||'')
+.toLowerCase();
 
 if(
 direction!=='buy'&&
@@ -1141,36 +824,28 @@ return;
 }
 
 syncing=true;
-
 setTradeButtonsDisabled(true);
 
 try{
 
-const {
-data,
-error
-}=await client.rpc(
+const {data,error}=
+await client.rpc(
 'start_trade_cycle',
 {
 p_code:code,
-p_selected_amount:Number(
-amount.toFixed(2)
-),
-p_client_direction:direction
+p_selected_amount:
+Number(amount.toFixed(2)),
+p_client_direction:
+direction
 }
 );
 
-if(error){
-throw error;
-}
+if(error)throw error;
 
-const result=
-data||{};
+const result=data||{};
 
 const cycleId=
-Number(
-result.cycle_id
-);
+Number(result.cycle_id);
 
 const settleAt=
 result.settle_at;
@@ -1187,13 +862,9 @@ throw new Error(
 }
 
 const settleTime=
-Date.parse(
-settleAt
-);
+Date.parse(settleAt);
 
-if(
-!Number.isFinite(settleTime)
-){
+if(!Number.isFinite(settleTime)){
 
 throw new Error(
 'Unable to start trade timer.'
@@ -1201,10 +872,10 @@ throw new Error(
 
 }
 
-activeCycleId=
-cycleId;
-
+activeCycleId=cycleId;
 settling=false;
+pendingSettlementResult=null;
+countdownFinished=false;
 
 saveActiveCycle(
 cycleId,
@@ -1212,8 +883,6 @@ settleAt
 );
 
 showTradePopup();
-
-showCountdown(30);
 
 if(
 !startCountdown(
@@ -1228,52 +897,15 @@ throw new Error(
 
 }
 
-const waitAndSettle=async()=>{
-
-if(
-activeCycleId!==cycleId
-){
-return;
-}
-
-const remaining=
-settleTime-Date.now();
-
-if(remaining>0){
-
-setTimeout(
-waitAndSettle,
-Math.min(
-250,
-remaining
-)
-);
-
-return;
-}
-
-await new Promise(
-resolve=>{
-setTimeout(
-resolve,
-500
-);
-}
-);
-
-if(
-activeCycleId===cycleId
-){
-
-await settleTradeCycle(
+/*
+ * IMPORTANT:
+ * Do NOT wait for settle_at.
+ * Start backend settlement in background
+ * before the 30s countdown finishes.
+ */
+startBackgroundSettlement(
 cycleId
 );
-
-}
-
-};
-
-waitAndSettle();
 
 }catch(error){
 
@@ -1282,10 +914,9 @@ console.error(
 error
 );
 
-stopCountdown();
+stopTimers();
 
 activeCycleId=null;
-
 clearSavedActiveCycle();
 
 closeTradePopup();
@@ -1372,21 +1003,17 @@ syncing=false;
 window.startTradeCycle=
 startTradeCycle;
 
-window.startBuyTrade=
-function(){
+window.startBuyTrade=function(){
 startTradeCycle('buy');
 };
 
-window.startSellTrade=
-function(){
+window.startSellTrade=function(){
 startTradeCycle('sell');
 };
 
 async function init(){
 
-if(initialized){
-return true;
-}
+if(initialized)return true;
 
 if(
 !$('tradeBalanceAmount')||
@@ -1403,9 +1030,7 @@ return false;
 const ready=
 await initSupabase();
 
-if(!ready){
-return false;
-}
+if(!ready)return false;
 
 const accountLoaded=
 await loadAccount();
@@ -1417,7 +1042,6 @@ console.warn(
 );
 
 return false;
-
 }
 
 createTradePopup();
@@ -1425,11 +1049,9 @@ createTradePopup();
 initialized=true;
 
 syncAmount(0);
-
 hideCountdown();
 hideResult();
 clearMessage();
-
 setTradeButtonsDisabled(false);
 
 const amountInput=
@@ -1441,40 +1063,28 @@ $('tradeBalanceSlider');
 amountInput.addEventListener(
 'input',
 function(){
-
-syncAmount(
-this.value
-);
-
+syncAmount(this.value);
 }
 );
 
 slider.addEventListener(
 'input',
 function(){
-
-syncAmount(
-this.value
-);
-
+syncAmount(this.value);
 }
 );
 
 $('buyTradeBtn').addEventListener(
 'click',
 function(){
-
 startTradeCycle('buy');
-
 }
 );
 
 $('sellTradeBtn').addEventListener(
 'click',
 function(){
-
 startTradeCycle('sell');
-
 }
 );
 
@@ -1488,9 +1098,7 @@ async function boot(){
 const ready=
 await init();
 
-if(ready){
-return;
-}
+if(ready)return;
 
 setTimeout(
 boot,
