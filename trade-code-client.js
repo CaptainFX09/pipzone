@@ -774,9 +774,7 @@ return false;
 
 initialized=true;
 
-syncAmount(
-getBalance()
-);
+syncAmount(0);
 
 hideCountdown();
 hideResult();
