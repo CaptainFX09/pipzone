@@ -25,6 +25,7 @@ const expiryUnit=$('expiryUnit');
 const generatedCode=$('generatedCode');
 const generateBtn=$('generateBtn');
 const copyBtn=$('copyBtn');
+const sendMessageBtn=$('sendMessageBtn');
 const refreshBtn=$('refreshBtn');
 const message=$('message');
 const historyList=$('historyList');
@@ -344,6 +345,40 @@ showMessage(error.message||'Unable to generate code.','error');
 }finally{
 generateBtn.disabled=false;
 generateBtn.textContent='Generate Code';
+}
+});
+
+// ============================================
+// Send Latest Trade Code Message
+// ============================================
+
+sendMessageBtn.addEventListener('click',async()=>{
+clearMessage();
+
+if(!confirm('Send the latest generated trade code to all clients?'))return;
+
+sendMessageBtn.disabled=true;
+sendMessageBtn.textContent='Sending...';
+
+try{
+const {data,error}=await client.rpc('send_latest_trade_code_message');
+
+if(error)throw error;
+
+const code=data?.trade_code||'';
+const count=data?.messages_inserted||0;
+
+showMessage(
+`Trade code ${code} message sent to ${count} client${count===1?'':'s'}.`,
+'success'
+);
+
+}catch(error){
+console.error(error);
+showMessage(error.message||'Unable to send trade code message.','error');
+}finally{
+sendMessageBtn.disabled=false;
+sendMessageBtn.textContent='Send Message';
 }
 });
 
