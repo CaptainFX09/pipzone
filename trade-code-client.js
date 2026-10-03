@@ -18,8 +18,10 @@ return '$'+Number(value||0).toFixed(2);
 }
 
 function showMessage(text,error=false){
-const el=$('tradeCodeMsg')||$('tradeMsg');
+const el=$('tradeMsg')||$('tradeCodeMsg');
+
 if(!el)return;
+
 el.textContent=text;
 el.style.color=error?'var(--loss)':'var(--profit)';
 el.classList.add('show');
@@ -27,8 +29,10 @@ el.style.display='block';
 }
 
 function clearMessage(){
-const el=$('tradeCodeMsg')||$('tradeMsg');
+const el=$('tradeMsg')||$('tradeCodeMsg');
+
 if(!el)return;
+
 el.textContent='';
 el.classList.remove('show');
 el.style.display='none';
@@ -37,42 +41,64 @@ el.style.display='none';
 function showCountdown(value){
 const box=$('tradeCountdownBox');
 const text=$('tradeCountdown');
-if(box)box.style.display='block';
-if(text)text.textContent=String(Math.max(0,value));
+
+if(box){
+box.style.display='block';
+}
+
+if(text){
+text.textContent=String(
+Math.max(0,Number(value)||0)
+);
+}
 }
 
 function hideCountdown(){
 const box=$('tradeCountdownBox');
-if(box)box.style.display='none';
+
+if(box){
+box.style.display='none';
+}
 }
 
 function showResult(text,amount,balance){
 const box=$('tradeResultBox');
 const result=$('tradeResult');
 
-if(box)box.style.display='block';
+if(box){
+box.style.display='block';
+}
 
-if(result){
+if(!result)return;
+
+const numericAmount=Math.abs(
+Number(amount)||0
+);
+
+const numericBalance=Number(balance)||0;
+
 result.textContent=
 text+
 ' '+
 (amount>=0?'+':'-')+
-money(Math.abs(amount))+
+money(numericAmount)+
 ' — Balance: '+
-money(balance);
+money(numericBalance);
 
 result.style.color=
 text==='PROFIT'
 ?'var(--profit)'
 :'var(--loss)';
 }
-}
 
 function hideResult(){
 const box=$('tradeResultBox');
-if(box)box.style.display='none';
-
 const result=$('tradeResult');
+
+if(box){
+box.style.display='none';
+}
+
 if(result){
 result.textContent='';
 }
@@ -80,27 +106,26 @@ result.textContent='';
 
 function setTradeButtonsDisabled(disabled){
 const buttons=[
-$('tradeBuyBtn'),
-$('tradeSellBtn'),
 $('buyTradeBtn'),
 $('sellTradeBtn')
 ];
 
 buttons.forEach(button=>{
-if(button)button.disabled=disabled;
+if(button){
+button.disabled=disabled;
+}
 });
 }
 
-function setTradeButtonsVisible(visible){
-const box=$('tradeDirectionButtons');
-if(box)box.style.display=visible?'flex':'none';
+async function initSupabase(){
+if(client){
+return true;
 }
 
-async function initSupabase(){
-if(client)return true;
-
 if(!window.supabase){
-console.error('Supabase library not loaded.');
+console.error(
+'Supabase library not loaded.'
+);
 return false;
 }
 
@@ -113,7 +138,9 @@ return true;
 }
 
 async function loadAccount(){
-if(!client)return false;
+if(!client){
+return false;
+}
 
 const {
 data:{
@@ -122,7 +149,11 @@ session
 error:sessionError
 }=await client.auth.getSession();
 
-if(sessionError||!session?.user){
+if(
+sessionError||
+!session||
+!session.user
+){
 return false;
 }
 
@@ -131,13 +162,21 @@ data,
 error
 }=await client
 .from('accounts')
-.select('id,balance,initial_balance,profit,first_deposit_at,total_withdrawn')
-.eq('user_id',session.user.id)
+.select(
+'id,balance,initial_balance,profit,first_deposit_at,total_withdrawn'
+)
+.eq(
+'user_id',
+session.user.id
+)
 .limit(1)
 .maybeSingle();
 
 if(error){
-console.error('Trade account load error:',error);
+console.error(
+'Trade account load error:',
+error
+);
 return false;
 }
 
@@ -149,7 +188,9 @@ return !!currentAccount;
 function getBalance(){
 return Math.max(
 0,
-Number(currentAccount?.balance||0)
+Number(
+currentAccount?.balance||0
+)
 );
 }
 
@@ -162,7 +203,9 @@ const safe=Math.max(
 0,
 Math.min(
 max,
-Number.isFinite(numericValue)?numericValue:0
+Number.isFinite(numericValue)
+?numericValue
+:0
 )
 );
 
@@ -185,8 +228,13 @@ slider.disabled=max<=0;
 const min=$('tradeBalanceMin');
 const maxEl=$('tradeBalanceMax');
 
-if(min)min.textContent='$0.00';
-if(maxEl)maxEl.textContent=money(max);
+if(min){
+min.textContent='$0.00';
+}
+
+if(maxEl){
+maxEl.textContent=money(max);
+}
 }
 
 function getTradeCode(){
@@ -199,48 +247,32 @@ $('tradeBalanceAmount')?.value
 );
 }
 
-function updateSignalDisplay(direction,currency){
-const directionText=
-String(direction||'')
-.toUpperCase();
-
-const currencyText=
-String(currency||'')
-.toUpperCase();
-
-const text=
-currencyText
-?directionText+' '+currencyText
-:directionText;
-
-const candidates=[
-$('tradeSignal'),
-$('tradeDirection'),
-$('tradeSignalText'),
-$('tradeCurrencySignal')
-];
-
-for(const el of candidates){
-if(el){
-el.textContent=text;
-el.style.display='block';
-break;
-}
-}
-}
-
-function updateCountdownFrom(settleAt){
+function startCountdown(settleAt,cycleId){
 const settleTime=Date.parse(settleAt);
 
 if(!Number.isFinite(settleTime)){
 return false;
 }
 
+if(countdownTimer){
+clearInterval(countdownTimer);
+countdownTimer=null;
+}
+
 const update=()=>{
-if(!activeCycleId)return;
+if(activeCycleId!==cycleId){
+if(countdownTimer){
+clearInterval(countdownTimer);
+countdownTimer=null;
+}
+return;
+}
+
+const millisecondsLeft=
+settleTime-Date.now();
 
 const secondsLeft=Math.ceil(
-(settleTime-Date.now())/1000
+millisecondsLeft/1000
 );
 
 if(secondsLeft<=0){
@@ -261,10 +293,6 @@ Math.min(30,secondsLeft)
 
 update();
 
-if(countdownTimer){
-clearInterval(countdownTimer);
-}
-
 countdownTimer=setInterval(
 update,
 250
@@ -273,8 +301,17 @@ update,
 return true;
 }
 
+function stopCountdown(){
+if(countdownTimer){
+clearInterval(countdownTimer);
+countdownTimer=null;
+}
+}
+
 async function settleTradeCycle(cycleId){
-if(settling)return;
+if(settling){
+return;
+}
 
 settling=true;
 
@@ -290,7 +327,9 @@ p_cycle_id:cycleId
 }
 );
 
-if(error)throw error;
+if(error){
+throw error;
+}
 
 const result=data||{};
 
@@ -300,16 +339,19 @@ result.success===undefined
 :Boolean(result.success);
 
 if(!success){
-throw new Error(
-'Trade could not be settled.'
+showMessage(
+'Trade could not be settled.',
+true
 );
+
+settling=false;
+return;
 }
 
 const resultText=
 String(
 result.result||''
-)
-.toLowerCase();
+).toLowerCase();
 
 const adjustment=
 Number(
@@ -324,10 +366,16 @@ result.balance_after||0
 currentAccount.balance=
 balanceAfter;
 
-if(result.profit_after!==undefined){
+if(
+result.profit_after!==undefined
+){
 currentAccount.profit=
-Number(result.profit_after||0);
+Number(
+result.profit_after||0
+);
 }
+
+stopCountdown();
 
 showCountdown(0);
 
@@ -345,15 +393,28 @@ $('tradeCodeInput').value='';
 
 syncAmount(0);
 
-setTradeButtonsDisabled(true);
+activeCycleId=null;
 
-if(typeof window.renderAccountSummary==='function'){
+setTradeButtonsDisabled(false);
+
+if(
+typeof window.renderAccountSummary==='function'
+){
+try{
 await window.renderAccountSummary(
 currentAccount
 );
+}catch(e){
+console.warn(
+'Account summary refresh failed:',
+e
+);
+}
 }
 
-if(typeof window.loadNotifications==='function'){
+if(
+typeof window.loadNotifications==='function'
+){
 try{
 await window.loadNotifications();
 }catch(e){
@@ -364,6 +425,8 @@ e
 }
 }
 
+settling=false;
+
 }catch(error){
 
 console.error(
@@ -372,20 +435,27 @@ error
 );
 
 const errorText=
-error.message?.toLowerCase()||'';
+error?.message?.toLowerCase()||'';
 
 if(
 errorText.includes('too early')||
 errorText.includes('not ready')||
 errorText.includes('30')
 ){
+
+settling=false;
+
 setTimeout(
 ()=>{
-settling=false;
+if(
+activeCycleId===cycleId
+){
 settleTradeCycle(cycleId);
+}
 },
 1000
 );
+
 return;
 }
 
@@ -394,19 +464,14 @@ showMessage(
 true
 );
 
-setTradeButtonsDisabled(false);
-
-}finally{
-
-if(activeCycleId===cycleId){
 settling=false;
-}
-
 }
 }
 
 async function startTradeCycle(clientDirection){
-if(syncing)return;
+if(syncing){
+return;
+}
 
 clearMessage();
 hideResult();
@@ -431,7 +496,10 @@ const amount=getSelectedAmount();
 const code=getTradeCode();
 const max=getBalance();
 
-if(!Number.isFinite(amount)||amount<=0){
+if(
+!Number.isFinite(amount)||
+amount<=0
+){
 showMessage(
 'Enter a valid balance amount.',
 true
@@ -458,10 +526,14 @@ return;
 }
 
 const direction=
-String(clientDirection||'')
-.toLowerCase();
+String(
+clientDirection||''
+).toLowerCase();
 
-if(direction!=='buy'&&direction!=='sell'){
+if(
+direction!=='buy'&&
+direction!=='sell'
+){
 showMessage(
 'Invalid trade direction.',
 true
@@ -470,6 +542,7 @@ return;
 }
 
 syncing=true;
+
 setTradeButtonsDisabled(true);
 
 try{
@@ -488,7 +561,9 @@ p_client_direction:direction
 }
 );
 
-if(error)throw error;
+if(error){
+throw error;
+}
 
 const result=data||{};
 
@@ -509,61 +584,68 @@ throw new Error(
 );
 }
 
-activeCycleId=cycleId;
-settling=false;
+const settleTime=
+Date.parse(settleAt);
 
-updateSignalDisplay(
-result.trade_direction||
-result.signal_direction||
-result.direction||
-'',
-result.trade_currency||
-result.currency||
-''
-);
-
-showCountdown(30);
-setTradeButtonsDisabled(true);
-
-if(!updateCountdownFrom(settleAt)){
+if(!Number.isFinite(settleTime)){
 throw new Error(
 'Unable to start trade timer.'
 );
 }
 
-const settleLoop=async()=>{
-if(activeCycleId!==cycleId)return;
+activeCycleId=cycleId;
+settling=false;
 
-const settleTime=Date.parse(
-settleAt
-);
+showCountdown(30);
 
 if(
-Number.isFinite(settleTime) &&
-Date.now()<settleTime
+!startCountdown(
+settleAt,
+cycleId
+)
 ){
+throw new Error(
+'Unable to start trade timer.'
+);
+}
+
+const waitAndSettle=async()=>{
+if(
+activeCycleId!==cycleId
+){
+return;
+}
+
+const remaining=
+settleTime-Date.now();
+
+if(remaining>0){
 setTimeout(
-settleLoop,
-250
+waitAndSettle,
+Math.min(250,remaining)
 );
 return;
 }
 
 await new Promise(
-resolve=>setTimeout(
+resolve=>{
+setTimeout(
 resolve,
 500
-)
+);
+}
 );
 
-if(activeCycleId===cycleId){
+if(
+activeCycleId===cycleId
+){
 await settleTradeCycle(
 cycleId
 );
 }
 };
 
-settleLoop();
+waitAndSettle();
 
 }catch(error){
 
@@ -572,8 +654,12 @@ console.error(
 error
 );
 
+stopCountdown();
+
+activeCycleId=null;
+
 const errorText=
-error.message?.toLowerCase()||'';
+error?.message?.toLowerCase()||'';
 
 if(
 errorText.includes('expired')
@@ -582,6 +668,7 @@ showMessage(
 'Trade code has expired.',
 true
 );
+
 }else if(
 errorText.includes('already been used')||
 errorText.includes('already used')
@@ -590,6 +677,7 @@ showMessage(
 'This trade code has already been used.',
 true
 );
+
 }else if(
 errorText.includes('trade code not found')||
 errorText.includes('code not found')||
@@ -599,6 +687,7 @@ showMessage(
 'Invalid trade code.',
 true
 );
+
 }else if(
 errorText.includes('selected amount exceeds')
 ){
@@ -606,6 +695,7 @@ showMessage(
 'Selected amount exceeds your current balance.',
 true
 );
+
 }else if(
 errorText.includes('no trading account')
 ){
@@ -613,6 +703,7 @@ showMessage(
 'No trading account found.',
 true
 );
+
 }else if(
 errorText.includes('another trade cycle')||
 errorText.includes('trade cycle is already running')
@@ -621,6 +712,7 @@ showMessage(
 'Another trade is already running.',
 true
 );
+
 }else{
 showMessage(
 'Unable to start trade. Please try again later.',
@@ -648,29 +740,30 @@ window.startSellTrade=function(){
 startTradeCycle('sell');
 };
 
-window.applyTradeCode=async function(){
-showMessage(
-'Select BUY or SELL to start the trade.',
-true
-);
-};
-
 async function init(){
-if(initialized)return true;
+if(initialized){
+return true;
+}
 
 if(
 !$('tradeBalanceAmount')||
 !$('tradeBalanceSlider')||
-!$('tradeCodeInput')
+!$('tradeCodeInput')||
+!$('buyTradeBtn')||
+!$('sellTradeBtn')
 ){
 return false;
 }
 
-const ready=await initSupabase();
+const ready=
+await initSupabase();
 
-if(!ready)return false;
+if(!ready){
+return false;
+}
 
-const accountLoaded=await loadAccount();
+const accountLoaded=
+await loadAccount();
 
 if(!accountLoaded){
 console.warn(
@@ -681,69 +774,63 @@ return false;
 
 initialized=true;
 
-syncAmount(getBalance());
+syncAmount(
+getBalance()
+);
 
 hideCountdown();
 hideResult();
+clearMessage();
+
 setTradeButtonsDisabled(false);
 
-const amountInput=$('tradeBalanceAmount');
-const slider=$('tradeBalanceSlider');
+const amountInput=
+$('tradeBalanceAmount');
+
+const slider=
+$('tradeBalanceSlider');
 
 amountInput.addEventListener(
 'input',
 function(){
-syncAmount(this.value);
+syncAmount(
+this.value
+);
 }
 );
 
 slider.addEventListener(
 'input',
 function(){
-syncAmount(this.value);
+syncAmount(
+this.value
+);
 }
 );
 
-const buyButtons=[
-$('tradeBuyBtn'),
-$('buyTradeBtn')
-];
-
-const sellButtons=[
-$('tradeSellBtn'),
-$('sellTradeBtn')
-];
-
-buyButtons.forEach(button=>{
-if(button){
-button.addEventListener(
+$('buyTradeBtn').addEventListener(
 'click',
-()=>{
+function(){
 startTradeCycle('buy');
 }
 );
-}
-});
 
-sellButtons.forEach(button=>{
-if(button){
-button.addEventListener(
+$('sellTradeBtn').addEventListener(
 'click',
-()=>{
+function(){
 startTradeCycle('sell');
 }
 );
-}
-});
 
 return true;
 }
 
 async function boot(){
-
 const ready=await init();
 
-if(ready)return;
+if(ready){
+return;
+}
 
 setTimeout(
 boot,
