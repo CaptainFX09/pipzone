@@ -610,21 +610,23 @@ For account, deposit, withdrawal, or general support questions, please use the c
 <div class="balance-amount" id="dashBalance">$0.00</div>
 <span class="balance-pl zero" id="dashProfitPill">$0.00 profit so far</span>
 </div>
-<!-- ==================== APPLY TRADE CODE ==================== -->
-<div class="trade-code-card">
+<!-- ==================== LIVE TRADE ==================== -->
+<div class="trade-code-card" id="tradeCard">
 <div class="trade-code-head">
 <div>
-<div class="trade-code-title">Apply Trade Code</div>
-<div class="trade-code-sub">Select the balance amount you want to apply the trade result to.</div>
+<div class="trade-code-title">Place Trade</div>
+<div class="trade-code-sub">Select the balance amount you want to use for this trade.</div>
 </div>
 </div>
+
 <!-- Balance amount -->
 <div class="form-group">
-<label>Balance Amount</label>
+<label>Trade Amount</label>
 <div class="trade-balance-input-wrap">
 <span class="trade-balance-prefix">$</span>
 <input id="tradeBalanceAmount" type="number" min="0" step="0.01" value="0" placeholder="0.00" inputmode="decimal">
 </div>
+
 <!-- Balance slider -->
 <div class="trade-balance-slider-wrap">
 <input id="tradeBalanceSlider" type="range" min="0" max="0" step="0.01" value="0">
@@ -634,17 +636,34 @@ For account, deposit, withdrawal, or general support questions, please use the c
 </div>
 </div>
 </div>
-<!-- Trade code -->
+
+<!-- Trade direction -->
 <div class="form-group">
-<label>Trade Code</label>
-<input id="tradeCodeInput" type="text" placeholder="Enter your trade code" autocomplete="off">
+<label>Trade Direction</label>
+<div class="hero-trade-actions" id="tradeDirectionButtons">
+<button type="button" class="btn hero-sell-btn" id="sellTradeBtn">SELL</button>
+<button type="button" class="btn btn-gold hero-buy-btn" id="buyTradeBtn">BUY</button>
 </div>
-<!-- Apply button -->
-<div class="form-actions">
-<button type="button" class="btn btn-gold" id="applyTradeCodeBtn" onclick="applyTradeCode()">Apply Trade Code</button>
 </div>
-<!-- Result / message -->
-<div id="tradeCodeMsg" class="msg" style="display:none"></div>
+
+<!-- Active trade countdown -->
+<div id="tradeCountdownBox" style="display:none">
+<div class="form-group">
+<label>Trade in Progress</label>
+<div id="tradeCountdown">30</div>
+</div>
+</div>
+
+<!-- Trade result -->
+<div id="tradeResultBox" style="display:none">
+<div class="form-group">
+<label>Trade Result</label>
+<div id="tradeResult"></div>
+</div>
+</div>
+
+<!-- Trade message -->
+<div id="tradeMsg" class="msg" style="display:none"></div>
 </div>
 <!-- Dashboard stat cards -->
 <div class="dash-grid">
