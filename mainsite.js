@@ -1729,70 +1729,272 @@ async function loadRequests() {
   if (!currentUser || !supabaseReady || !$('requestList')) return;
 
   const listEl = $('requestList');
-  if (listEl) listEl.innerHTML = skeletonRowsHtml(3);
+  listEl.innerHTML = skeletonRowsHtml(3);
+
+  const formatDate = (value) => {
+    const raw = String(value || '');
+    const datePart = raw.split('T')[0].split(' ')[0];
+    const parts = datePart.split('-').map(Number);
+
+    if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2]) return '—';
+
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+
+    return `${String(parts[2]).padStart(2, '0')} ${months[parts[1] - 1] || '—'} ${String(parts[0]).slice(-2)}`;
+  };
+
+  const formatTime = (value) => {
+    const raw = String(value || '');
+    const match = raw.match(/(?:T| )(\d{2}:\d{2}:\d{2})/);
+    return match ? match[1] : '—';
+  };
+
+  const formatPair = (value) => {
+    const code = String(value || '');
+    return code
+      .replace(/^PZ-/i, '')
+      .split('-')[0]
+      .toUpperCase() || '—';
+  };
+
+  const escapeHtml = (value) =>
+    String(value ?? '').replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;',
+    }[char]));
+
+  const formatPnl = (value) => {
+    const pnl = Number(value) || 0;
+    const amount = Math.abs(pnl).toFixed(2);
+
+    if (pnl > 0) return `+$${amount}`;
+    if (pnl < 0) return `-$${amount}`;
+    return `$0.00`;
+  };
+
+  const statusLabel = (value) => {
+    const status = String(value || '').toLowerCase();
+
+    if (status === 'pending') return 'Pending';
+    if (status === 'approved') return 'Approved';
+    if (status === 'rejected') return 'Rejected';
+
+    return escapeHtml(
+      String(value || 'Pending').replace(/^./, (char) => char.toUpperCase())
+    );
+  };
 
   try {
-    const [d, w] = await Promise.all([
+    const [tradeResult, depositResult, withdrawalResult] = await Promise.all([
+      supabaseClient
+        .from('trade_code_applications')
+        .select('adjustment_amount,code_snapshot,applied_at')
+        .eq('user_id', currentUser.id)
+        .order('applied_at', { ascending: false }),
+
       supabaseClient
         .from('deposits')
         .select('amount,status,created_at')
         .eq('user_id', currentUser.id)
-        .order('created_at', { ascending: false })
-        .limit(5),
+        .order('created_at', { ascending: false }),
+
       supabaseClient
         .from('withdrawals')
         .select('amount,status,created_at')
         .eq('user_id', currentUser.id)
-        .order('created_at', { ascending: false })
-        .limit(5),
+        .order('created_at', { ascending: false }),
     ]);
-    const rows = [];
-    (d.data || []).forEach((x) =>
-      rows.push({ type: 'Deposit', amount: x.amount, status: x.status, date: x.created_at }),
-    );
-    (w.data || []).forEach((x) =>
-      rows.push({ type: 'Withdrawal', amount: x.amount, status: x.status, date: x.created_at }),
-    );
-    rows.sort((a, b) => new Date(b.date) - new Date(a.date));
-    const el = $('requestList');
-    if (!rows.length) {
-      el.innerHTML = '<div class="tx-empty">No deposits or withdrawals yet.</div>';
-      return;
-    }
-    const statusWord = { pending: 'Pending review', approved: 'Approved', rejected: 'Rejected' };
-    el.innerHTML = rows
-      .slice(0, 8)
-      .map((x) => {
-        const isDeposit = x.type === 'Deposit';
-        const statusKey = String(x.status).toLowerCase();
-        const statusLabel = statusWord[statusKey] || String(x.status);
+
+    if (tradeResult.error) throw tradeResult.error;
+    if (depositResult.error) throw depositResult.error;
+    if (withdrawalResult.error) throw withdrawalResult.error;
+
+    const trades = (tradeResult.data || [])
+      .map((x) => ({
+        pnl: Number(x.adjustment_amount) || 0,
+        pair: formatPair(x.code_snapshot),
+        date: x.applied_at,
+      }))
+      .filter((x) => x.date);
+
+    const deposits = (depositResult.data || [])
+      .map((x) => ({
+        amount: Math.abs(Number(x.amount) || 0),
+        status: String(x.status || 'pending').toLowerCase(),
+        date: x.created_at,
+      }))
+      .filter((x) => x.date);
+
+    const withdrawals = (withdrawalResult.data || [])
+      .map((x) => ({
+        amount: Math.abs(Number(x.amount) || 0),
+        status: String(x.status || 'pending').toLowerCase(),
+        date: x.created_at,
+      }))
+      .filter((x) => x.date);
+
+    const renderEmpty = (text) =>
+      `<div class="tx-history-empty">${escapeHtml(text)}</div>`;
+
+    const renderTradeHistory = () => {
+      if (!trades.length) {
         return (
-          '<div class="tx-card">' +
-          '<div class="tx-icon ' +
-          (isDeposit ? 'dep' : 'wd') +
-          '">' +
-          (isDeposit ? '⬇' : '⬆') +
-          '</div>' +
-          '<div class="tx-mid"><div class="tx-type">' +
-          x.type +
-          '</div><div class="tx-date">' +
-          new Date(x.date).toLocaleString() +
-          '</div></div>' +
-          '<div class="tx-right"><div class="tx-amount">' +
-          (isDeposit ? '+' : '-') +
-          '$' +
-          Number(x.amount).toFixed(2) +
-          '</div><span class="tx-status status-' +
-          statusKey +
-          '">' +
-          statusLabel +
-          '</span></div>' +
+          '<div class="tx-history-section">' +
+          '<h4 class="tx-history-title">TRADE HISTORY</h4>' +
+          renderEmpty('No trade history yet.') +
           '</div>'
         );
-      })
-      .join('');
+      }
+
+      return (
+        '<div class="tx-history-section">' +
+        '<h4 class="tx-history-title">TRADE HISTORY</h4>' +
+        '<div class="tx-table-wrap">' +
+        '<table class="tx-table tx-trade-table">' +
+        '<thead>' +
+        '<tr>' +
+        '<th>Date</th>' +
+        '<th>Time</th>' +
+        '<th>Pair</th>' +
+        '<th>PnL</th>' +
+        '</tr>' +
+        '</thead>' +
+        '<tbody>' +
+        trades
+          .map((x) => {
+            const pnlClass =
+              x.pnl > 0
+                ? 'tx-pnl-profit'
+                : x.pnl < 0
+                  ? 'tx-pnl-loss'
+                  : 'tx-pnl-neutral';
+
+            return (
+              '<tr>' +
+              `<td>${formatDate(x.date)}</td>` +
+              `<td>${formatTime(x.date)}</td>` +
+              `<td class="tx-pair">${escapeHtml(x.pair)}</td>` +
+              `<td class="${pnlClass}">${formatPnl(x.pnl)}</td>` +
+              '</tr>'
+            );
+          })
+          .join('') +
+        '</tbody>' +
+        '</table>' +
+        '</div>' +
+        '</div>'
+      );
+    };
+
+    const renderDepositHistory = () => {
+      if (!deposits.length) {
+        return (
+          '<div class="tx-history-section">' +
+          '<h4 class="tx-history-title">DEPOSIT HISTORY</h4>' +
+          renderEmpty('No deposits yet.') +
+          '</div>'
+        );
+      }
+
+      return (
+        '<div class="tx-history-section">' +
+        '<h4 class="tx-history-title">DEPOSIT HISTORY</h4>' +
+        '<div class="tx-table-wrap">' +
+        '<table class="tx-table tx-request-table">' +
+        '<thead>' +
+        '<tr>' +
+        '<th>Date</th>' +
+        '<th>Time</th>' +
+        '<th>Amount</th>' +
+        '<th>Status</th>' +
+        '</tr>' +
+        '</thead>' +
+        '<tbody>' +
+        deposits
+          .map((x) => {
+            const statusClass = ['pending', 'approved', 'rejected'].includes(x.status)
+              ? x.status
+              : 'pending';
+
+            return (
+              '<tr>' +
+              `<td>${formatDate(x.date)}</td>` +
+              `<td>${formatTime(x.date)}</td>` +
+              `<td>$${x.amount.toFixed(2)}</td>` +
+              `<td><span class="tx-status status-${statusClass}">${statusLabel(x.status)}</span></td>` +
+              '</tr>'
+            );
+          })
+          .join('') +
+        '</tbody>' +
+        '</table>' +
+        '</div>' +
+        '</div>'
+      );
+    };
+
+    const renderWithdrawalHistory = () => {
+      if (!withdrawals.length) {
+        return (
+          '<div class="tx-history-section">' +
+          '<h4 class="tx-history-title">WITHDRAWAL HISTORY</h4>' +
+          renderEmpty('No withdrawals yet.') +
+          '</div>'
+        );
+      }
+
+      return (
+        '<div class="tx-history-section">' +
+        '<h4 class="tx-history-title">WITHDRAWAL HISTORY</h4>' +
+        '<div class="tx-table-wrap">' +
+        '<table class="tx-table tx-request-table">' +
+        '<thead>' +
+        '<tr>' +
+        '<th>Date</th>' +
+        '<th>Time</th>' +
+        '<th>Amount</th>' +
+        '<th>Status</th>' +
+        '</tr>' +
+        '</thead>' +
+        '<tbody>' +
+        withdrawals
+          .map((x) => {
+            const statusClass = ['pending', 'approved', 'rejected'].includes(x.status)
+              ? x.status
+              : 'pending';
+
+            return (
+              '<tr>' +
+              `<td>${formatDate(x.date)}</td>` +
+              `<td>${formatTime(x.date)}</td>` +
+              `<td>$${x.amount.toFixed(2)}</td>` +
+              `<td><span class="tx-status status-${statusClass}">${statusLabel(x.status)}</span></td>` +
+              '</tr>'
+            );
+          })
+          .join('') +
+        '</tbody>' +
+        '</table>' +
+        '</div>' +
+        '</div>'
+      );
+    };
+
+    listEl.innerHTML =
+      renderTradeHistory() +
+      renderDepositHistory() +
+      renderWithdrawalHistory();
+
   } catch (err) {
     console.error('Requests error:', err);
+    listEl.innerHTML =
+      '<div class="tx-empty">Unable to load transaction history.</div>';
   }
 }
 
