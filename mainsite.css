@@ -317,22 +317,29 @@ footer{padding:56px 0 40px}
 .dash-actions .btn-gold{box-shadow:0 4px 18px rgba(47,191,131,.18)}
 .dash-note{margin-top:18px;padding:12px 14px;background:rgba(47,191,131,.07);border:1px solid rgba(47,191,131,.25);border-radius:3px;font-size:13px;color:var(--gold);line-height:1.6}
 
-/* -------------------------- 20. Transaction list cards -------------------------- */
-.tx-card{display:flex;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-bottom:10px}
-.tx-icon{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
-.tx-icon.dep{background:rgba(47,191,131,.12);color:var(--gold)}
-.tx-icon.wd{background:rgba(139,153,146,.12);color:var(--muted)}
-.tx-mid{flex:1;min-width:0}
-.tx-type{font-size:14.5px;font-weight:600}
-.tx-date{color:var(--muted2);font-size:12px;margin-top:2px}
-.tx-right{text-align:right;flex:none}
-.tx-amount{font:15px 'IBM Plex Mono'}
-.tx-status{font-size:11.5px;margin-top:4px;font-weight:600;letter-spacing:.3px;padding:2px 8px;border-radius:20px;display:inline-block}
+
+/* -------------------------- 20. Transaction history tables -------------------------- */
+.tx-history-section{margin-bottom:22px}
+.tx-history-section:last-child{margin-bottom:0}
+.tx-history-title{font-size:12px;font-weight:700;letter-spacing:1.2px;color:var(--muted);margin:0 0 10px}
+.tx-table-wrap{width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+.tx-table{width:100%;min-width:540px;border-collapse:collapse;margin:0}
+.tx-table th,.tx-table td{padding:13px 16px;border-bottom:1px solid var(--line);font-size:13px;text-align:left;white-space:nowrap}
+.tx-table th{font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--muted2);background:rgba(255,255,255,.015)}
+.tx-table tbody tr:last-child td{border-bottom:0}
+.tx-table tbody tr:hover{background:rgba(255,255,255,.015)}
+.tx-trade-table th:nth-child(3),.tx-trade-table td:nth-child(3){text-align:center}
+.tx-trade-table th:nth-child(4),.tx-trade-table td:nth-child(4){text-align:right}
+.tx-request-table th:nth-child(3),.tx-request-table td:nth-child(3),.tx-request-table th:nth-child(4),.tx-request-table td:nth-child(4){text-align:right}
+.tx-pair{font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:600}
+.tx-pnl-profit{color:var(--profit);font:13.5px 'IBM Plex Mono',monospace;font-weight:600}
+.tx-pnl-loss{color:var(--loss);font:13.5px 'IBM Plex Mono',monospace;font-weight:600}
+.tx-pnl-neutral{color:var(--muted);font:13.5px 'IBM Plex Mono',monospace;font-weight:600}
+.tx-status{font-size:11px;font-weight:600;letter-spacing:.3px;padding:3px 8px;border-radius:20px;display:inline-block}
 .tx-status.status-pending{color:var(--gold);background:rgba(47,191,131,.10)}
 .tx-status.status-approved{color:var(--profit);background:rgba(94,234,176,.10)}
 .tx-status.status-rejected{color:var(--loss);background:rgba(242,115,94,.10)}
-.tx-empty{color:var(--muted);font-size:14px;padding:24px 0;text-align:center;border:1px dashed var(--line);border-radius:8px}
-
+.tx-history-empty{color:var(--muted);font-size:13px;padding:18px;text-align:center;border:1px dashed var(--line);border-radius:8px;background:var(--panel)}
 @media(max-width:640px){
 .dash-topbar{flex-direction:column;align-items:flex-start}
 .dash-topbar-actions{align-self:flex-end}
