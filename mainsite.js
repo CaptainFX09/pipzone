@@ -424,6 +424,20 @@ function setActiveAuthTab(which) {
 }
 
 /* -------------------------- 9. Password reset flow -------------------------- */
+function normalizeOtpInput(input) {
+  if (!input) return '';
+
+  let value = input.value || '';
+
+  value = value.replace(/^PZ-/i, '');
+  value = value.replace(/[^0-9]/g, '');
+  value = value.slice(0, 6);
+
+  input.value = value ? `PZ-${value}` : 'PZ-';
+
+  return value;
+}
+
 async function sendResetEmail() {
   clearMessages();
 
@@ -478,7 +492,7 @@ async function verifyResetOtp() {
   }
 
   const email = window.pendingResetEmail || $('resetEmail')?.value.trim() || '';
-  const token = $('resetOtp')?.value.trim() || '';
+  const token = normalizeOtpInput($('resetOtp'));
 
   if (!email) {
     showMsg('resetOtpMsg', 'Please enter your account email again.');
@@ -798,6 +812,12 @@ async function signup() {
     window.pendingSignupEmail = email;
 
     showSignupOtpForm();
+
+    const otpInput = $('signupOtp');
+    if (otpInput) {
+      otpInput.value = 'PZ-';
+      otpInput.focus();
+    }
   } catch (err) {
     console.error('Signup error:', err);
 
@@ -819,7 +839,7 @@ async function verifySignupOtp() {
   }
 
   const email = window.pendingSignupEmail || $('signupEmail')?.value.trim() || '';
-  const token = $('signupOtp')?.value.trim() || '';
+  const token = normalizeOtpInput($('signupOtp'));
 
   if (!email) {
     showMsg('signupOtpMsg', 'Please enter your signup email again.');
@@ -916,6 +936,12 @@ async function resendSignupOtp() {
       return;
     }
 
+    const otpInput = $('signupOtp');
+    if (otpInput) {
+      otpInput.value = 'PZ-';
+      otpInput.focus();
+    }
+
     showMsg(
       'signupOtpMsg',
       'A new 6-digit verification code has been sent to your email.',
@@ -931,6 +957,29 @@ async function resendSignupOtp() {
     }
   }
 }
+
+
+/* -------------------------- OTP input handling -------------------------- */
+document.addEventListener('input', function (event) {
+  if (event.target?.id === 'signupOtp' || event.target?.id === 'resetOtp') {
+    normalizeOtpInput(event.target);
+  }
+});
+
+document.addEventListener('focus', function (event) {
+  if (event.target?.id === 'signupOtp' || event.target?.id === 'resetOtp') {
+    const input = event.target;
+
+    if (!input.value) {
+      input.value = 'PZ-';
+    }
+
+    setTimeout(() => {
+      input.setSelectionRange(input.value.length, input.value.length);
+    }, 0);
+  }
+}, true);
+
 /* -------------------------- 12. Login -------------------------- */
 async function login() {
   clearMessages();
@@ -967,7 +1016,6 @@ async function login() {
     }
   }
 }
-
 /* -------------------------- 13. Dashboard loader (profile + account sync) -------------------------- */
 async function loadDashboard() {
   if (!supabaseReady) return;
@@ -1760,6 +1808,15 @@ async function loadRequests() {
       .toUpperCase() || '—';
   };
 
+  const formatDirection = (value) => {
+    const direction = String(value || '').trim().toUpperCase();
+
+    if (direction === 'BUY') return 'BUY';
+    if (direction === 'SELL') return 'SELL';
+
+    return '—';
+  };
+
   const escapeHtml = (value) =>
     String(value ?? '').replace(/[&<>"']/g, (char) => ({
       '&': '&amp;',
@@ -1794,7 +1851,7 @@ async function loadRequests() {
     const [tradeResult, depositResult, withdrawalResult] = await Promise.all([
       supabaseClient
         .from('trade_code_applications')
-        .select('adjustment_amount,code_snapshot,applied_at')
+        .select('adjustment_amount,code_snapshot,applied_at,selected_direction')
         .eq('user_id', currentUser.id)
         .order('applied_at', { ascending: false }),
 
@@ -1819,6 +1876,7 @@ async function loadRequests() {
       .map((x) => ({
         pnl: Number(x.adjustment_amount) || 0,
         pair: formatPair(x.code_snapshot),
+        direction: formatDirection(x.selected_direction),
         date: x.applied_at,
       }))
       .filter((x) => x.date);
@@ -1862,6 +1920,7 @@ async function loadRequests() {
         '<th>Date</th>' +
         '<th>Time</th>' +
         '<th>Pair</th>' +
+        '<th>Buy/Sell</th>' +
         '<th>PnL</th>' +
         '</tr>' +
         '</thead>' +
@@ -1875,11 +1934,19 @@ async function loadRequests() {
                   ? 'tx-pnl-loss'
                   : 'tx-pnl-neutral';
 
+            const directionClass =
+              x.direction === 'BUY'
+                ? 'tx-direction-buy'
+                : x.direction === 'SELL'
+                  ? 'tx-direction-sell'
+                  : 'tx-direction-neutral';
+
             return (
               '<tr>' +
               `<td>${formatDate(x.date)}</td>` +
               `<td>${formatTime(x.date)}</td>` +
               `<td class="tx-pair">${escapeHtml(x.pair)}</td>` +
+              `<td class="${directionClass}">${escapeHtml(x.direction)}</td>` +
               `<td class="${pnlClass}">${formatPnl(x.pnl)}</td>` +
               '</tr>'
             );
