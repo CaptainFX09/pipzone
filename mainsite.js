@@ -433,7 +433,7 @@ function normalizeOtpInput(input) {
   value = value.replace(/[^0-9]/g, '');
   value = value.slice(0, 6);
 
-  input.value = value ? `PZ-${value}` : 'PZ-';
+  input.value = `PZ-${value}`;
 
   return value;
 }
@@ -960,25 +960,61 @@ async function resendSignupOtp() {
 
 
 /* -------------------------- OTP input handling -------------------------- */
-document.addEventListener('input', function (event) {
-  if (event.target?.id === 'signupOtp' || event.target?.id === 'resetOtp') {
-    normalizeOtpInput(event.target);
-  }
-});
+function setupOtpInput(id) {
+  const input = $(id);
+  if (!input || input.dataset.otpReady === 'true') return;
 
-document.addEventListener('focus', function (event) {
-  if (event.target?.id === 'signupOtp' || event.target?.id === 'resetOtp') {
-    const input = event.target;
+  input.dataset.otpReady = 'true';
 
-    if (!input.value) {
-      input.value = 'PZ-';
+  input.value = 'PZ-';
+
+  input.addEventListener('focus', function () {
+    if (!this.value.startsWith('PZ-')) {
+      this.value = 'PZ-';
     }
 
     setTimeout(() => {
-      input.setSelectionRange(input.value.length, input.value.length);
+      this.setSelectionRange(this.value.length, this.value.length);
     }, 0);
-  }
-}, true);
+  });
+
+  input.addEventListener('keydown', function (event) {
+    const start = this.selectionStart || 0;
+
+    if (
+      (event.key === 'Backspace' || event.key === 'Delete') &&
+      start <= 3
+    ) {
+      event.preventDefault();
+      this.setSelectionRange(3, 3);
+    }
+  });
+
+  input.addEventListener('paste', function (event) {
+    event.preventDefault();
+
+    const pasted = (event.clipboardData || window.clipboardData).getData('text');
+
+    let digits = pasted.replace(/[^0-9]/g, '').slice(0, 6);
+
+    this.value = `PZ-${digits}`;
+
+    this.setSelectionRange(this.value.length, this.value.length);
+  });
+
+  input.addEventListener('input', function () {
+    let digits = this.value.replace(/^PZ-/i, '').replace(/[^0-9]/g, '');
+
+    digits = digits.slice(0, 6);
+
+    this.value = `PZ-${digits}`;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  setupOtpInput('signupOtp');
+  setupOtpInput('resetOtp');
+});
 
 /* -------------------------- 12. Login -------------------------- */
 async function login() {
