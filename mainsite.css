@@ -329,9 +329,13 @@ footer{padding:56px 0 40px}
 .tx-table tbody tr:last-child td{border-bottom:0}
 .tx-table tbody tr:hover{background:rgba(255,255,255,.015)}
 .tx-trade-table th:nth-child(3),.tx-trade-table td:nth-child(3){text-align:center}
-.tx-trade-table th:nth-child(4),.tx-trade-table td:nth-child(4){text-align:right}
+.tx-trade-table th:nth-child(4),.tx-trade-table td:nth-child(4){text-align:center}
+.tx-trade-table th:nth-child(5),.tx-trade-table td:nth-child(5){text-align:right}
 .tx-request-table th:nth-child(3),.tx-request-table td:nth-child(3),.tx-request-table th:nth-child(4),.tx-request-table td:nth-child(4){text-align:right}
 .tx-pair{font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:600}
+.tx-direction-buy{color:var(--profit);font:12.5px 'IBM Plex Mono',monospace;font-weight:600}
+.tx-direction-sell{color:var(--loss);font:12.5px 'IBM Plex Mono',monospace;font-weight:600}
+.tx-direction-neutral{color:var(--muted);font:12.5px 'IBM Plex Mono',monospace;font-weight:600}
 .tx-pnl-profit{color:var(--profit);font:13.5px 'IBM Plex Mono',monospace;font-weight:600}
 .tx-pnl-loss{color:var(--loss);font:13.5px 'IBM Plex Mono',monospace;font-weight:600}
 .tx-pnl-neutral{color:var(--muted);font:13.5px 'IBM Plex Mono',monospace;font-weight:600}
@@ -349,7 +353,6 @@ footer{padding:56px 0 40px}
 .unlock-wrap{max-width:100%;width:100%}
 .dash-actions .btn{min-width:100%}
 }
-
 /* -------------------------- 21. Withdrawal fee calculator box -------------------------- */
 .fee-calc{margin-top:12px;padding:14px;background:var(--bg2);border:1px solid var(--line);border-radius:3px;font-size:13px}
 .fee-row{display:flex;justify-content:space-between;padding:5px 0;color:var(--muted)}
