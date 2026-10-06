@@ -33,11 +33,9 @@
 <div class="trade-selection-row">
 <div class="field">
 <label for="tradeDirection">Trade Direction</label>
-<select id="tradeDirection">
-<option value="buy">BUY</option>
-<option value="sell">SELL</option>
-</select>
+<select id="tradeDirection"> <option value="">Select Trade Direction</option> <option value="buy">BUY</option> <option value="sell">SELL</option> </select>
 </div>
+
 <div class="field">
 <label for="tradeCurrency">Currency / Asset</label>
 <select id="tradeCurrency"></select>
@@ -51,10 +49,7 @@
 <!-- Adjustment Settings -->
 <div class="field">
 <label for="adjustmentType">Adjustment Type</label>
-<select id="adjustmentType">
-<option value="increase">Increase</option>
-<option value="decrease">Decrease</option>
-</select>
+<select id="adjustmentType"> <option value="">Select Adjustment Type</option> <option value="increase">Increase</option> <option value="decrease">Decrease</option> </select>
 </div>
 
 <div class="field">
@@ -82,10 +77,41 @@
 <label for="generatedCode">Generated Code</label>
 <input id="generatedCode" type="text" readonly placeholder="PZ-TRD-000001">
 </div>
+
 <div class="generated-actions">
 <button id="copyBtn" class="copy-btn" type="button" disabled>Copy Code</button>
 <button id="generateBtn" class="generate-btn" type="button">Generate Code</button>
 <button id="sendMessageBtn" class="generate-btn" type="button">Send Message</button>
+</div>
+</div>
+
+<!-- Selected Clients -->
+<div class="selected-clients-section">
+<div class="card-title">Send Code to Selected Client(s)</div>
+<div class="card-sub">Select one or more clients to receive the latest generated trade code.</div>
+
+<div class="selected-client-toolbar">
+<label class="select-all-label">
+<input id="selectAllClients" type="checkbox">
+<span>Select All Clients</span>
+</label>
+<div id="selectedClientCount" class="selected-client-count">0 clients selected</div>
+</div>
+
+<div class="client-dropdown" id="clientDropdown">
+<button class="client-dropdown-toggle" id="clientDropdownToggle" type="button">
+<span id="clientDropdownText">Select Client(s)</span>
+<span class="client-dropdown-arrow">▾</span>
+</button>
+<div class="client-dropdown-menu" id="clientDropdownMenu">
+<div id="clientList" class="client-list">
+<div class="empty">Loading clients...</div>
+</div>
+</div>
+</div>
+
+<div class="selected-client-actions">
+<button id="sendSelectedBtn" class="generate-btn" type="button">Send Code to Selected Client(s)</button>
 </div>
 </div>
 
