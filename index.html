@@ -746,8 +746,8 @@ PipZoNe is a managed trading arrangement, not a bank or a regulated fund. Tradin
 <div class="form-group">
 <label>Network</label>
 <div class="network-tabs">
-<div class="network-tab active" id="tab-TRC20" onclick="selectDepositNetwork('TRC20')">TRC20</div>
-<div class="network-tab" id="tab-BEP20" onclick="selectDepositNetwork('BEP20')">BEP20</div>
+<div class="network-tab active" id="tab-TRC20" onclick="selectDepositNetwork('TRC20')">Tether (USDT TRC20)</div>
+<div class="network-tab" id="tab-BEP20" onclick="selectDepositNetwork('BEP20')">Tether (USDT BEP20)</div>
 </div>
 <!-- QR code for the currently-selected network -->
 <div class="form-group" style="text-align:center">
@@ -756,7 +756,7 @@ PipZoNe is a managed trading arrangement, not a bank or a regulated fund. Tradin
 </div>
 </div>
 <div class="form-group">
-<label>Deposit to this address <span style="color:var(--gold)" id="depositNetworkLabel">(TRC20)</span></label>
+<label>Deposit to this address <span style="color:var(--gold)" id="depositNetworkLabel">Tether (USDT TRC20)</span></label>
 <div style="display:flex;gap:8px">
 <input id="depositAddressField" type="text" readonly value="Loading..." style="flex:1">
 <button type="button" class="btn" style="white-space:nowrap" onclick="copyDepositAddress()">Copy</button>
@@ -795,8 +795,8 @@ Minimum deposit is $100. Send USDT only on the network selected above, to the ad
 <div class="form-group">
 <label>Network</label>
 <div class="network-tabs">
-<div class="network-tab active" id="wd-tab-TRC20" onclick="selectWithdrawalNetwork('TRC20')">TRC20</div>
-<div class="network-tab" id="wd-tab-BEP20" onclick="selectWithdrawalNetwork('BEP20')">BEP20</div>
+<div class="network-tab active" id="wd-tab-TRC20" onclick="selectWithdrawalNetwork('TRC20')">Tether (USDT TRC20)</div>
+<div class="network-tab" id="wd-tab-BEP20" onclick="selectWithdrawalNetwork('BEP20')">Tether (USDT BEP20)</div>
 </div>
 </div>
 <div class="form-group">
@@ -809,7 +809,7 @@ Minimum deposit is $100. Send USDT only on the network selected above, to the ad
 <div class="fee-row total"><span>You Will Receive</span><span id="calcReceive">$0.00</span></div>
 </div>
 <div class="form-group">
-<label id="withdrawalWalletLabel">TRC20 Withdrawal Wallet</label>
+<label id="withdrawalWalletLabel">Tether (USDT TRC20) Withdrawal Wallet</label>
 <input id="withdrawalWallet" type="text" placeholder="T...">
 <div class="note" style="margin-top:8px" id="withdrawalWalletNote">This is the wallet saved on your account for this network. You can edit it if needed.</div>
 </div>
@@ -858,14 +858,14 @@ Your profit share can be withdrawn on demand, any time, with no minimum amount â
 </div>
 <div class="form-group">
 <label>Withdrawal Wallet <span style="color:var(--gold)">(at least one required)</span></label>
-<div class="note" style="margin:0 0 12px">Provide your TRC20 wallet, your BEP20 wallet, or both.</div>
+<div class="note" style="margin:0 0 12px">Provide your Tether (USDT TRC20) wallet, your Tether (USDT BEP20) wallet, or both.</div>
 </div>
 <div class="form-group">
-<label>TRC20 Wallet <span style="color:var(--muted2);font-weight:400">(optional)</span></label>
+<label>Tether (USDT TRC20) Wallet  <span style="color:var(--muted2);font-weight:400">(optional)</span></label>
 <input id="profileWalletTrc20" type="text" placeholder="T...">
 </div>
 <div class="form-group">
-<label>BEP20 Wallet <span style="color:var(--muted2);font-weight:400">(optional)</span></label>
+<label>Tether (USDT BEP20) Wallet <span style="color:var(--muted2);font-weight:400">(optional)</span></label>
 <input id="profileWalletBep20" type="text" placeholder="0x...">
 </div>
 <div class="form-actions">
