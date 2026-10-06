@@ -26,6 +26,17 @@ const generatedCode=$('generatedCode');
 const generateBtn=$('generateBtn');
 const copyBtn=$('copyBtn');
 const sendMessageBtn=$('sendMessageBtn');
+
+const clientDropdown=$('clientDropdown');
+const clientDropdownToggle=$('clientDropdownToggle');
+const clientDropdownMenu=$('clientDropdownMenu');
+const clientDropdownText=$('clientDropdownText');
+const clientList=$('clientList');
+
+const selectAllClients=$('selectAllClients');
+const selectedClientCount=$('selectedClientCount');
+const sendSelectedBtn=$('sendSelectedBtn');
+
 const refreshBtn=$('refreshBtn');
 const message=$('message');
 const historyList=$('historyList');
@@ -91,6 +102,8 @@ tradeCurrency.disabled=true;
 addCurrencyBtn.disabled=true;
 deleteCurrencyBtn.disabled=true;
 
+tradeCurrency.innerHTML='<option value="">Select Currency / Asset</option>';
+
 const {data,error}=await client.from('trade_currencies').select('id,name,code,is_active').order('code',{ascending:true});
 
 if(error){
@@ -106,13 +119,14 @@ tradeCurrency.innerHTML='<option value="">No currencies available</option>';
 return false;
 }
 
-tradeCurrency.innerHTML=activeCurrencies.map(item=>{
+tradeCurrency.innerHTML='<option value="">Select Currency / Asset</option>'+activeCurrencies.map(item=>{
 return`<option value="${esc(item.code)}">${esc(item.code)}${item.name&&item.name!==item.code?' — '+esc(item.name):''}</option>`;
 }).join('');
 
+tradeCurrency.value='';
 tradeCurrency.disabled=false;
 addCurrencyBtn.disabled=false;
-deleteCurrencyBtn.disabled=false;
+deleteCurrencyBtn.disabled=true;
 
 return true;
 }
@@ -231,6 +245,138 @@ deleteCurrencyBtn.textContent='Delete Currency';
 });
 
 // ============================================
+// Load Client List With Checkboxes
+// ============================================
+
+async function loadClients(){
+clientDropdownToggle.disabled=true;
+clientDropdownMenu.classList.remove('open');
+clientDropdownToggle.classList.remove('open');
+clientDropdownText.textContent='Select Client(s)';
+
+clientList.innerHTML='<div class="empty">Loading clients...</div>';
+
+sendSelectedBtn.disabled=true;
+selectAllClients.checked=false;
+selectAllClients.indeterminate=false;
+selectAllClients.disabled=true;
+
+const {data,error}=await client
+.from('profiles')
+.select('id,full_name,first_name,last_name,verified_client_number')
+.eq('role','client')
+.order('created_at',{ascending:true});
+
+if(error){
+console.error(error);
+clientList.innerHTML='<div class="empty">Unable to load clients</div>';
+selectedClientCount.textContent='0 clients selected';
+clientDropdownText.textContent='Select Client(s)';
+showMessage(error.message||'Unable to load clients.','error');
+return false;
+}
+
+if(!data?.length){
+clientList.innerHTML='<div class="empty">No clients available</div>';
+selectedClientCount.textContent='0 clients selected';
+clientDropdownText.textContent='Select Client(s)';
+return false;
+}
+
+clientList.innerHTML=data.map(profile=>{
+const fullName=profile.full_name||[profile.first_name,profile.last_name].filter(Boolean).join(' ')||'Client';
+
+return`
+<label class="client-checkbox">
+<input
+type="checkbox"
+class="client-select-checkbox"
+value="${esc(profile.id)}">
+<span class="client-checkbox-info">
+<strong>${esc(fullName)}</strong>
+${profile.verified_client_number?`<small>${esc(profile.verified_client_number)}</small>`:''}
+</span>
+</label>
+`;
+}).join('');
+
+clientDropdownToggle.disabled=false;
+selectAllClients.disabled=false;
+sendSelectedBtn.disabled=false;
+
+updateSelectedClientCount();
+
+return true;
+}
+
+// ============================================
+// Update Selected Client Count
+// ============================================
+
+function updateSelectedClientCount(){
+const checkboxes=[...document.querySelectorAll('.client-select-checkbox')];
+const checked=checkboxes.filter(checkbox=>checkbox.checked);
+const count=checked.length;
+
+selectedClientCount.textContent=`${count} client${count===1?'':'s'} selected`;
+
+selectAllClients.checked=checkboxes.length>0&&checked.length===checkboxes.length;
+selectAllClients.indeterminate=checked.length>0&&checked.length<checkboxes.length;
+
+if(count===0){
+clientDropdownText.textContent='Select Client(s)';
+}else if(count===1){
+const selected=checked[0];
+const name=selected.closest('.client-checkbox')?.querySelector('strong')?.textContent||'1 client';
+clientDropdownText.textContent=name;
+}else{
+clientDropdownText.textContent=`${count} clients selected`;
+}
+}
+
+// ============================================
+// Client Dropdown Open / Close
+// ============================================
+
+clientDropdownToggle.addEventListener('click',()=>{
+if(clientDropdownToggle.disabled)return;
+
+const isOpen=clientDropdownMenu.classList.toggle('open');
+clientDropdownToggle.classList.toggle('open',isOpen);
+});
+
+document.addEventListener('click',event=>{
+if(!clientDropdown.contains(event.target)){
+clientDropdownMenu.classList.remove('open');
+clientDropdownToggle.classList.remove('open');
+}
+});
+
+// ============================================
+// Individual Client Checkbox
+// ============================================
+
+clientList.addEventListener('change',event=>{
+if(!event.target.classList.contains('client-select-checkbox'))return;
+
+updateSelectedClientCount();
+});
+
+// ============================================
+// Select / Unselect All Clients
+// ============================================
+
+selectAllClients.addEventListener('change',()=>{
+const checkboxes=document.querySelectorAll('.client-select-checkbox');
+
+checkboxes.forEach(checkbox=>{
+checkbox.checked=selectAllClients.checked;
+});
+
+updateSelectedClientCount();
+});
+
+// ============================================
 // Load Trade Code History
 // ============================================
 
@@ -301,6 +447,11 @@ showMessage('Select a currency or asset.','error');
 return;
 }
 
+if(!type||!['increase','decrease'].includes(type)){
+showMessage('Select an adjustment type.','error');
+return;
+}
+
 if(!Number.isFinite(percent)||percent<=0||percent>100){
 showMessage('Enter a valid percentage.','error');
 return;
@@ -349,7 +500,7 @@ generateBtn.textContent='Generate Code';
 });
 
 // ============================================
-// Send Latest Trade Code Message
+// Send Latest Trade Code Message To ALL Clients
 // ============================================
 
 sendMessageBtn.addEventListener('click',async()=>{
@@ -379,6 +530,57 @@ showMessage(error.message||'Unable to send trade code message.','error');
 }finally{
 sendMessageBtn.disabled=false;
 sendMessageBtn.textContent='Send Message';
+}
+});
+
+// ============================================
+// Send Latest Trade Code To SELECTED Clients
+// ============================================
+
+sendSelectedBtn.addEventListener('click',async()=>{
+clearMessage();
+
+const selectedIds=[...document.querySelectorAll('.client-select-checkbox:checked')]
+.map(checkbox=>checkbox.value);
+
+if(!selectedIds.length){
+showMessage('Select at least one client.','error');
+return;
+}
+
+if(!generatedCode.value.trim()){
+showMessage('Generate a trade code first.','error');
+return;
+}
+
+const count=selectedIds.length;
+
+if(!confirm(`Send the latest generated trade code to ${count} selected client${count===1?'':'s'}?`))return;
+
+sendSelectedBtn.disabled=true;
+sendSelectedBtn.textContent='Sending...';
+
+try{
+const {data,error}=await client.rpc('send_trade_code_to_selected_clients',{
+p_user_ids:selectedIds
+});
+
+if(error)throw error;
+
+const code=data?.trade_code||generatedCode.value.trim();
+const sentCount=data?.messages_inserted||0;
+
+showMessage(
+`Trade code ${code} sent to ${sentCount} selected client${sentCount===1?'':'s'}.`,
+'success'
+);
+
+}catch(error){
+console.error(error);
+showMessage(error.message||'Unable to send trade code to selected clients.','error');
+}finally{
+sendSelectedBtn.disabled=false;
+sendSelectedBtn.textContent='Send Code to Selected Client(s)';
 }
 });
 
@@ -454,6 +656,7 @@ await loadHistory();
 
 refreshBtn.addEventListener('click',async()=>{
 await loadHistory();
+await loadClients();
 });
 
 // ============================================
@@ -485,7 +688,17 @@ showMessage(error.message||'Unable to logout.','error');
 
 (async()=>{
 if(!(await checkAdmin()))return;
+
+tradeDirection.value='';
+adjustmentType.value='';
+
 await loadCurrencies();
+
+tradeDirection.value='';
+adjustmentType.value='';
+tradeCurrency.value='';
+
+await loadClients();
 await loadHistory();
 })();
 
