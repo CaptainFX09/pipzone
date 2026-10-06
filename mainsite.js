@@ -258,7 +258,9 @@ function selectDepositNetwork(net) {
   $('tab-TRC20').classList.toggle('active', net === 'TRC20');
   $('tab-BEP20').classList.toggle('active', net === 'BEP20');
   $('depositAddressField').value = DEPOSIT_ADDRESSES[net];
-  $('depositNetworkLabel').textContent = '(' + net + ')';
+  $('depositNetworkLabel').textContent = net === 'TRC20'
+  ? 'Tether (USDT TRC20)'
+  : 'Tether (USDT BEP20)';
   const qrImg = $('depositQrImage');
   if (qrImg) qrImg.src = DEPOSIT_QR_IMAGES[net];
 }
@@ -285,10 +287,10 @@ function selectWithdrawalNetwork(net) {
     net === 'TRC20' ? currentProfile?.wallet_address : currentProfile?.wallet_address_bep20;
 
   if (net === 'TRC20') {
-    label.textContent = 'TRC20 Withdrawal Wallet';
+    label.textContent = 'Tether (USDT TRC20) Withdrawal Wallet';
     input.placeholder = 'T...';
   } else {
-    label.textContent = 'BEP20 Withdrawal Wallet';
+    label.textContent = 'Tether (USDT BEP20) Withdrawal Wallet';
     input.placeholder = '0x...';
   }
 
