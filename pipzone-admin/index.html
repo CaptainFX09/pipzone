@@ -2,201 +2,1038 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PipZoNe — Admin Panel</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PipZoNe — Managed Forex &amp; Crypto Trading</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-
-<!-- EXTERNAL LIBRARY: SUPABASE CLIENT -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- STYLES (see styles.css) -->
-<link rel="stylesheet" href="styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="this.onerror=null;this.src='https://unpkg.com/@supabase/supabase-js@2'"></script>
+<!-- Live candlestick charts (BTC & ETH) — TradingView's free "lightweight-charts" library -->
+<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<!-- MAINSITE STYLES: see mainsite.css for the full stylesheet (organized by section) -->
+<link rel="stylesheet" href="mainsite.css">
 </head>
-
 <body>
-
-<!-- LOGIN VIEW — shown when there is no active/admin session -->
-<div id="loginView" class="login">
-  <h1>Pip<span style="color:var(--gold)">ZoNe</span></h1>
-  <p class="sub">Admin Panel Login</p>
-
-  <div id="loginMsg" class="notice"></div>
-
-  <div class="field">
-    <label>Email</label>
-    <input id="email" type="email" autocomplete="username" placeholder="Admin email">
-  </div>
-
-  <div class="field">
-    <label>Password</label>
-    <div class="pw-wrap">
-      <input id="password" type="password" autocomplete="current-password" placeholder="Password">
-      <button type="button" class="pw-toggle" onclick="togglePw('password',this)" aria-label="Show password">👁</button>
-    </div>
-  </div>
-
-  <button class="btn" id="loginBtn">Login</button>
-
-  <div class="danger-note">
-    Only an account whose profile role is <b>admin</b> can access this panel.
-  </div>
+<!-- ==================== HEADER / NAV ==================== -->
+<header>
+<div class="wrap nav">
+<div class="brand"><img src="Logo.png" alt="PipZoNe" class="logo-img"><span class="gold">Pip</span>ZoNe</div>
+<nav class="navlinks">
+<a href="#how">How it works</a>
+<a href="#calculator">Calculator</a>
+<a href="#performance">Performance</a>
+<a href="#faq">FAQ</a>
+<a href="#contact">Contact</a>
+</nav>
+<div class="navcta">
+<button class="btn" onclick="openAuth('login')">Sign In</button>
+<button class="btn btn-gold" onclick="openAuth('signup')">Sign Up</button>
+</div>
+</div>
+</header>
+<div id="home">
+<!-- ==================== HERO SECTION ==================== -->
+<!-- ==================== HERO SECTION ==================== -->
+<section class="hero">
+<div class="hero-bg-grid"></div>
+<div class="hero-glow hero-glow-one"></div>
+<div class="hero-glow hero-glow-two"></div>
+<div class="wrap hero-grid">
+<div class="hero-copy">
+<div class="eyebrow"><span class="dot"></span>Trading desk open — September 2026 cycle</div>
+<h1>Your capital, our<br>desk, <em>one shared</em><br>outcome.</h1>
+<p class="hero-sub">PipZoNe uses client provided capital for forex and crypto trading under an agreed 60/40 profit sharing structure. Trading results depend on market conditions and actual performance. We do not charge flat management fees. Forex markets are closed on Saturdays and Sundays, so no trading result is recorded on those days.</p>
+<div class="hero-actions">
+<button class="btn btn-gold" onclick="openAuth('signup')">Create account</button>
+<a class="btn" href="#how">See how it works</a>
+</div>
 </div>
 
+<!-- ==================== HERO TRADING TERMINAL ==================== -->
+<div class="hero-terminal-wrap">
+<div class="hero-terminal">
+<div class="terminal-scanline"></div>
+<div class="terminal-corner terminal-corner-tl"></div>
+<div class="terminal-corner terminal-corner-tr"></div>
+<div class="terminal-corner terminal-corner-bl"></div>
+<div class="terminal-corner terminal-corner-br"></div>
 
-<!-- ADMIN APP (main dashboard) — shown once an authenticated admin session is confirmed -->
-<div id="app" class="hidden">
+<div class="terminal-head">
+<div class="terminal-brand">
+<span class="terminal-live-dot"></span>
+<span>LIVE MARKET TERMINAL</span>
+</div>
+<div class="terminal-status">
+<span class="terminal-status-dot"></span>
+REAL-TIME FEED
+</div>
+</div>
+
+<div class="terminal-market-bar">
+<div class="market-tabs" id="heroAssetTabs">
+<button type="button" class="market-tab active" data-asset="BTC" onclick="switchHeroAsset('BTC')">₿ BTC/USDT</button>
+<button type="button" class="market-tab" data-asset="ETH" onclick="switchHeroAsset('ETH')">Ξ ETH/USDT</button>
+</div>
+<div class="terminal-pair">BINANCE · SPOT</div>
+</div>
+
+<div class="terminal-price-row">
+<div>
+<div class="terminal-price-label">CURRENT MARKET PRICE</div>
+<div class="market-price" id="heroPrice">—</div>
+</div>
+<div class="terminal-change-box">
+<div class="terminal-price-label">SESSION MOVE</div>
+<div class="market-change" id="heroChange">—</div>
+</div>
+</div>
+
+<div class="terminal-chart-head">
+<div class="terminal-chart-label">
+<span class="chart-pulse"></span>
+CANDLESTICK / LIVE
+</div>
+<div class="market-tf-row terminal-tf-row" id="heroTfRow">
+<button type="button" class="tf-chip active" data-tf="1m">1m</button>
+<button type="button" class="tf-chip" data-tf="5m">5m</button>
+<button type="button" class="tf-chip" data-tf="15m">15m</button>
+<button type="button" class="tf-chip" data-tf="1h">1h</button>
+<button type="button" class="tf-chip" data-tf="4h">4h</button>
+</div>
+</div>
+
+<div class="market-chart terminal-chart" id="heroChart"></div>
+
+<div class="terminal-bottom">
+<div class="terminal-micro-stats">
+<div>
+<span>MARKET</span>
+<b id="heroMarketLabel">BTC/USDT</b>
+</div>
+<div>
+<span>STATUS</span>
+<b class="terminal-online">ONLINE</b>
+</div>
+<div>
+<span>DATA</span>
+<b>LIVE</b>
+</div>
+</div>
+
+<div class="hero-trade-actions">
+<button type="button" class="btn hero-sell-btn" onclick="openAuth('signup')">Sell</button>
+<button type="button" class="btn btn-gold hero-buy-btn" onclick="openAuth('signup')">Buy</button>
+</div>
+</div>
+
+<div class="terminal-footer">
+<span>● LIVE MARKET DATA</span>
+<span>BTC / ETH</span>
+<span>1m — 4h</span>
+</div>
+
+<div class="note">Live market data — for information only, not trading advice or a signal to invest.</div>
+</div>
+</div>
+</div>
+</section>
+
+  <!-- ==================== APP LAUNCH ==================== -->
+<section class="app-launch">
+<div class="wrap app-launch-card">
+<div class="app-launch-image">
+<img src="app_launch_banner.png" alt="PipZoNe App Launch">
+</div>
+<div class="app-launch-content">
+<div class="app-launch-label">PipZoNe Mobile App</div>
+<h2>Your Account. Your Dashboard. One App</h2>
+<p>Introducing the official PipZoNe Android App designed to give you convenient access to your account, personal dashboard, balance updates, profit records, deposits, withdrawals, and transaction history, all in one place.
+
+Enjoy a smooth and user friendly experience while staying connected with your PipZoNe account anytime, anywhere.</p>
+
+<strong class="app-launch-label">Login to Your Dashboard • Download the App • Stay Connected</strong>
+<!--<div class="app-launch-ios">
+<span>iOS App</span>
+<strong>Coming Soon</strong>
+</div>-->
+</div>
+</div>
+</section>
+<!-- ==================== STATS STRIP ==================== -->
+<section class="stats" style="padding:0">
+<div class="wrap stats-row">
+<div class="stat"><div class="stat-num">$100</div><div class="stat-label">Minimum deposit</div></div>
+<div class="stat"><div class="stat-num">60%</div><div class="stat-label">Client profit share</div></div>
+<div class="stat"><div class="stat-num">Daily</div><div class="stat-label">Settlement cycle</div></div>
+</div>
+</section>
+<!-- ==================== LIVE STATS STRIP ==================== -->
+<section class="live-strip" style="padding:0">
+<div class="wrap live-row">
+<span class="live-dot"></span>
+<!--<span><b id="liveClients">—</b> clients onboarded</span>-->
+<span class="live-sep">·</span>
+<span><b id="liveDeposits">—</b> in verified deposits</span>
+<span class="live-sep">·</span>
+<span><b id="liveWithdrawals">—</b> Total Withdrawal</span>
+<span class="live-sep">·</span>
+<span>updated live from account records</span>
+</div>
+</section>
+<!-- ==================== HOW IT WORKS ==================== -->
+<section id="how">
 <div class="wrap">
-
-  <!-- TOP BAR: brand, admin email, buttons -->
-  <div class="top" id="pageTop">
-  <div>
-    <div class="brand">PipZoNe <span>Admin</span></div>
-    <div class="sub" id="adminEmail"></div>
-  </div>
-<div class="top-buttons">
-  <button class="btn" onclick="document.getElementById('depositSection').scrollIntoView({behavior:'smooth'})" type="button"> Deposit Requests</button>
-  <button class="btn" onclick="document.getElementById('withdrawalSection').scrollIntoView({behavior:'smooth'})" type="button">Withdrawal Requests</button>
-  <button class="btn" onclick="document.getElementById('accountSection').scrollIntoView({behavior:'smooth'})" type="button">Client Accounts</button>
-  <button class="btn" onclick="document.getElementById('referralSection').scrollIntoView({behavior:'smooth'})" type="button">Referral Program</button>
-
-  <button class="btn" onclick="location.href='profit-codes.html'" type="button">Trade Code</button>
-  <button class="btn" onclick="location.href='announcements.html'" type="button">📢 Announcements</button>
-  <button class="btn" onclick="location.href='app-updates.html'" type="button">📱 App Updates</button>
-
-  <button class="btn" id="refreshBtn" type="button">Refresh</button>
-  <button class="btn logout" id="logoutBtn" type="button">Logout</button>
-</div>
-  </div>
-
-  <div id="msg" class="notice"></div>
-
-  <!-- SUMMARY CARDS — high-level dashboard stats -->
-  <div class="cards">
-
-    <div class="stat">
-      <small>Total Clients</small>
-      <h2 id="clients">0</h2>
-    </div>
-
-    <div class="stat">
-      <small>Total Deposit</small>
-      <h2 id="deposits">$0.00</h2>
-    </div>
-
-    <div class="stat">
-      <small>Total Withdrawal Paid</small>
-      <h2 id="withdrawalpaid">$0.00</h2>
-    </div>
-
-    <div class="stat">
-      <small>Pending Deposit</small>
-      <h2 id="pendingDp">$0.00</h2>
-    </div>
-
-    <div class="stat">
-      <small>Pending Withdrawal</small>
-      <h2 id="pendingWd">$0.00</h2>
-    </div>
-
-    <div class="stat">
-      <small>Total Profit</small>
-      <h2 id="profit">$0.00</h2>
-    </div>
-
-    <div class="stat">
-      <small>Withdrawal Fee</small>
-      <h2 id="withdrawalFee">$0.00</h2>
-    </div>
-
-    <div class="stat">
-      <small>Desk Profit</small>
-      <h2 id="deskProfit">$0.00</h2>
-    </div>
-
-    <!-- REFERRAL PROGRAM SUMMARY -->
-    <div class="stat">
-      <small>Total Referrals</small>
-      <h2 id="totalReferrals">0</h2>
-    </div>
-
-    <div class="stat">
-      <small>Active Referrers</small>
-      <h2 id="activeReferrers">0</h2>
-    </div>
-
-    <div class="stat">
-      <small>Referred Deposits</small>
-      <h2 id="referredDeposits">$0.00</h2>
-    </div>
-
-    <div class="stat">
-      <small>Total Commission Paid</small>
-      <h2 id="totalCommissionPaid">$0.00</h2>
-    </div>
-
-  </div>
-
-  <!-- DEPOSIT REQUESTS SECTION -->
- <div class="section" id="depositSection">
-  <h3 onclick="window.scrollTo({top:0,behavior:'smooth'})">Deposit Requests</h3>
-  <div id="depositTable" class="table-wrap"></div>
-</div>
-
-  <!-- WITHDRAWAL REQUESTS SECTION -->
-<div class="section" id="withdrawalSection">
-  <h3 onclick="window.scrollTo({top:0,behavior:'smooth'})">Withdrawal Requests</h3>
-  <div id="withdrawalTable" class="table-wrap"></div>
-</div>
-
-  <!-- CLIENT ACCOUNTS SECTION -->
-  <div class="section" id="accountSection">
-  <h3 onclick="window.scrollTo({top:0,behavior:'smooth'})">Client Accounts</h3>
-  <div id="accountTable" class="table-wrap"></div>
-</div>
-
-  <!-- REFERRAL PROGRAM SECTION — commission rate control + per-client breakdown -->
-<!-- REFERRAL PROGRAM SECTION — tiered commission rate control + per-client breakdown -->
-<div class="section" id="referralSection">
-  <h3 onclick="window.scrollTo({top:0,behavior:'smooth'})">Referral Program</h3>
-
-  <div class="referral-rate-row">
-    <label for="commissionRateLowInput">$100 → $499.99 Commission Rate (%)</label>
-    <input id="commissionRateLowInput" type="number" step="0.1" min="0" max="100" placeholder="e.g. 1">
-    <button class="btn" id="saveLowRateBtn" type="button">Save Rate</button>
-    <span id="lowRateSavedNote" class="rate-saved-note"></span>
-  </div>
-
-  <div class="referral-rate-row">
-    <label for="commissionRateHighInput">$500+ Commission Rate (%)</label>
-    <input id="commissionRateHighInput" type="number" step="0.1" min="0" max="100" placeholder="e.g. 6">
-    <button class="btn" id="saveHighRateBtn" type="button">Save Rate</button>
-    <span id="highRateSavedNote" class="rate-saved-note"></span>
-  </div>
-
-  <div id="referralTable" class="table-wrap"></div>
-</div>
-
-  <!-- DAILY RESULTS SECTION -->
-  <div class="section">
-    <h3>Daily Results</h3>
-    <div id="profitTable" class="table-wrap"></div>
-  </div>
-
-  <!-- TRANSACTIONS SECTION -->
-  <div class="section">
-    <h3>Transactions</h3>
-    <div id="transactionTable" class="table-wrap"></div>
-  </div>
-
-  <div class="footer">
-    PipZoNe Admin Panel • Never put the Supabase service-role key in this file.
-  </div>
-
+<div class="sec-head">
+<div class="sec-tag">How it <span>works</span></div>
+<div>
+<h2>From deposit to settlement, in four steps.</h2>
+<p class="sec-desc">Every account follows the same process. Trading results are recorded to your account based on actual trading performance.</p>
 </div>
 </div>
+<div class="steps">
+<div class="step"><div class="step-num">01</div><div class="step-title">Create your account</div><div class="step-desc">Register with your details and verify your email using a 6-digit code..</div></div>
+<div class="step"><div class="step-num">02</div><div class="step-title">Deposit capital</div><div class="step-desc">Send a minimum of $100 in USDT via TRC20 or BEP20 to your account's deposit address. Funds are credited after confirmation.</div></div>
+<div class="step"><div class="step-num">03</div><div class="step-title">Capital is traded</div><div class="step-desc">Client-provided capital is used for forex and crypto trading under the agreed trading structure. Trading can result in both profits and losses.</div></div>
+<div class="step"><div class="step-num">04</div><div class="step-title">Daily settlement</div><div class="step-desc">Each day's actual trading result is calculated according to the agreed 60/40 profit-sharing structure. When a profit is generated, your applicable profit share may be requested for withdrawal according to the withdrawal terms. Your original deposit unlocks 40 days after it is credited. Forex markets are closed on Saturdays and Sundays, so no result is recorded on those two days each week.</div></div>
+</div>
+</div>
+</section>
+<!-- ==================== PROFIT SPLIT CALCULATOR ==================== -->
+<section id="calculator">
+<div class="wrap">
+<div class="sec-head">
+<div class="sec-tag">Profit <span>split</span></div>
+<div>
+<h2>See how a result would split.</h2>
+<p class="sec-desc">Move the slider to model a trading result. This does not predict or guarantee any outcome.</p>
+</div>
+</div>
+<div class="calc">
+<div class="calc-in">
+<div class="field-label">Modeled monthly trading result</div>
+<div class="amount-display">$<span id="amtOut">100</span></div>
+<input type="range" id="amtSlider" min="-200" max="1000" step="10" value="100">
+<div class="calc-scale"><span>-$200</span><span>$1,000</span></div>
+<div class="split-bar"><div class="split-client"></div><div class="split-mgr"></div></div>
+<div class="split-legend"><span style="color:var(--gold)">Client · 60%</span><span>Desk · 40%</span></div>
+</div>
+<div class="calc-out">
+<div class="out-row"><span class="out-label">Trading result</span><span class="out-value" id="outResult">$100.00</span></div>
+<div class="out-row"><span class="out-label">Your share (60%)</span><span class="out-value hi" id="outClient">$60.00</span></div>
+<div class="out-row"><span class="out-label">Desk share (40%)</span><span class="out-value" id="outMgr">$40.00</span></div>
+<!--<div class="calc-warn">This is a modeling tool, not a forecast. Forex and crypto trading carries risk of loss.</div>-->
+</div>
+</div>
+</div>
+</section>
+<!-- ==================== VERIFIED PERFORMANCE TABLE ==================== -->
+<section id="performance">
+<div class="wrap">
+<div class="sec-head">
+<div class="sec-tag">Verified <span>performance</span></div>
+<div>
+<h2>Monthly results, as they closed.</h2>
+<p class="sec-desc">Only settled, verified results are published here. If you do not receive a Trading Code on a particular day, please do not worry. Your profit will be added during the Daily Profit Update at midnight (Thailand Time), except on Saturdays and Sundays when the forex markets are closed and no result is recorded. Past performance does not guarantee future results.
+</p>
+</div>
+</div>
+<table>
+<thead>
+<tr><th>Month</th><th>Trading result</th><th>Client 60%</th><th>Desk 40%</th></tr>
+</thead>
+<tbody>
+<tr><td>June</td><td><span class="up">+$5000</span><div class="bar-track"><div class="bar-fill" style="width:62%"></div></div></td><td>$3000</td><td>$2000</td></tr>
+<tr><td>July</td><td><span class="up">+$3500</span><div class="bar-track"><div class="bar-fill" style="width:43%"></div></div></td><td>$2100</td><td>$1400</td></tr>
+<tr><td>August</td><td><span class="up">+$6200</span><div class="bar-track"><div class="bar-fill" style="width:77%"></div></div></td><td>$3720</td><td>$2480</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- ==================== LIVE MARKETS (BTC & ETH) ==================== -->
+<section id="markets">
+<div class="wrap">
+<div class="sec-head">
+<div class="sec-tag">Live <span>Markets</span></div>
+<div>
+<h2>BTC &amp; ETH, updated live.</h2>
+<p class="sec-desc">Bitcoin and Ethereum candles are pulled live from market data and displayed in real time. Same live feed on every device — mobile or desktop.</p>
+</div>
+</div>
+<div class="market-switch-row">
+<button type="button" class="market-switch active" data-asset="BTC" onclick="switchMarketAsset('BTC')">₿ BTC / USDT</button>
+<button type="button" class="market-switch" data-asset="ETH" onclick="switchMarketAsset('ETH')">Ξ ETH / USDT</button>
+</div>
+<div class="market-main-panel">
+<div class="market-main-head">
+<div>
+<div class="market-main-title" id="mainMarketTitle">₿ BTC / USDT</div>
+<div class="market-main-price" id="mainMarketPrice">—</div>
+<div class="market-main-change" id="mainMarketChange">—</div>
+</div>
+<div class="live-dot-wrap"><span class="live-dot"></span>Live</div>
+</div>
+<div class="market-tf-row market-tf-row-big" id="marketsTfRow">
+<button type="button" class="tf-chip active" data-tf="1m">1m</button>
+<button type="button" class="tf-chip" data-tf="5m">5m</button>
+<button type="button" class="tf-chip" data-tf="15m">15m</button>
+<button type="button" class="tf-chip" data-tf="1h">1h</button>
+<button type="button" class="tf-chip" data-tf="4h">4h</button>
+</div>
+<div class="market-chart market-chart-big market-chart-single" id="mainMarketChart"></div>
+</div>
+<div class="note" style="margin-top:16px">Market data shown for information only. It is not investment advice and is not connected to your account balance or trading results above.</div>
+</div>
+</section>
+<!-- ==================== FAQ ACCORDION ==================== -->
+<section id="faq">
+<div class="wrap">
+<div class="sec-head">
+<div class="sec-tag">Common <span>questions</span></div>
+<div><h2>FAQ</h2></div>
+</div>
+<div class="faq-list">
+<div class="faq-item">
+<div class="faq-q"><span>What's the minimum deposit?</span><span class="plus">+</span></div>
+<div class="faq-a"><p>$100 in USDT, sent via TRC20 or BEP20, to open an account.</p></div>
+</div>
+<div class="faq-item">
+<div class="faq-q"><span>How is the profit split calculated?</span><span class="plus">+</span></div>
+<div class="faq-a"><p>Each day's actual trading result is calculated. You receive 60% and the desk receives 40%.</p></div>
+</div>
+<div class="faq-item">
+<div class="faq-q"><span>When can I withdraw?</span><span class="plus">+</span></div>
+<div class="faq-a"><p>Eligible profit shares may be requested for withdrawal according to the applicable withdrawal terms. Your original deposit (principal) can be withdrawn once 40 days have passed since it was credited. There is no minimum withdrawal amount, and a fixed $2 withdrawal fee applies to every request. Once approved, withdrawals are typically received within 5 minutes to 8 hours.</p></div>
+</div>
+<div class="faq-item">
+<div class="faq-q"><span>Is my capital guaranteed?</span><span class="plus">+</span></div>
+<div class="faq-a"><p>No. Forex and crypto trading can result in losses.</p></div>
+</div>
+<div class="faq-item">
+<div class="faq-q"><span>Do you trade every day?</span><span class="plus">+</span></div>
+<div class="faq-a"><p>We trade forex and crypto on trading days. Forex markets are closed on Saturdays and Sundays, so no trade is placed and no profit/loss is updated on your account those two days. Crypto markets trade every day, but results are still settled and updated on the same daily schedule as forex.</p></div>
+</div>
+</div>
+</div>
+</section>
+<!-- ==================== LEGAL: TERMS & CONDITIONS ==================== -->
+<section id="terms" class="legal-section">
+<div class="wrap">
+<div class="sec-tag">Legal</div>
+<h2>Terms &amp; Conditions</h2>
+<div class="legal-updated">Last updated: September 2026</div>
+<div class="legal-block">
+<h3>1. The arrangement</h3>
+<p>PipZoNe ("the desk", "we", "us") uses client-provided capital for forex and crypto trading under an agreed 60/40 profit-sharing structure. Trading results depend on actual market performance and may result in either profits or losses. By creating an account you agree to the terms described here and on the rest of this site.</p>
+<h3>2. Minimum deposit</h3>
+<p>The minimum deposit to open an account is $100, sent in USDT via the TRC20 or BEP20 network only. Deposits are credited to your account balance only after the transaction is confirmed on-chain.</p>
+<h3>3. Profit and loss sharing</h3>
+<p>Trading results are recorded for the relevant account and allocated according to the agreed 60% client and 40% desk sharing structure. Positive results increase the applicable account balance, while negative results reduce it. The sharing structure does not guarantee a profit or protect against losses.</p>
+<h3>4. Withdrawals</h3>
+<p>There is no minimum withdrawal amount. A fixed withdrawal fee of $2 is deducted from every withdrawal request; the remaining amount is paid out to you. Your accumulated profit share may be withdrawn on demand, at any time. Your original deposited capital (principal) may only be withdrawn once 40 days have passed since it was credited to your account. Requests are manually reviewed before approval. Once approved, funds are typically received within 5 minutes to 8 hours, paid to the wallet address you provide.</p>
+<h3>5. No guaranteed returns</h3>
+<p>Nothing in these terms, on this site, or in any communication from PipZoNe constitutes a guarantee of profit or of capital preservation. Forex and crypto trading carries a material risk of loss, up to and including the loss of your entire deposited capital.</p>
+<h3>6. Account accuracy</h3>
+<p>You are responsible for providing accurate deposit transaction hashes and withdrawal wallet addresses, and for selecting the correct network. PipZoNe is not responsible for funds sent to an incorrect address, on an incorrect network, or with incorrect transaction details.</p>
+<h3>7. Termination</h3>
+<p>Either party may close the arrangement. On closure, your remaining available balance is paid out through the standard withdrawal process, subject to the principal lock-in period described above.</p>
+<h3>8. Referral program</h3>
+<p>Clients may share a personal referral link. Referral earnings are not activated until the referring client's own first deposit has been approved. No commission is generated by a pending or rejected deposit, by a referred signup on its own, or more than once for the same approved deposit. Self-referral is not permitted, and each referred client is attributed to a single referrer. Commission rates are set by PipZoNe and may be changed at any time; the rate applied to a given deposit is the rate in effect when that deposit is approved.</p>
+<h3>9. Changes to these terms</h3>
+<p>We may update these terms from time to time. Continued use of your account after an update constitutes acceptance of the revised terms.</p>
+</div>
+</div>
+</section>
+<!-- ==================== LEGAL: PRIVACY POLICY ==================== -->
+<section id="privacy" class="legal-section">
+<div class="wrap">
+<div class="sec-tag">Legal</div>
+<h2>Privacy Policy</h2>
+<div class="legal-updated">Last updated: September 2026</div>
+<div class="legal-block">
+<h3>1. Information we collect</h3>
+<p>When you create an account we collect your full name, email address, phone number, and the wallet address(es) you provide for withdrawals. We also record your deposit and withdrawal requests, the resulting account balance history, and — if you joined via a referral link, or if you refer other clients — your referral relationship and referral earnings history. If you contact support, we also store the message and any attachment you choose to submit.</p>
+<h3>2. How we use your information</h3>
+<ul>
+<li>To create and manage your client account</li>
+<li>To verify deposits and process withdrawal requests</li>
+<li>To send account and transaction notifications</li>
+<li>To respond to support requests</li>
+<li>To attribute referral relationships and calculate referral earnings</li>
+</ul>
+<h3>3. What we do not do</h3>
+<p>We do not sell your personal information to third parties. We do not share your data with anyone outside of what is required to operate your account and process your transactions.</p>
+<h3>4. Data storage</h3>
+<p>Account data is stored with our database provider using industry-standard access controls. Passwords are stored in hashed form and are never visible to us in plain text.</p>
+<h3>5. Your rights</h3>
+<p>You may request a copy of the personal data we hold about you, or request that your account be closed and your data removed, subject to any records we are required to retain for financial record-keeping.</p>
+<h3>6. Contact</h3>
+<p>For any privacy-related request, please reach out through the contact details at the bottom of this page.</p>
+</div>
+</div>
+</section>
+<!-- ==================== LEGAL: RISK DISCLOSURE ==================== -->
+<section id="risk-disclosure" class="legal-section">
+<div class="wrap">
+<div class="sec-tag">Legal</div>
+<h2>Risk Disclosure</h2>
+<div class="legal-updated">Last updated: September 2026</div>
+<div class="legal-block">
+<h3>Trading risk</h3>
+<p>Forex and crypto trading is highly speculative and involves a significant risk of loss. Past performance of any trading strategy or account is not indicative of future results. You should only deposit capital you can afford to lose. Forex markets are closed on Saturdays and Sundays, so no trading result is recorded and no profit/loss update happens on those days.</p>
+<h3>No guarantee of profit</h3>
+<p>The 60/40 profit split describes how a trading result is divided — it is not a promise of what that result will be. Some days may produce a loss, which is shared in the same proportion as a profit.</p>
+<h3>Liquidity and withdrawal timing</h3>
+<p>Your profit share can be requested for withdrawal at any time and is subject to manual review. Your original deposited capital is locked for 40 days from the date it is credited. Once a withdrawal is approved, funds are typically received within 5 minutes to 8 hours. This means your principal is not available on demand in the same way as a bank account.</p>
+<h3>Not a bank or regulated fund</h3>
+<p>PipZoNe is a managed trading arrangement between you and the desk. It is not a bank, is not FDIC or similarly insured, and is not a licensed or regulated investment fund. Deposits are not protected by any deposit insurance scheme.</p>
+<h3>Independent advice</h3>
+<p>Nothing on this site is financial or investment advice. You are encouraged to seek independent financial advice before depositing capital, and to only invest an amount you are fully prepared to lose.</p>
+<!--<div class="legal-disclaimer">This page is a plain-language summary for clients and is not a substitute for professional legal advice. If you are operating PipZoNe as a business, have this page (and the Terms &amp; Privacy pages above) reviewed by a qualified lawyer in your jurisdiction before relying on them.</div>
+</div>-->
+</div>
+</section>
+</div>
+<!-- ==================== CONTACT US ==================== -->
+<section id="contact" class="contact-section">
+<div class="wrap">
+<div class="sec-head">
+<div class="sec-tag">Contact <span>Us</span></div>
+<div>
+<h2>We're here to help.</h2>
+<p class="sec-desc">If you have an account, deposit, withdrawal, or general support issue, send us a message and our support team will review it.</p>
+</div>
+</div>
+<div class="contact-grid">
+<div class="contact-info">
+<h3>Support Email</h3>
+<p>
+<a href="mailto:support.pipzone@gmail.com">support.pipzone@gmail.com</a>
+</p>
+<h3 style="margin-top:30px">Office Address</h3>
+<p>
+Thanon Hat<br>
+Pattaya, Chon Buri 20260<br>
+Thailand
+</p>
+<h3 style="margin-top:30px">Support</h3>
+<p>
+For account, deposit, withdrawal, or general support questions, please use the contact form and provide enough information for our support team to understand the issue. You can attach a screenshot or document if it helps explain your issue.
+</p>
+</div>
+<div class="contact-form">
+<form onsubmit="submitContact(event)">
+<div class="form-group">
+<label>Name</label>
+<input id="contactName" type="text" placeholder="Your name" required>
+</div>
+<div class="form-group">
+<label>Email</label>
+<input id="contactEmail" type="email" placeholder="Your email" required>
+</div>
+<div class="form-group">
+<label>Issue / Subject</label>
+<input id="contactSubject" type="text" placeholder="What can we help with?" required>
+</div>
+<div class="form-group">
+<label>Message</label>
+<textarea id="contactMessage" placeholder="Describe your issue..." required></textarea>
+</div>
+<div class="form-group">
+<label>Attachment <span style="color:var(--muted2);font-weight:400">(optional, image or PDF, under 5MB)</span></label>
+<input id="contactAttachment" type="file" accept="image/*,.pdf" style="padding:8px">
+<div id="contactAttachmentName" style="font-size:12px;color:var(--muted2);margin-top:6px"></div>
+</div>
+<div class="form-actions">
+<button type="submit" class="btn btn-gold" style="width:100%;padding:12px" id="contactSubmitBtn">Submit</button>
+</div>
+<div id="contactSuccess" class="contact-success">Your message has been sent to our support team.</div>
+</form>
+</div>
+</div>
+</div>
+</section>
+<!-- ==================== DASHBOARD (client area) ==================== -->
+<section id="dashboard" class="dashboard">
+<div class="wrap">
+<div class="dash-topbar">
+<div class="dash-welcome" onclick="toggleAccountMenu()" role="button" tabindex="0" aria-label="Open account menu">
+<div class="dash-avatar" id="dashAvatar">C</div>
+<div>
+<div class="dash-hi">Welcome back</div>
+<div class="dash-name" id="welcomeName">Client</div>
+<div class="dash-email" id="welcomeEmail">—</div>
+</div>
+</div>
+<div class="dash-topbar-actions">
+<div class="notif-wrap">
+<button type="button" class="notif-bell" onclick="toggleNotifications()" aria-label="Notifications">
+🔔
+<span class="notif-badge" id="notifBadge" style="display:none">0</span>
+</button>
+<div class="notif-overlay" id="notifOverlay" onclick="handleNotifOverlayClick()"></div>
+<div class="notif-dropdown" id="notifDropdown">
+<div class="notif-head">
+<span>Notifications</span>
+<div class="notif-head-actions">
+<button type="button" class="notif-markread" onclick="markAllNotificationsRead()">Mark all as read</button>
+<button type="button" class="notif-close" onclick="closeNotifications()" aria-label="Close notifications">×</button>
+</div>
+</div>
+<div class="notif-list" id="notifList">
+<div class="notif-empty">Loading...</div>
+</div>
+</div>
+<!-- Single-notification detail popup — opens on top of the list when a notification is clicked -->
+<div class="notif-detail-modal" id="notifDetailModal">
+<div class="notif-detail-box">
+<button type="button" class="notif-detail-close" onclick="closeNotifDetail()" aria-label="Close">×</button>
+<div class="notif-detail-icon" id="notifDetailIcon"></div>
+<div class="notif-detail-text" id="notifDetailText"></div>
+<div class="notif-detail-time" id="notifDetailTime"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ==================== ACCOUNT MENU ==================== -->
+<div class="menu-overlay" id="accountMenuOverlay" onclick="closeAccountMenu()"></div>
+<div class="menu-popup" id="accountMenuPopup">
+<div class="menu-head">
+<div class="menu-head-avatar" id="menuHeadAvatar">C</div>
+<div class="menu-head-info">
+<div class="menu-head-name" id="menuHeadName">Client</div>
+<div class="menu-head-sub" id="menuHeadEmail">—</div>
+</div>
+<button type="button" class="notif-close" onclick="closeAccountMenu()" aria-label="Close menu">×</button>
+</div>
+<div class="menu-list">
+<button type="button" class="menu-item" onclick="openViewProfile()">👤 View Profile</button>
+<button type="button" class="menu-item" onclick="openSettings()">⚙️ Settings</button>
+<div class="menu-divider"></div>
+<button type="button" class="menu-item" onclick="openTeam()">👥 Team</button>
+<button type="button" class="menu-item" onclick="openInviteMembers()">➕ Invite Members</button>
+<div class="menu-divider"></div>
+<button type="button" class="menu-item" onclick="openSupport()">🎧 Support</button>
+<div class="menu-divider"></div>
+<button type="button" class="menu-item menu-item-danger" onclick="logout()">🚪 Sign Out</button>
+</div>
+</div>
+<!-- ==================== INVITE MEMBERS MODAL ==================== -->
+<div class="request-modal" id="inviteModal">
+<div class="request-box">
+<button type="button" class="request-close" onclick="closeInviteMembers()">×</button>
+<h2>Invite Members</h2>
+<p class="auth-sub">Share your referral link and earn commission.</p>
+<div class="referral-card" id="referralCard">
+<div class="referral-locked" id="referralLocked">
+<div class="referral-head">🤝 Refer &amp; Earn</div>
+<div class="referral-locked-msg">🔒 Make your first deposit to unlock your referral link.</div>
+</div>
+<div class="referral-unlocked" id="referralUnlocked" style="display:none">
+<div class="referral-head">🤝 Refer &amp; Earn</div>
+<div class="referral-sub">Earn commission when people you refer make an approved deposit.</div>
+<div class="msg" id="referralMsg"></div>
+<div class="referral-link-row">
+<input id="referralLinkField" type="text" readonly value="Loading...">
+<button type="button" class="btn" onclick="copyReferralLink()">Copy Link</button>
+<button type="button" class="btn btn-gold" onclick="shareReferralLink()">Share</button>
+</div>
+<div class="referral-stats">
+<div class="referral-stat">
+<div class="referral-stat-label">Total Referrals</div>
+<div class="referral-stat-value" id="referralCount">0</div>
+</div>
+<div class="referral-stat">
+<div class="referral-stat-label">Referred Deposits</div>
+<div class="referral-stat-value" id="referralDeposits">$0.00</div>
+</div>
+<div class="referral-stat">
+<div class="referral-stat-label">Total Earnings</div>
+<div class="referral-stat-value gold" id="referralEarnings">$0.00</div>
+</div>
+</div>
+</div>
+</div>
+<div class="referral-terms">
+<h3>Referral program</h3>
+<p>Clients may share a personal referral link. Referral earnings are not activated until the referring client's own first deposit has been approved. No commission is generated by a pending or rejected deposit, by a referred signup on its own, or more than once for the same approved deposit. Self-referral is not permitted, and each referred client is attributed to a single referrer. Commission rates are set by PipZoNe and may be changed at any time; the rate applied to a given deposit is the rate in effect when that deposit is approved.</p>
+</div>
+</div>
+</div>
+<!-- ==================== VIEW PROFILE MODAL ==================== -->
+<div class="request-modal" id="viewProfileModal">
+<div class="request-box">
+<button type="button" class="request-close" onclick="closeViewProfile()">×</button>
+<h2>Your Profile</h2>
+<p class="auth-sub">Your saved account details.</p>
+<div class="profile-view-list" id="profileViewList"></div>
+</div>
+</div>
+<!-- ==================== TEAM MODAL ==================== -->
+<div class="request-modal" id="teamModal">
+<div class="request-box">
+<button type="button" class="request-close" onclick="closeTeam()">×</button>
+<h2>Your Team</h2>
+<p class="auth-sub">Clients who joined using your referral link.</p>
+<div id="teamList"><div class="tx-empty">Loading...</div></div>
+</div>
+</div>
+<!-- ==================== SUPPORT MODAL ==================== -->
+<div class="request-modal" id="supportModal">
+<div class="request-box">
+<button type="button" class="request-close" onclick="closeSupport()">×</button>
+<h2>Contact Support</h2>
+<p class="auth-sub">Send a message to the PipZoNe support team.</p>
+<div class="msg" id="supportMsg"></div>
+<div class="form-group">
+<label>Subject</label>
+<input id="supportSubject" type="text" placeholder="What can we help with?">
+</div>
+<div class="form-group">
+<label>Message</label>
+<textarea id="supportMessage" placeholder="Describe your issue..."></textarea>
+</div>
+<div class="form-group">
+<label>Attachment <span style="color:var(--muted2);font-weight:400">(optional, image or PDF, under 5MB)</span></label>
+<input id="supportAttachment" type="file" accept="image/*,.pdf" style="padding:8px">
+<div id="supportAttachmentName" style="font-size:12px;color:var(--muted2);margin-top:6px"></div>
+</div>
+<div class="form-actions">
+<button type="button" class="btn btn-gold" onclick="submitSupportMessage()">Send message</button>
+</div>
+</div>
+</div>
+  <!-- ==================== APP DOWNLOAD ==================== -->
+<button type="button" class="btn btn-gold app-download-btn" onclick="downloadApp()">
+  📱 Download App
+</button>
 
-<!-- APP LOGIC (see script.js) — loaded last so all DOM elements above already exist -->
-<script src="script.js"></script>
+<!-- Balance hero card -->
+<div class="balance-hero">
+<div class="balance-label">Your current balance</div>
+<div class="balance-amount" id="dashBalance">$0.00</div>
+<span class="balance-pl zero" id="dashProfitPill">$0.00 profit so far</span>
+</div>
+<!-- ==================== LIVE TRADE ==================== -->
+<div class="trade-code-card" id="tradeCard">
+<div class="trade-code-head">
+<div>
+<div class="trade-code-title">Place Trade</div>
+<div class="trade-code-sub">Select the balance amount you want to use for this trade.</div>
+</div>
+</div>
 
+<!-- Balance amount -->
+<div class="form-group">
+<label>Trade Amount</label>
+<div class="trade-balance-input-wrap">
+<span class="trade-balance-prefix">$</span>
+<input id="tradeBalanceAmount" type="number" min="0" step="0.01" value="0" placeholder="0.00" inputmode="decimal">
+</div>
+
+<!-- Balance slider -->
+<div class="trade-balance-slider-wrap">
+<input id="tradeBalanceSlider" type="range" min="0" max="0" step="0.01" value="0">
+<div class="trade-balance-scale">
+<span id="tradeBalanceMin">$0.00</span>
+<span id="tradeBalanceMax">$0.00</span>
+</div>
+</div>
+</div>
+
+  <!-- Trade Code -->
+<div class="form-group">
+<label>Trade Code</label>
+<input id="tradeCodeInput" type="text" placeholder="Enter your trade code" autocomplete="off">
+</div>
+
+<!-- Trade direction -->
+<div class="form-group">
+<label>Trade Direction</label>
+<div class="hero-trade-actions" id="tradeDirectionButtons">
+<button type="button" class="btn hero-sell-btn" id="sellTradeBtn">SELL</button>
+<button type="button" class="btn btn-gold hero-buy-btn" id="buyTradeBtn">BUY</button>
+</div>
+</div>
+
+<!-- Active trade countdown -->
+<div id="tradeCountdownBox" style="display:none">
+<div class="form-group">
+<label>Trade in Progress</label>
+<div id="tradeCountdown">30</div>
+</div>
+</div>
+
+<!-- Trade message -->
+<div id="tradeMsg" class="msg" style="display:none"></div>
+</div>
+<!-- Dashboard stat cards -->
+<div class="dash-grid">
+<div class="dash-card">
+<div class="label">💵 Deposited capital</div>
+<div class="value" id="dashDeposit">$0.00</div>
+<div class="sub">Money you've put in</div>
+</div>
+<div class="dash-card">
+<div class="label">📈 Profit / Loss</div>
+<div class="value" id="dashProfit">$0.00</div>
+<div class="sub" id="dashProfitSub">Total earned since you joined</div>
+</div>
+<div class="dash-card">
+<div class="label">💸 Total withdrawn</div>
+<div class="value" id="dashWithdrawn">$0.00</div>
+<div class="sub">Paid out to you so far</div>
+</div>
+</div>
+<!-- Available-to-withdraw + unlock progress -->
+<div class="avail-card">
+<div class="avail-top">
+<div>
+<div class="avail-label">✅ Available to withdraw right now</div>
+<div class="avail-amount" id="dashAvailable">$0.00</div>
+</div>
+<div class="unlock-wrap">
+<div class="unlock-label"><span>Deposit unlock</span><b id="unlockDaysText">—</b></div>
+<div class="unlock-track"><div class="unlock-fill" id="unlockFill" style="width:0%"></div></div>
+<div class="unlock-note" id="unlockNote">Your deposited amount unlocks 40 days after it's credited. Your profit can be withdrawn any time.</div>
+</div>
+</div>
+</div>
+<!-- Deposit / Withdrawal action buttons -->
+<!-- Deposit / Withdrawal / Reinvest action buttons -->
+<div class="dash-actions">
+<button type="button" class="btn btn-gold" onclick="openRequest('deposit')">➕ Deposit</button>
+<button type="button" class="btn" onclick="openRequest('withdrawal')">➖ Withdrawal</button>
+<button type="button" class="btn" id="reinvestBtn" onclick="reinvestAccount()" disabled>🔄 Reinvest</button>
+</div>
+
+<!-- Reinvest status -->
+<div class="reinvest-card" id="reinvestCard" style="display:none">
+<div class="reinvest-top">
+<div>
+<div class="avail-label">🔒 Reinvested balance</div>
+<div class="avail-amount" id="reinvestAmount">$0.00</div>
+</div>
+<div class="unlock-wrap">
+<div class="unlock-label"><span>Reinvest lock</span><b id="reinvestDaysText">—</b></div>
+<div class="unlock-track"><div class="unlock-fill" id="reinvestFill" style="width:0%"></div></div>
+<div class="unlock-note" id="reinvestNote">Your reinvested balance is locked for 40 days.</div>
+</div>
+</div>
+</div>
+
+<div id="reinvestMsg" class="msg" style="display:none"></div>
+<!-- Recent transactions list -->
+<div class="request-list">
+<h3>Recent transactions</h3>
+<div id="requestList">
+<div class="tx-empty">Loading...</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ==================== FOOTER ==================== -->
+<footer>
+<div class="wrap">
+<div class="foot-grid">
+<div class="brand" style="font-size:17px">
+<div class="brand" style="font-size:17px">
+<img src="Logo.png" alt="PipZoNe" class="logo-img"><span class="gold">Pip</span>ZoNe
+</div>
+<div class="foot-links">
+<a href="#how">How it works</a>
+<a href="#performance">Performance</a>
+<a href="#faq">FAQ</a>
+<a href="#contact">Contact</a>
+<a href="#terms">Terms</a>
+<a href="#privacy">Privacy</a>
+<a href="#risk-disclosure">Risk Disclosure</a>
+</div>
+</div>
+<!--<div class="foot-bottom">
+PipZoNe is a managed trading arrangement, not a bank or a regulated fund. Trading forex and crypto carries a high level of risk and may not be suitable for all investors.
+</div>-->
+</div>
+</footer>
+<!-- ==================== DEPOSIT MODAL ==================== -->
+<div class="request-modal" id="depositModal">
+<div class="request-box">
+<button type="button" class="request-close" onclick="closeRequest('deposit')">×</button>
+<h2>Deposit USDT</h2>
+<p class="auth-sub">Choose a network and submit your deposit for review.</p>
+<div class="msg" id="depositMsg"></div>
+<div class="form-group">
+<label>Network</label>
+<div class="network-tabs">
+<div class="network-tab active" id="tab-TRC20" onclick="selectDepositNetwork('TRC20')">Tether (USDT TRC20)</div>
+<div class="network-tab" id="tab-BEP20" onclick="selectDepositNetwork('BEP20')">Tether (USDT BEP20)</div>
+</div>
+<!-- QR code for the currently-selected network -->
+<div class="form-group" style="text-align:center">
+<label>Scan to Deposit</label>
+<img id="depositQrImage" src="qr-trc20.png" alt="Deposit QR code" style="width:180px;height:180px;border-radius:8px;border:1px solid var(--line);margin-top:6px">
+</div>
+</div>
+<div class="form-group">
+<label>Deposit to this address <span style="color:var(--gold)" id="depositNetworkLabel">Tether (USDT TRC20)</span></label>
+<div style="display:flex;gap:8px">
+<input id="depositAddressField" type="text" readonly value="Loading..." style="flex:1">
+<button type="button" class="btn" style="white-space:nowrap" onclick="copyDepositAddress()">Copy</button>
+</div>
+<div class="note" style="margin-top:8px">Once you pick a network the address above is locked to that network — send funds only to this exact address on the network shown.</div>
+</div>
+<div class="form-group">
+<label>Amount (USDT)</label>
+<input id="depositAmount" type="number" min="100" step="0.01" placeholder="100">
+</div>
+<div class="form-group">
+<label>Transaction Hash</label>
+<input id="depositTx" type="text" placeholder="Paste transaction hash">
+</div>
+<div class="form-group">
+<label>Payment Screenshot <span style="color:var(--gold)">*required</span></label>
+<input id="depositProof" type="file" accept="image/*" style="padding:8px">
+<div id="depositProofName" style="font-size:12px;color:var(--muted2);margin-top:6px"></div>
+</div>
+<p class="request-note">
+Minimum deposit is $100. Send USDT only on the network selected above, to the address shown. A screenshot of your payment is required so we can verify it. Your request will remain <b>pending</b> until it is manually verified and approved. Your deposit unlocks for withdrawal 40 days after it is credited — your profit share is available sooner, on demand.
+</p>
+<div class="form-actions">
+<button type="button" class="btn btn-gold" onclick="submitDeposit()">Submit deposit request</button>
+</div>
+</div>
+</div>
+<!-- ==================== WITHDRAWAL MODAL ==================== -->
+<div class="request-modal" id="withdrawalModal">
+<div class="request-box">
+<button type="button" class="request-close" onclick="closeRequest('withdrawal')">×</button>
+<h2>Withdrawal request</h2>
+<p class="auth-sub">Choose the network and confirm the wallet you want to withdraw to.</p>
+<div class="msg" id="withdrawalMsg"></div>
+<div id="withdrawalAvailable" class="dash-note" style="display:none;margin-bottom:14px"></div>
+<div class="form-group">
+<label>Network</label>
+<div class="network-tabs">
+<div class="network-tab active" id="wd-tab-TRC20" onclick="selectWithdrawalNetwork('TRC20')">Tether (USDT TRC20)</div>
+<div class="network-tab" id="wd-tab-BEP20" onclick="selectWithdrawalNetwork('BEP20')">Tether (USDT BEP20)</div>
+</div>
+</div>
+<div class="form-group">
+<label>Amount (USDT)</label>
+<input id="withdrawalAmount" type="number" min="2.01" step="0.01" placeholder="Amount">
+</div>
+<div id="withdrawalCalc" class="fee-calc" style="display:none">
+<div class="fee-row"><span>Withdrawal Amount</span><span id="calcAmount">$0.00</span></div>
+<div class="fee-row"><span>Withdrawal Fee</span><span id="calcFee">$0.00</span></div>
+<div class="fee-row total"><span>You Will Receive</span><span id="calcReceive">$0.00</span></div>
+</div>
+<div class="form-group">
+<label id="withdrawalWalletLabel">Tether (USDT TRC20) Withdrawal Wallet</label>
+<input id="withdrawalWallet" type="text" placeholder="T...">
+<div class="note" style="margin-top:8px" id="withdrawalWalletNote">This is the wallet saved on your account for this network. You can edit it if needed.</div>
+</div>
+<p class="request-note">
+Your profit share can be withdrawn on demand, any time, with no minimum amount — a fixed <b>$2 withdrawal fee</b> applies to every request. Your original deposit unlocks 40 days after it is credited. Once approved, withdrawals are typically received within <b>5 minutes to 8 hours</b>. Only your available balance can be withdrawn. Choose the same network you used to deposit, and make sure the wallet address is correct before submitting.
+</p>
+<div class="form-actions">
+<button type="button" class="btn btn-gold" onclick="submitWithdrawal()">Submit withdrawal request</button>
+</div>
+</div>
+</div>
+<!-- ==================== COMPLETE PROFILE MODAL ==================== -->
+<div class="request-modal" id="completeProfileModal">
+<div class="request-box">
+<button type="button" class="request-close" onclick="closeCompleteProfile()">×</button>
+<h2>Complete your profile</h2>
+<p class="auth-sub">Please complete your profile before making a deposit.</p>
+<div class="msg" id="profileMsg"></div>
+<div class="form-group">
+<label>First Name</label>
+<input id="profileFirstName" type="text" autocomplete="given-name">
+</div>
+<div class="form-group">
+<label>Last Name</label>
+<input id="profileLastName" type="text" autocomplete="family-name">
+</div>
+<div class="form-group">
+<label>Phone / WhatsApp</label>
+<input id="profilePhone" type="text" autocomplete="tel">
+</div>
+<div class="form-group">
+<label>Address</label>
+<input id="profileAddress" type="text" autocomplete="street-address">
+</div>
+<div class="form-group">
+<label>City</label>
+<input id="profileCity" type="text" autocomplete="address-level2">
+</div>
+<div class="form-group">
+<label>Postal Code</label>
+<input id="profilePostalCode" type="text" autocomplete="postal-code">
+</div>
+<div class="form-group">
+<label>State</label>
+<input id="profileState" type="text" autocomplete="address-level1">
+</div>
+<div class="form-group">
+<label>Withdrawal Wallet <span style="color:var(--gold)">(at least one required)</span></label>
+<div class="note" style="margin:0 0 12px">Provide your Tether (USDT TRC20) wallet, your Tether (USDT BEP20) wallet, or both.</div>
+</div>
+<div class="form-group">
+<label>Tether (USDT TRC20) Wallet  <span style="color:var(--muted2);font-weight:400">(optional)</span></label>
+<input id="profileWalletTrc20" type="text" placeholder="T...">
+</div>
+<div class="form-group">
+<label>Tether (USDT BEP20) Wallet <span style="color:var(--muted2);font-weight:400">(optional)</span></label>
+<input id="profileWalletBep20" type="text" placeholder="0x...">
+</div>
+<div class="form-actions">
+<button type="button" class="btn btn-gold" onclick="submitProfile()">Save profile</button>
+</div>
+</div>
+</div>
+<!-- ==================== AUTH MODAL ==================== -->
+<div class="modal" id="authModal">
+<div class="auth-box">
+<button class="close" onclick="closeAuth()">×</button>
+<h2 class="auth-title" id="authTitle">Welcome to <span class="gold">PipZoNe</span></h2>
+<div class="auth-tabs" id="authTabs">
+<button type="button" class="auth-tab" id="authTabLogin" onclick="showLogin()">Sign in</button>
+<button type="button" class="auth-tab" id="authTabSignup" onclick="showSignup()">Create an account</button>
+</div>
+<div id="loginForm">
+<p class="auth-sub">Sign in to your PipZoNe account.</p>
+<div class="msg" id="loginMsg"></div>
+<div class="form-group">
+<label>Email</label>
+<input id="loginEmail" type="email" autocomplete="email">
+</div>
+<div class="form-group">
+<label>Password</label>
+<div class="pw-wrap">
+<input id="loginPassword" type="password" autocomplete="current-password">
+<button type="button" class="pw-toggle" onclick="togglePw('loginPassword',this)" aria-label="Show password">👁</button>
+</div>
+<div class="forgot-link">
+<button type="button" onclick="showResetPassword()">Forgot password?</button>
+</div>
+</div>
+<div class="form-actions">
+<button type="button" class="btn btn-gold" onclick="login()">Login</button>
+</div>
+</div>
+<div id="signupForm" style="display:none">
+<p class="auth-sub">Create your client account.</p>
+<div class="msg" id="signupMsg"></div>
+<div class="form-group">
+<label>Email</label>
+<input id="signupEmail" type="email" autocomplete="email">
+</div>
+<div class="form-group">
+<label>Password</label>
+<div class="pw-wrap">
+<input id="signupPassword" type="password" autocomplete="new-password">
+<button type="button" class="pw-toggle" onclick="togglePw('signupPassword',this)" aria-label="Show password">👁</button>
+</div>
+<div class="pw-rules" id="pwRules">
+<div class="pw-rule" id="ruleLen"><span class="pw-rule-dot"></span>Between 8-15 characters<span class="pw-rule-count" id="pwCount">0</span></div>
+<div class="pw-rule" id="ruleCase"><span class="pw-rule-dot"></span>At least one upper and one lower case letter</div>
+<div class="pw-rule" id="ruleNum"><span class="pw-rule-dot"></span>At least one number</div>
+<div class="pw-rule" id="ruleSpecial"><span class="pw-rule-dot"></span>At least one special character</div>
+</div>
+</div>
+<div class="form-group">
+<label>Confirm Password</label>
+<div class="pw-wrap">
+<input id="confirmPassword" type="password" autocomplete="new-password">
+<button type="button" class="pw-toggle" onclick="togglePw('confirmPassword',this)" aria-label="Show password">👁</button>
+</div>
+</div>
+<div class="form-group">
+<label>Partner code <span style="color:var(--muted2);font-weight:400">(optional)</span></label>
+<input id="partnerCode" type="text" placeholder="Enter partner code" autocomplete="off">
+</div>
+<div class="form-actions">
+<button type="button" class="btn btn-gold" onclick="signup()">Create account</button>
+</div>
+</div>
+  <div id="signupOtpForm" style="display:none">
+<h2>Verify your account</h2>
+<p class="auth-sub">Enter the 6-digit code sent to your email.</p>
+<div class="msg" id="signupOtpMsg"></div>
+<div class="form-group">
+<label>Verification Code</label>
+<input id="signupOtp" type="text" inputmode="numeric" maxlength="9" autocomplete="one-time-code" placeholder="PZ-123456">
+</div>
+<div class="form-actions">
+<button type="button" class="btn btn-gold" onclick="verifySignupOtp()">Verify account</button>
+</div>
+<div class="switch">
+Didn't receive the code?
+<button type="button" onclick="resendSignupOtp()">Resend code</button>
+</div>
+</div>
+<div id="resetPasswordForm" style="display:none">
+<h2>Reset password</h2>
+<p class="auth-sub">Enter your account email and we'll send you a 6-digit verification code.</p>
+<div class="msg" id="resetMsg"></div>
+<div class="form-group">
+<label>Email</label>
+<input id="resetEmail" type="email" autocomplete="email" placeholder="Your account email">
+</div>
+<div class="form-actions">
+<button type="button" class="btn btn-gold" onclick="sendResetEmail()">Send code</button>
+</div>
+<div class="switch">
+Remember your password?
+<button type="button" onclick="showLogin()">Client login</button>
+</div>
+</div>
+  <div id="resetOtpForm" style="display:none">
+<h2>Verify code</h2>
+<p class="auth-sub">Enter the 6-digit code sent to your email.</p>
+<div class="msg" id="resetOtpMsg"></div>
+<div class="form-group">
+<label>Verification Code</label>
+<input id="resetOtp" type="text" inputmode="numeric" maxlength="9" autocomplete="one-time-code" placeholder="PZ-123456">
+</div>
+<div class="form-actions">
+<button type="button" class="btn btn-gold" onclick="verifyResetOtp()">Verify code</button>
+</div>
+<div class="switch">
+Didn't receive the code?
+<button type="button" onclick="resendResetOtp()">Resend code</button>
+</div>
+</div>
+<div id="newPasswordForm" style="display:none">
+<h2>Set new password</h2>
+<p class="auth-sub">Enter your new PipZoNe account password.</p>
+<div class="msg" id="newPasswordMsg"></div>
+<div class="form-group">
+<label>New Password</label>
+<div class="pw-wrap">
+<input id="newPassword" type="password" autocomplete="new-password" placeholder="New password">
+<button type="button" class="pw-toggle" onclick="togglePw('newPassword',this)" aria-label="Show password">👁</button>
+</div>
+</div>
+<div class="form-group">
+<label>Confirm New Password</label>
+<div class="pw-wrap">
+<input id="confirmNewPassword" type="password" autocomplete="new-password" placeholder="Confirm new password">
+<button type="button" class="pw-toggle" onclick="togglePw('confirmNewPassword',this)" aria-label="Show password">👁</button>
+</div>
+</div>
+<div class="form-actions">
+<button type="button" class="btn btn-gold" onclick="updatePassword()">Update password</button>
+</div>
+<div class="switch">
+<button type="button" onclick="showLogin()">Back to client login</button>
+</div>
+</div>
+</div>
+</div>
+<!-- MAINSITE SCRIPT: see mainsite.js for all logic -->
+<script src="mainsite.js"></script>
+<script src="trade-code-client.js"></script>
 </body>
 </html>
