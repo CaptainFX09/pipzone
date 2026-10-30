@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Support | PipZoNe</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../../../shared/layout.css">
+<link rel="stylesheet" href="./stylesupport.css">
+
+<script>
+(function(){
+  const savedTheme=localStorage.getItem("pipzone_theme")||"dark";
+  document.documentElement.setAttribute("data-theme",savedTheme);
+})();
+</script>
+</head>
+
+<body>
+
+<div id="pageContent">
+<main class="main-content">
+
+  <div class="page-shell">
+
+    <section class="page-heading">
+
+      <div class="heading-copy">
+
+        <div class="eyebrow">
+          Client Support
+        </div>
+
+        <h1 class="page-title">
+          How can we help?
+        </h1>
+
+        <p class="page-description">
+          Contact the PipZoNe support team for help with deposits,
+          withdrawals, trading activity, account access, or other
+          client account questions.
+        </p>
+
+      </div>
+
+      <div class="secure-badge">
+        <span>Secure Support</span>
+      </div>
+
+    </section>
+
+    <section class="support-layout">
+
+      <!-- MAIN SUPPORT FORM -->
+      <div class="main-column">
+
+        <div class="card support-card">
+
+          <div class="card-header">
+
+            <div>
+              <h2 class="card-title">
+                Send a Support Request
+              </h2>
+
+              <p class="card-description">
+                Provide as much detail as possible so our team can
+                understand and resolve your request faster.
+              </p>
+            </div>
+
+            <div class="ticket-badge">
+              Client Support
+            </div>
+
+          </div>
+
+          <form id="supportForm" novalidate>
+
+            <div class="form-grid">
+
+              <div class="form-group full">
+
+                <label
+                  for="supportFrom"
+                  class="form-label"
+                >
+                  Your account
+                  <span>Replies will be sent here</span>
+                </label>
+
+                <input
+                  type="email"
+                  id="supportFrom"
+                  class="form-input"
+                  value="Loading..."
+                  readonly
+                >
+
+              </div>
+
+              <div class="form-group">
+
+                <label
+                  for="supportCategory"
+                  class="form-label"
+                >
+                  Category
+                </label>
+
+                <select
+                  id="supportCategory"
+                  class="form-input"
+                  required
+                >
+                  <option value="">Select category</option>
+                  <option value="deposit">
+                    Deposit
+                  </option>
+                  <option value="withdrawal">
+                    Withdrawal
+                  </option>
+                  <option value="trading">
+                    Trading Activity
+                  </option>
+                  <option value="account">
+                    Account / Profile
+                  </option>
+                  <option value="security">
+                    Security
+                  </option>
+                  <option value="technical">
+                    Technical Issue
+                  </option>
+                  <option value="other">
+                    Other
+                  </option>
+                </select>
+
+              </div>
+
+              <div class="form-group">
+
+                <label
+                  for="supportSubject"
+                  class="form-label"
+                >
+                  Subject
+                </label>
+
+                <input
+                  type="text"
+                  id="supportSubject"
+                  class="form-input"
+                  placeholder="Briefly describe your issue"
+                  maxlength="120"
+                  required
+                >
+
+              </div>
+
+              <div class="form-group full">
+
+                <label
+                  for="supportMessage"
+                  class="form-label"
+                >
+                  Message
+                </label>
+
+                <textarea
+                  id="supportMessage"
+                  class="form-input form-textarea"
+                  placeholder="Explain your issue or question..."
+                  maxlength="2000"
+                  required
+                ></textarea>
+
+                <div class="field-footer">
+                  <span>
+                    Do not include passwords, OTP codes, or private keys.
+                  </span>
+
+                  <span id="messageCounter">
+                    0 / 2000
+                  </span>
+                </div>
+
+              </div>
+
+              <div class="form-group full">
+
+                <label
+                  for="supportAttachment"
+                  class="form-label"
+                >
+                  Attachment
+                  <span>Optional · Max 5 MB</span>
+                </label>
+
+                <label
+                  for="supportAttachment"
+                  class="upload-box"
+                  id="uploadBox"
+                >
+
+                  <input
+                    type="file"
+                    id="supportAttachment"
+                    accept="image/*,.pdf"
+                    hidden
+                  >
+
+                  <span class="upload-icon">
+                    ↑
+                  </span>
+
+                  <span class="upload-title">
+                    Attach a screenshot or PDF
+                  </span>
+
+                  <span class="upload-description">
+                    PNG, JPG, JPEG or PDF · Maximum 5 MB
+                  </span>
+
+                </label>
+
+                <div
+                  id="selectedFile"
+                  class="selected-file hidden"
+                >
+                  <div class="file-icon">
+                    ▣
+                  </div>
+
+                  <div class="file-info">
+                    <strong id="fileName">
+                      file.pdf
+                    </strong>
+
+                    <span id="fileSize">
+                      0 KB
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    id="removeFileBtn"
+                    class="remove-file"
+                    title="Remove attachment"
+                  >
+                    ×
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+
+            <div
+              id="formFeedback"
+              class="form-feedback"
+              aria-live="polite"
+            ></div>
+
+            <div class="form-footer">
+
+              <div class="security-hint">
+                <span class="security-dot"></span>
+                Your request is sent securely to the PipZoNe support team.
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="submitSupportBtn"
+              >
+                <span id="submitButtonLabel">
+                  Send Request
+                </span>
+              </button>
+
+            </div>
+
+          </form>
+
+        </div>
+
+        <!-- TICKET HISTORY -->
+        <div class="card history-card">
+
+          <div class="card-header">
+
+            <div>
+              <h2 class="card-title">
+                Your Support Requests
+              </h2>
+
+              <p class="card-description">
+                Track the status of the requests you have sent.
+              </p>
+            </div>
+
+            <span class="ticket-badge" id="ticketCount">
+              0 Tickets
+            </span>
+
+          </div>
+
+          <div class="ticket-list" id="ticketList"></div>
+
+          <div class="ticket-empty" id="ticketEmpty">
+            You have not sent any support requests yet.
+          </div>
+
+        </div>
+
+        <!-- SUPPORT GUIDANCE -->
+        <div class="card guidance-card">
+
+          <div class="card-header">
+
+            <div>
+              <h2 class="card-title">
+                Before Contacting Support
+              </h2>
+
+              <p class="card-description">
+                These details can help us resolve your request faster.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="guidance-grid">
+
+            <div class="guidance-item">
+              <div class="guidance-icon">₮</div>
+              <div>
+                <h3>Deposit Issues</h3>
+                <p>
+                  Include your deposit amount, network, and transaction
+                  hash when asking about a deposit.
+                </p>
+              </div>
+            </div>
+
+            <div class="guidance-item">
+              <div class="guidance-icon">↗</div>
+              <div>
+                <h3>Withdrawal Issues</h3>
+                <p>
+                  Include the withdrawal amount, network, and relevant
+                  request details.
+                </p>
+              </div>
+            </div>
+
+            <div class="guidance-item">
+              <div class="guidance-icon">⌁</div>
+              <div>
+                <h3>Trading Activity</h3>
+                <p>
+                  Mention the trade date, currency, direction, amount,
+                  and displayed result if applicable.
+                </p>
+              </div>
+            </div>
+
+            <div class="guidance-item">
+              <div class="guidance-icon">!</div>
+              <div>
+                <h3>Security</h3>
+                <p>
+                  Never send your password, OTP code, seed phrase,
+                  or private wallet key to support.
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- SIDEBAR -->
+      <aside class="sidebar-stack">
+
+        <div class="side-card">
+
+          <div class="side-card-title">
+            Contact PipZoNe Support
+          </div>
+
+          <p class="side-card-description">
+            Our support team can assist with account, deposit,
+            withdrawal, trading, and technical questions.
+          </p>
+
+        </div>
+
+        <div class="side-card">
+
+          <div class="side-card-title">
+            Support Topics
+          </div>
+
+          <div class="topic-list">
+
+            <div class="topic-item">
+              <span>01</span>
+              Deposits &amp; Verification
+            </div>
+
+            <div class="topic-item">
+              <span>02</span>
+              Withdrawals &amp; Payouts
+            </div>
+
+            <div class="topic-item">
+              <span>03</span>
+              Trading Activity
+            </div>
+
+            <div class="topic-item">
+              <span>04</span>
+              Account &amp; Profile
+            </div>
+
+            <div class="topic-item">
+              <span>05</span>
+              Security &amp; Access
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="side-card response-card">
+
+          <div class="response-icon">
+            ✓
+          </div>
+
+          <div class="side-card-title">
+            Request Handling
+          </div>
+
+          <p class="side-card-description">
+            Submit one request per issue and include clear details.
+            This helps the support team review your case efficiently.
+          </p>
+
+        </div>
+
+      </aside>
+
+    </section>
+
+    <!-- SECURITY NOTICE -->
+    <section class="security-notice">
+
+      <div class="security-icon">
+        🔒
+      </div>
+
+      <div class="security-copy">
+
+        <h3 class="security-title">
+          Important Security Notice
+        </h3>
+
+        <p class="security-text">
+          PipZoNe support will never ask for your password, OTP,
+          seed phrase, private wallet key, or recovery phrase.
+          Only share information necessary to identify and resolve
+          your support request.
+        </p>
+
+      </div>
+
+    </section>
+
+    <footer class="page-footer">
+
+      <span>
+        © 2026 PipZoNe · Managed Forex &amp; Crypto Trading
+      </span>
+
+      <div class="footer-links">
+        <a href="../../index.html">
+          Dashboard
+        </a>
+
+        <a href="../profile/indexprofile.html">
+          Profile
+        </a>
+
+        <a href="../edit-profile/indexedit-profile.html">
+          Edit Profile
+        </a>
+
+        <a href="mailto:support.pipzone@gmail.com">
+          Support
+        </a>
+      </div>
+
+    </footer>
+
+  </div>
+
+</main>
+</div>
+
+<div id="toastContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../../supabase-config.js"></script>
+<script src="./scriptsupport.js"></script>
+<script src="../../../shared/layout.js"></script>
+
+</body>
+</html>

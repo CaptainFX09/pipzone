@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Client Portal | PipZoNe Managed Desk</title>
+    <meta name="description" content="PipZoNe Client Dashboard. Monitor managed forex and crypto balances, 60/40 profit distributions, and withdrawal locks." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="../assets/favicon/favicon.png" />
+	<link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./notifications.css" />
+    <script>
+      (function() {
+        const savedTheme = localStorage.getItem('pipzone_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      })();
+    </script>
+  </head>
+  <body class="dashboard-body">
+    <!-- Ambient Background Lighting -->
+    <div class="dash-glow glow-top" aria-hidden="true"></div>
+    <div class="dash-glow glow-bottom" aria-hidden="true"></div>
+
+    <div class="app-layout">
+      <!-- ====================================================================
+           1. Sidebar (Left)
+      ==================================================================== -->
+      <aside class="dash-sidebar" id="dashSidebar">
+        <!-- Sidebar Brand -->
+        <div class="sidebar-header">
+          <a href="./index.html" class="brand-logo" aria-label="PipZoNe client">
+            <img src="../assets/logo/Logo.png" alt="PipZoNe logo" class="logo-img" />
+            <span class="brand-name">Pip<span class="brand-accent">ZoNe</span></span>
+          </a>
+          <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close sidebar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar-nav">
+          <div class="nav-section-label">Trading Operations</div>
+          <a href="./index.html" class="nav-item active" data-nav="overview">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            <span>Dashboard</span>
+          </a>
+         <!-- <a href="#activity" class="nav-item" data-nav="activity">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            <span>Trading Activity</span>-->
+ 
+
+  <a href="./trading/indextrading.html" class="nav-item">
+    <span class="nav-icon">↗</span>
+    <span>Trading Activity</span>
+  </a>
+
+  <a href="./transactions/indextransactions.html" class="nav-item">
+    <span class="nav-icon">▤</span>
+    <span>Transactions</span>
+  </a>
+
+  <a href="./deposit/indexDeposit.html" class="nav-item">
+    <span class="nav-icon">↓</span>
+    <span>Deposit Capital</span>
+  </a>
+
+  <a href="./withdrawal/indexWithdrawal.html" class="nav-item">
+    <span class="nav-icon">↑</span>
+    <span>Withdrawals</span>
+  </a>
+
+  <a href="./referral/indexReferral.html" class="nav-item">
+    <span class="nav-icon">♧</span>
+    <span>Refer &amp; Earn</span>
+  </a>
+
+  <a href="./team/indexteam.html" class="nav-item">
+    <span class="nav-icon">♙</span>
+    <span>My Team</span>
+  </a>
+
+  <a href="./messages/indexmessages.html" class="nav-item">
+    <span class="nav-icon">✉</span>
+    <span>Messages</span>
+  </a>
+
+  <a href="./announcements/indexannouncements.html" class="nav-item">
+    <span class="nav-icon">◉</span>
+    <span>Announcements</span>
+  </a>
+
+  <a href="./updates/indexupdates.html" class="nav-item">
+    <span class="nav-icon">↻</span>
+    <span>Updates</span>
+  </a>
+
+  
+          
+          <div class="nav-section-label">Account</div>
+		  <a href="#performance" class="nav-item" data-nav="performance">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            <span>Analytics</span>
+          </a>
+
+			  <a href="./settings/profile/indexprofile.html" class="nav-item">
+			<span class="nav-icon">⚙</span>
+			<span>Settings</span>
+			  </a>
+
+          <a href="./settings/support/indexsupport.html" class="nav-item">
+            <span class="nav-icon">☎</span>
+            <span>Support</span>
+          </a>
+          <a href="../signin/index.html" class="nav-item logout-link" id="sidebarLogout">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <span>Sign out</span>
+          </a>
+        </nav>
+
+        <!-- Sidebar Footer Card -->
+        <div class="sidebar-help-card">
+          <div class="help-title">Desk Support</div>
+          <div class="help-desc">Questions regarding daily settlements or rollover covenants?</div>
+          <a href="./settings/support/indexsupport.html" class="help-link">Contact Execution Officer →</a>
+        </div>
+      </aside>
+
+      <!-- ====================================================================
+           2. Main Workspace Layout
+      ==================================================================== -->
+      <div class="dash-main-area">
+        <!-- Top Navigation Bar -->
+        <header class="dash-topbar">
+          <div class="topbar-left">
+            <button class="mobile-sidebar-toggle" id="mobileSidebarToggle" aria-label="Open sidebar menu">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <div class="greeting-wrap">
+              <div class="client-greeting">Welcome back, <span class="client-name" id="topbarClientName">Client</span></div>
+              <div class="client-subline">Institutional execution pool · Real-time equity accounting</div>
+            </div>
+          </div>
+
+          <!-- Topbar Search & Tools -->
+          <div class="topbar-right">
+            <!-- Search bar -->
+            <div class="search-box-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" placeholder="Search orders, hashes, dates..." class="search-input" id="dashSearchInput" />
+            </div>
+
+            <!-- Theme Toggle -->
+            <button id="themeToggleBtn" class="topbar-icon-btn" aria-label="Toggle light or dark theme" title="Toggle theme">
+              <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+              <svg class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+
+            <!-- Notifications Bell -->
+            <div class="notification-wrap">
+              <button class="topbar-icon-btn" id="notifBellBtn" aria-label="Notifications" title="Notifications">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                <span class="unread-badge" id="unreadNotifBadge" style="display:none">0</span>
+              </button>
+            </div>
+
+            <!-- Profile Dropdown Trigger -->
+            <div class="profile-menu-wrap" id="profileMenuWrap">
+              <button class="profile-trigger" id="profileTriggerBtn" aria-expanded="false">
+                <div class="user-avatar" id="userAvatarMark">CD</div>
+                <div class="profile-info-text">
+                  <div class="user-name" id="userDisplayName">Client Dashboard</div>
+                  <div class="user-tier" id="userTier">Client</div>
+                </div>
+                <svg class="chevron-down" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+
+              <!-- Dropdown Menu -->
+              <div class="profile-dropdown hidden" id="profileDropdown">
+                <div class="dropdown-header">
+                  <strong id="dropdownName">Client</strong>
+                  <span class="dropdown-email mono" id="dropdownEmail"></span>
+                </div>
+                <div class="dropdown-divider"></div>
+                <a href="./settings/profile/indexprofile.html" class="dropdown-item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                  <span>Profile & Security</span>
+                </a>
+                <a href="./referral/indexReferral.html" class="dropdown-item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7.5" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+                  <span>Invite & Earn Program</span>
+                </a>
+                <a href="./settings/support/indexsupport.html" class="dropdown-item">
+				  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+				  <span>Trading Desk Support</span>
+				</a>
+                <div class="dropdown-divider"></div>
+                <a href="../signin/index.html" class="dropdown-item text-loss" id="dropdownLogout">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                  <span>Sign out</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Dashboard Body Content -->
+        <main class="dash-content-body">
+          <!-- Top Row: Balance Hero + 3 Stat Cards -->
+          <div class="overview-grid">
+            <!-- Balance Hero Card -->
+            <div class="card balance-hero-card">
+              <div class="card-header-clean">
+                <span class="card-tag">Account Equity Overview</span>
+                <span class="account-network-pill mono">USDT (TRC20 / BEP20)</span>
+              </div>
+              <div class="balance-main-row">
+                <div class="balance-left">
+                  <div class="balance-currency-row">
+                    <span class="curr-sign">$</span>
+                    <span class="curr-amount mono counter-num" id="currentBalanceDisplay" data-target="0" data-decimals="2">0.00</span>
+                  </div>
+                  <div class="balance-pnl-row">
+                    <span class="pnl-pill profit">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                      <span id="dailyPnlValue" data-value="0">Daily P/L loading...</span>
+                    </span>
+                    <span class="settle-notice">Daily PnL</span>
+                  </div>
+                </div>
+
+                <!-- Two Primary Action Buttons -->
+                <div class="balance-actions-group">
+                  <button type="button" class="dash-btn btn-deposit open-deposit-modal" id="dashDepositBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                    <span>Deposit Capital</span>
+                  </button>
+                  <button type="button" class="dash-btn btn-withdraw open-withdraw-modal" id="dashWithdrawBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+                    <span>Withdrawal</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3 Stat Cards -->
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-label">Deposited Capital</span>
+                <div class="stat-icon-pill">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                </div>
+              </div>
+              <div class="stat-value mono">
+                $<span class="counter-num" data-target="0" data-decimals="2">0.00</span>
+              </div>
+              <div class="stat-footer-text" id="depositedCapitalStatus">
+					  No deposit yet
+				</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-label">Total Profit</span>
+                <div class="stat-icon-pill profit-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                </div>
+              </div>
+              <div class="stat-value mono text-profit">
+                +$<span class="counter-num" data-target="0" data-decimals="2">0.00</span>
+              </div>
+              <div class="stat-footer-text text-profit">
+                All-time net Client Profit
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-label">Total Withdrawn</span>
+                <div class="stat-icon-pill">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                </div>
+              </div>
+              <div class="stat-value mono">
+                $<span class="counter-num" data-target="0" data-decimals="2">0.00</span>
+              </div>
+              <div class="stat-footer-text">
+                Successfully paid to on-chain wallet
+              </div>
+            </div>
+          </div>
+
+          <!-- Middle Row: Available to Withdraw + Refer & Earn -->
+          <div class="dash-two-col-grid">
+            <!-- Available to Withdraw Card with 40-Day Unlock Progress Bar -->
+            <div class="card available-withdraw-card">
+              <div class="card-header-clean">
+                <div>
+                  <h3 class="card-title">Available for Immediate Withdrawal</h3>
+                  <p class="card-desc">Accrued 60% client profits can be withdrawn anytime. A fixed $2 fee applies per withdrawal, and payouts are processed within 5 minutes to 8 hours after approval.</p>
+                </div>
+                <div class="avail-badge mono text-profit">
+                  +$<span class="counter-num" data-target="0" data-decimals="2">0.00</span>
+                </div>
+              </div>
+
+              <!-- Animated 40-day cycle progress -->
+              <div class="unlock-cycle-box">
+                <div class="unlock-meta-row">
+                  <div class="unlock-label">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    <span>Principal Capital Unlock Cycle: <strong>0 days left</strong></span>
+                  </div>
+                  <span class="unlock-pct mono">0 / 40 Days (0.0%)</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" style="width: 0;"></div>
+                </div>
+                <p class="unlock-subtext">
+                  Initial principal ($0.00) is locked until <strong>0 ,0, 0000</strong> to protect active positions from margin disruption. All profit gains above principal remain 100% withdrawable immediately.
+                </p>
+              </div>
+
+              <div class="card-actions-row">
+                <button class="secondary-dash-btn open-withdraw-modal">Request Profit Payout</button>
+              </div>
+            </div>
+
+            <!-- Refer & Earn Card (Toggleable Locked vs Unlocked state) -->
+            <div class="card referral-program-card">
+              <div class="card-header-clean">
+                <div>
+                  <h3 class="card-title">Refer & Earn Program</h3>
+                  <p class="card-desc">Refer Partners. Earn Rewards. Grow Together.</p>
+                </div>
+                <!-- State preview toggle -->
+                <button class="text-btn" id="toggleReferralStateBtn" title="Toggle preview state">
+                  <span id="referralStateLabel">View Unlocked State</span>
+                </button>
+              </div>
+
+              <!-- Unlocked State View -->
+              <div id="referralUnlockedView" class="referral-content hidden">
+                <div class="referral-link-box">
+                  <span id="referralLinkText" class="referral-url">Available after your first approved deposit</span>
+                  <button type="button" class="copy-btn" id="copyRefLinkBtn" disabled>
+                    <span id="copyRefBtnLabel">Copy</span>
+                  </button>
+                </div>
+
+                <!-- 3 Referral Stats -->
+                <div class="ref-stats-grid">
+                  <div class="ref-stat-box">
+                    <div class="ref-stat-num mono counter-num" data-target="0">0</div>
+                    <div class="ref-stat-name">Total Referrals</div>
+                  </div>
+                  <div class="ref-stat-box">
+                    <div class="ref-stat-num mono">$<span class="counter-num" data-target="0">0</span></div>
+                    <div class="ref-stat-name">Referred Capital</div>
+                  </div>
+                  <div class="ref-stat-box">
+                    <div class="ref-stat-num mono text-profit">+$<span class="counter-num" data-target="0.00" data-decimals="2">0.00</span></div>
+                    <div class="ref-stat-name">Your Commission</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Locked State View (Hidden by default, can be toggled) -->
+              <div id="referralLockedView" class="referral-content">
+                <div class="locked-state-banner">
+                  <div class="lock-icon-wrap">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                  </div>
+                  <strong>Referral Link Locked</strong>
+                  <p>Make your first capital deposit ($100 minimum) to activate your unique affiliate partner link and begin earning automated commissions.</p>
+                  <button class="dash-btn btn-deposit mt-2" onclick="window.location.href='deposit/indexDeposit.html'">Make First Deposit</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Row: Donut Chart (Allocation) + Area Chart (Growth) -->
+          <div class="dash-charts-grid">
+            <!-- Area Performance Growth Chart -->
+            <div class="card chart-card">
+              <div class="card-header-clean">
+                <div>
+                  <h3 class="card-title">Cumulative Profit Curve</h3>
+                  <p class="card-desc">Your cumulative profit over recent trading days.</p>
+                </div>
+                <div class="equity-meta mono text-profit" id="equityMeta">Total Profit: $0.00</div>
+              </div>
+              <div class="equity-canvas-wrapper">
+                <canvas id="clientEquityCanvas" width="680" height="220" aria-label="Client equity performance curve"></canvas>
+              </div>
+            </div>
+
+            <!-- Donut Allocation Chart -->
+            <div class="card donut-card">
+              <div class="card-header-clean">
+                <div>
+                  <h3 class="card-title">Portfolio Allocation</h3>
+                  <p class="card-desc">Share of your trades across market segments.</p>
+                </div>
+              </div>
+              <div class="donut-wrapper">
+                <canvas id="clientDonutCanvas" width="180" height="180" aria-label="Portfolio asset allocation donut chart"></canvas>
+                <div class="donut-legend" id="allocationLegend"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom: Recent Transactions with Skeleton Pulse -->
+          <div class="card transactions-card">
+            <div class="card-header-clean">
+              <div>
+                <h3 class="card-title">Recent Desk Settlements & Activity</h3>
+                <p class="card-desc">Blockchain verified capital allocations, profit payouts, and settlements.</p>
+              </div>
+              <div class="table-actions">
+                                <select id="txFilterSelect" class="clean-select">
+                  <option value="all">All Types</option>
+                  <option value="settlement">Profit Settlements</option>
+                  <option value="deposit">Deposits</option>
+                  <option value="withdrawal">Withdrawals</option>
+                  <option value="reinvest">Reinvest</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Skeleton Pulse Loading Placeholder (Mock 1.5s delay) -->
+            <div id="txSkeletonLoader" class="skeleton-list">
+              <div class="skeleton-row">
+                <div class="skeleton-icon"></div>
+                <div class="skeleton-text-col">
+                  <div class="skeleton-line w-40"></div>
+                  <div class="skeleton-line w-20"></div>
+                </div>
+                <div class="skeleton-line w-25"></div>
+                <div class="skeleton-pill"></div>
+              </div>
+              <div class="skeleton-row">
+                <div class="skeleton-icon"></div>
+                <div class="skeleton-text-col">
+                  <div class="skeleton-line w-50"></div>
+                  <div class="skeleton-line w-25"></div>
+                </div>
+                <div class="skeleton-line w-30"></div>
+                <div class="skeleton-pill"></div>
+              </div>
+              <div class="skeleton-row">
+                <div class="skeleton-icon"></div>
+                <div class="skeleton-text-col">
+                  <div class="skeleton-line w-45"></div>
+                  <div class="skeleton-line w-20"></div>
+                </div>
+                <div class="skeleton-line w-25"></div>
+                <div class="skeleton-pill"></div>
+              </div>
+            </div>
+
+            <!-- Actual Transactions List -->
+            <div id="txRealList" class="tx-list hidden">
+              <!-- Populated by script.js -->
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Notifications modal is loaded from notifications.html. -->
+    <div id="notificationsModalMount"></div>
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="../supabase-config.js"></script>
+    <script src="./script.js"></script>
+    <script src="./notifications.js"></script>
+    
+    <script src="../shared/sidebar-collapse.js"></script>
+    <script src="../shared/nav-badges.js"></script>
+  </body>
+</html>

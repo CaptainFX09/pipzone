@@ -1,0 +1,850 @@
+<!-- =========================================================
+								Sign In HTML
+         ========================================================= -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ===== Page SEO / Meta ===== -->
+    <title>Sign In | PipZoNe Client Portal</title>
+    <meta name="description" content="Access your PipZoNe client dashboard. Track forex and crypto trading returns and weekly settlements." />
+
+    <!-- ===== Google Fonts ===== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- ===== Page Styles ===== -->
+	  <link rel="icon" type="image/png" href="../assets/favicon/favicon.png" />
+    <link rel="stylesheet" href="./style.css" />
+
+    <!-- ===== Theme Restore ===== -->
+    <script>
+      (function() {
+        const savedTheme = localStorage.getItem('pipzone_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      })();
+    </script>
+  </head>
+
+  <body>
+
+    <!-- =========================================================
+         BACKGROUND AMBIENCE
+         ========================================================= -->
+    <div class="bg-glow bg-glow-1" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-2" aria-hidden="true"></div>
+
+
+    <!-- =========================================================
+         AUTH PAGE WRAPPER
+         ========================================================= -->
+    <div class="auth-page-wrapper">
+
+
+      <!-- =======================================================
+           TOP FLOATING NAVIGATION
+           ======================================================= -->
+      <header class="auth-header">
+
+        <!-- ===== PipZoNe Brand ===== -->
+        <a href="./index.html" class="brand-logo" aria-label="PipZoNe signin">
+          <img src="../assets/logo/Logo.png" alt="PipZoNe logo" class="logo-img" />
+          <span class="brand-name">Pip<span class="brand-accent">ZoNe</span></span>
+        </a>
+
+        <!-- ===== Header Actions ===== -->
+        <div class="header-actions">
+
+          <!-- Theme Toggle -->
+          <button
+            id="themeToggleBtn"
+            class="icon-btn"
+            aria-label="Toggle light or dark theme"
+            title="Toggle theme"
+          >
+            <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+
+            <svg class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+
+          <!-- Back To Home -->
+          <a href="../index.html" class="nav-back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back to Home
+          </a>
+
+        </div>
+      </header>
+
+
+      <!-- =========================================================
+           CENTERED AUTH CARD
+           ========================================================= -->
+      <main class="auth-container">
+
+        <div class="auth-card">
+
+
+          <!-- =====================================================
+               AUTH CARD NAVIGATION TABS
+               ===================================================== -->
+          <nav class="auth-tabs" aria-label="Account access options">
+
+            <!-- Sign In Tab -->
+            <button
+              type="button"
+              class="auth-tab active"
+              id="tabSignIn"
+              aria-current="page"
+            >
+              Sign in
+            </button>
+
+            <!-- Create Account Tab -->
+            <a
+              href="../signup/index.html"
+              class="auth-tab"
+              id="tabCreateAccount"
+            >
+              Create account
+            </a>
+
+          </nav>
+
+
+          <!-- =====================================================
+               CARD HEADER
+               ===================================================== -->
+          <div class="auth-card-header">
+            <h1 class="auth-title">Welcome to Desk Portal</h1>
+            <p class="auth-subtitle">
+              Sign in to review managed performance, profit splits, and pending settlements.
+            </p>
+          </div>
+
+
+          <!-- =====================================================
+               GLOBAL STATUS ALERT
+               ===================================================== -->
+          <div
+            id="statusAlert"
+            class="alert-box hidden"
+            role="alert"
+          >
+            <span class="alert-icon"></span>
+            <span class="alert-text"></span>
+          </div>
+
+
+          <!-- =====================================================
+               SIGN IN FORM
+               ===================================================== -->
+          <form id="signinForm" class="auth-form" novalidate>
+
+
+            <!-- ===================================================
+                 EMAIL FIELD
+                 =================================================== -->
+            <div class="form-group">
+
+              <label for="emailInput" class="form-label">
+                <span>Email address</span>
+                <span class="required-star">*</span>
+              </label>
+
+              <div class="input-wrapper">
+
+                <input
+                  type="email"
+                  id="emailInput"
+                  name="email"
+                  class="form-input"
+                  placeholder="name@example.com"
+                  autocomplete="email"
+                  value=""
+                  required
+                />
+
+                <span class="input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                </span>
+
+              </div>
+
+              <span class="field-error" id="emailError"></span>
+
+            </div>
+
+
+            <!-- ===================================================
+                 PASSWORD FIELD
+                 =================================================== -->
+            <div class="form-group">
+
+              <div class="label-row">
+
+                <label for="passwordInput" class="form-label">
+                  <span>Password</span>
+                  <span class="required-star">*</span>
+                </label>
+
+                <!-- Forgot Password Trigger -->
+                <button
+                  type="button"
+                  class="forgot-link-btn"
+                  id="forgotPasswordBtn"
+                >
+                  Forgot password?
+                </button>
+
+              </div>
+
+              <div class="input-wrapper">
+
+                <input
+                  type="password"
+                  id="passwordInput"
+                  name="password"
+                  class="form-input"
+                  placeholder="Enter your password"
+                  autocomplete="current-password"
+                  value=""
+                  required
+                />
+
+                <!-- Password Visibility Toggle -->
+                <button
+                  type="button"
+                  class="password-toggle-btn"
+                  id="togglePasswordBtn"
+                  aria-label="Toggle password visibility"
+                >
+
+                  <svg
+                    class="eye-open"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+
+                  <svg
+                    class="eye-closed hidden"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                  </svg>
+
+                </button>
+
+              </div>
+
+              <span class="field-error" id="passwordError"></span>
+
+            </div>
+
+
+            <!-- ===================================================
+                 INLINE FORGOT PASSWORD BOX
+                 =================================================== -->
+            <div
+              id="forgotPasswordBox"
+              class="inline-reset-box hidden"
+            >
+
+              <!-- Recovery Information -->
+              <div class="reset-box-header">
+                <strong>Password Recovery</strong>
+                <p>
+                  We'll send a 6-digit verification code to your verified client email.
+                </p>
+              </div>
+
+              <!-- Recovery Email + Send OTP -->
+              <div class="reset-box-action">
+
+                <input
+                  type="email"
+                  id="resetEmailInput"
+                  class="form-input reset-input"
+                  placeholder="Enter account email"
+                />
+
+                <button
+                  type="button"
+                  id="sendResetBtn"
+                  class="secondary-btn"
+                >
+                  Send OTP
+                </button>
+
+              </div>
+
+              <!-- Recovery Feedback -->
+              <div
+                id="resetFeedback"
+                class="reset-feedback hidden"
+              ></div>
+
+            </div>
+
+
+            <!-- ===================================================
+                 REMEMBER ME + SECURITY BADGE
+                 =================================================== -->
+            <div class="login-meta-row">
+
+              <!-- Remember Me -->
+              <label class="checkbox-container">
+
+                <input
+                  type="checkbox"
+                  id="rememberMe"
+                  checked
+                />
+
+                <span class="checkbox-custom"></span>
+
+                <span class="checkbox-label">
+                  Keep me signed in
+                </span>
+
+              </label>
+
+              <!-- Security Badge -->
+              <span class="security-chip">
+
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+
+                256-bit TLS
+
+              </span>
+
+            </div>
+
+
+            <!-- ===================================================
+                 LOGIN BUTTON
+                 =================================================== -->
+            <button
+              type="submit"
+              class="submit-btn"
+              id="loginBtn"
+            >
+
+              <span class="btn-text">
+                Login to Dashboard
+              </span>
+
+              <span
+                class="btn-spinner hidden"
+                aria-hidden="true"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke-dasharray="32"
+                    stroke-dashoffset="12"
+                  ></circle>
+                </svg>
+              </span>
+
+            </button>
+
+          </form>
+
+
+          <!-- =========================================================
+               PASSWORD RESET OTP MODAL
+               ========================================================= -->
+          <div
+            id="resetOtpModal"
+            class="otp-modal hidden"
+            aria-hidden="true"
+          >
+
+            <!-- ===== Modal Backdrop ===== -->
+            <div class="otp-modal-backdrop"></div>
+
+
+            <!-- ===== Modal Card ===== -->
+            <div
+              class="otp-modal-card"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="resetOtpTitle"
+            >
+
+
+              <!-- ===================================================
+                   CLOSE BUTTON
+                   =================================================== -->
+              <button
+                type="button"
+                class="otp-close-btn"
+                id="resetOtpCloseBtn"
+                aria-label="Close password recovery"
+              >
+                ×
+              </button>
+
+
+              <!-- ===================================================
+                   SECURITY / LOCK ICON
+                   =================================================== -->
+              <div class="otp-icon">
+
+                <svg
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+
+              </div>
+
+
+              <!-- ===================================================
+                   OTP TITLE
+                   =================================================== -->
+              <h2 id="resetOtpTitle">
+                Verify Reset Code
+              </h2>
+
+
+              <!-- ===================================================
+                   OTP DESCRIPTION
+                   =================================================== -->
+              <p class="otp-description">
+                We sent a 6-digit password reset code to
+              </p>
+
+              <p
+                class="otp-email"
+                id="resetOtpEmailDisplay"
+              ></p>
+
+
+              <!-- ===================================================
+                   6-DIGIT OTP INPUTS
+                   =================================================== -->
+              <div
+                class="otp-inputs"
+                id="resetOtpInputs"
+              >
+
+                <input
+                  type="text"
+                  maxlength="1"
+                  inputmode="numeric"
+                  autocomplete="one-time-code"
+                />
+
+                <input
+                  type="text"
+                  maxlength="1"
+                  inputmode="numeric"
+                />
+
+                <input
+                  type="text"
+                  maxlength="1"
+                  inputmode="numeric"
+                />
+
+                <input
+                  type="text"
+                  maxlength="1"
+                  inputmode="numeric"
+                />
+
+                <input
+                  type="text"
+                  maxlength="1"
+                  inputmode="numeric"
+                />
+
+                <input
+                  type="text"
+                  maxlength="1"
+                  inputmode="numeric"
+                />
+
+              </div>
+
+
+              <!-- ===================================================
+                   VERIFY OTP BUTTON
+                   =================================================== -->
+              <button
+                type="button"
+                class="submit-btn otp-verify-btn"
+                id="verifyResetOtpBtn"
+              >
+
+                <span class="btn-text">
+                  Verify Code
+                </span>
+
+                <span
+                  class="btn-spinner hidden"
+                  aria-hidden="true"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke-dasharray="32"
+                      stroke-dashoffset="12"
+                    ></circle>
+                  </svg>
+                </span>
+
+              </button>
+
+
+              <!-- ===================================================
+                   RESEND OTP
+                   =================================================== -->
+              <p class="otp-resend-text">
+                Didn't receive the code?
+
+                <button
+                  type="button"
+                  id="resendResetOtpBtn"
+                  class="otp-resend-btn"
+                >
+                  Resend Code
+                </button>
+              </p>
+
+
+              <!-- ===================================================
+                   OTP STATUS MESSAGE
+                   =================================================== -->
+              <div
+                id="resetOtpStatus"
+                class="otp-status hidden"
+              ></div>
+
+
+              <!-- ===================================================
+                   NEW PASSWORD SECTION
+                   Appears after successful OTP verification
+                   =================================================== -->
+              <div
+                id="newPasswordBox"
+                class="new-password-box hidden"
+              >
+
+
+                <!-- =================================================
+                     NEW PASSWORD
+                     ================================================= -->
+                <div class="form-group">
+
+                  <label
+                    for="newPasswordInput"
+                    class="form-label"
+                  >
+                    <span>New Password</span>
+                    <span class="required-star">*</span>
+                  </label>
+
+                  <div class="input-wrapper">
+
+                    <input
+                      type="password"
+                      id="newPasswordInput"
+                      class="form-input"
+                      placeholder="Enter new password"
+                      autocomplete="new-password"
+                    />
+
+                    <!-- New Password Visibility -->
+                    <button
+                      type="button"
+                      class="password-toggle-btn"
+                      id="toggleNewPasswordBtn"
+                      aria-label="Toggle new password visibility"
+                    >
+
+                      <svg
+                        class="eye-open"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+
+                      <svg
+                        class="eye-closed hidden"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                      </svg>
+
+                    </button>
+
+                  </div>
+
+                  <span
+                    class="field-error"
+                    id="newPasswordError"
+                  ></span>
+
+                </div>
+
+
+                <!-- =================================================
+                     CONFIRM NEW PASSWORD
+                     ================================================= -->
+                <div class="form-group">
+
+                  <label
+                    for="confirmNewPasswordInput"
+                    class="form-label"
+                  >
+                    <span>Confirm Password</span>
+                    <span class="required-star">*</span>
+                  </label>
+
+                  <div class="input-wrapper">
+
+                    <input
+                      type="password"
+                      id="confirmNewPasswordInput"
+                      class="form-input"
+                      placeholder="Confirm new password"
+                      autocomplete="new-password"
+                    />
+
+                    <!-- Confirm Password Visibility -->
+                    <button
+                      type="button"
+                      class="password-toggle-btn"
+                      id="toggleConfirmNewPasswordBtn"
+                      aria-label="Toggle password visibility"
+                    >
+
+                      <svg
+                        class="eye-open"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+
+                      <svg
+                        class="eye-closed hidden"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                      </svg>
+
+                    </button>
+
+                  </div>
+
+                  <span
+                    class="field-error"
+                    id="confirmNewPasswordError"
+                  ></span>
+
+                </div>
+
+
+                <!-- =================================================
+                     UPDATE PASSWORD BUTTON
+                     ================================================= -->
+                <button
+                  type="button"
+                  class="submit-btn"
+                  id="updatePasswordBtn"
+                >
+
+                  <span class="btn-text">
+                    Update Password
+                  </span>
+
+                  <span
+                    class="btn-spinner hidden"
+                    aria-hidden="true"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                    >
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke-dasharray="32"
+                        stroke-dashoffset="12"
+                      ></circle>
+                    </svg>
+                  </span>
+
+                </button>
+
+              </div>
+
+            </div>
+          </div>
+
+
+          <!-- =========================================================
+               CARD FOOTER
+               ========================================================= -->
+          <footer class="auth-card-footer">
+            <p>
+              New to PipZoNe?
+              <a
+                href="../signup/index.html"
+                class="auth-link"
+              >
+                Create an account
+              </a>
+            </p>
+          </footer>
+
+        </div>
+      </main>
+
+
+      <!-- =========================================================
+           BOTTOM MINI FOOTER
+           ========================================================= -->
+      <footer class="auth-bottom-footer">
+        <p>
+          © 2026 PipZoNe Capital Partners. Managed Execution Desk. All rights reserved.
+        </p>
+      </footer>
+
+    </div>
+
+
+    <!-- =========================================================
+         SUPABASE + PAGE JAVASCRIPT
+         ========================================================= -->
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- PipZoNe Supabase Configuration -->
+    <script src="../supabase-config.js"></script>
+
+    <!-- Sign In / Password Recovery Logic -->
+    <script src="./script.js"></script>
+	<!-- Sign In / Supabase JS -->
+    <script src="./supabase-auth.js"></script>
+	
+  </body>
+</html>

@@ -1,0 +1,1374 @@
+
+/* =========================================================
+   PIPZONE — TRADING ACTIVITY
+   Main Stylesheet
+   Theme: Dark Green / Light Theme
+   Fonts: Fraunces + IBM Plex Sans + IBM Plex Mono
+========================================================= */
+
+
+/* =========================================================
+   01. ROOT VARIABLES & DARK THEME
+========================================================= */
+
+:root{
+  --bg:#0a0e14;
+  --panel:#111923;
+  --panel-2:#151f2b;
+  --panel-3:#0d141d;
+  --border:#24313f;
+  --border-soft:rgba(141,154,168,.14);
+  --text:#f3f6f8;
+  --text-2:#c4cdd5;
+  --muted:#82909e;
+  --green:#2FBF83;
+  --green-strong:#5EEAB0;
+  --green-soft:rgba(47,191,131,.11);
+  --green-border:rgba(47,191,131,.28);
+  --loss:#F2735E;
+  --warning:#E5A93C;
+  --blue:#3B82F6;
+  --shadow:0 18px 50px rgba(0,0,0,.22);
+  --radius:18px;
+  --radius-sm:12px;
+}
+
+
+/* =========================================================
+   02. LIGHT THEME VARIABLES
+========================================================= */
+
+[data-theme="light"]{
+  --bg:#f4f7f8;
+  --panel:#ffffff;
+  --panel-2:#f8fafb;
+  --panel-3:#eef3f4;
+  --border:#dbe3e7;
+  --border-soft:rgba(65,79,91,.12);
+  --text:#15201f;
+  --text-2:#43514f;
+  --muted:#72807e;
+  --green:#15945f;
+  --green-strong:#087d4e;
+  --green-soft:rgba(21,148,95,.09);
+  --green-border:rgba(21,148,95,.23);
+  --loss:#d9533f;
+  --warning:#b77b18;
+  --blue:#2563eb;
+  --shadow:0 18px 50px rgba(26,42,48,.08);
+}
+
+
+/* =========================================================
+   03. RESET & GLOBAL STYLES
+========================================================= */
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:var(--bg);
+  color:var(--text);
+  font-family:"IBM Plex Sans",sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+button,
+input,
+select{
+  font:inherit;
+}
+
+button,
+a{
+  -webkit-tap-highlight-color:transparent;
+}
+
+button{
+  cursor:pointer;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+
+/* =========================================================
+   04. BACKGROUND GLOW EFFECTS
+========================================================= */
+
+.page-glow{
+  position:fixed;
+  width:430px;
+  height:430px;
+  border-radius:50%;
+  filter:blur(110px);
+  opacity:.08;
+  pointer-events:none;
+  z-index:0;
+}
+
+.page-glow-one{
+  top:-180px;
+  right:-100px;
+  background:var(--green);
+}
+
+.page-glow-two{
+  bottom:-230px;
+  left:-150px;
+  background:#2f7dbf;
+}
+
+
+/* =========================================================
+   05. TOPBAR & BRAND
+========================================================= */
+
+.topbar{
+  position:relative;
+  z-index:5;
+  width:100%;
+  min-height:76px;
+  padding:0 34px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid var(--border-soft);
+  background:rgba(10,14,20,.76);
+  backdrop-filter:blur(18px);
+}
+
+[data-theme="light"] .topbar{
+  background:rgba(244,247,248,.82);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:11px;
+}
+
+.brand-mark{
+  width:38px;
+  height:38px;
+  display:grid;
+  place-items:center;
+  border-radius:11px;
+  background:var(--green);
+  color:#07120e;
+  font-family:"Fraunces",serif;
+  font-size:22px;
+  font-weight:700;
+  box-shadow:0 7px 24px rgba(47,191,131,.18);
+}
+
+.brand-name{
+  font-family:"Fraunces",serif;
+  font-size:23px;
+  font-weight:600;
+  letter-spacing:-.5px;
+}
+
+.brand-pip{
+  color:var(--green);
+}
+
+.brand-zone{
+  color:var(--text);
+}
+
+
+/* =========================================================
+   06. TOPBAR ACTIONS & DASHBOARD LINK
+========================================================= */
+
+.topbar-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.icon-btn,
+.dashboard-link{
+  border:1px solid var(--border);
+  background:var(--panel);
+  color:var(--text-2);
+}
+
+.icon-btn{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  transition:.2s ease;
+}
+
+.icon-btn:hover{
+  border-color:var(--green-border);
+  color:var(--green-strong);
+  transform:translateY(-1px);
+}
+
+#themeIcon{
+  font-size:19px;
+  line-height:1;
+}
+
+.dashboard-link{
+  min-height:42px;
+  padding:0 15px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  font-weight:600;
+  transition:.2s ease;
+}
+
+.dashboard-link:hover{
+  border-color:var(--green-border);
+  color:var(--green-strong);
+}
+
+
+/* =========================================================
+   07. PAGE CONTAINER & PAGE HEADING
+========================================================= */
+
+.page-shell{
+  position:relative;
+  z-index:1;
+  width:min(1180px,calc(100% - 48px));
+  margin:0 auto;
+  padding:54px 0 70px;
+}
+
+.page-heading{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:30px;
+  margin-bottom:30px;
+}
+
+.eyebrow{
+  margin-bottom:9px;
+  color:var(--green);
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:1.5px;
+}
+
+.page-heading h1,
+.section-header h2,
+.support-card h2,
+.hero-copy h2{
+  margin:0;
+  font-family:"Fraunces",serif;
+  letter-spacing:-.7px;
+}
+
+.page-heading h1{
+  font-size:42px;
+  line-height:1.08;
+}
+
+.page-heading p{
+  max-width:680px;
+  margin:12px 0 0;
+  color:var(--muted);
+  font-size:15px;
+  line-height:1.7;
+}
+
+
+/* =========================================================
+   08. SECURE BADGE
+========================================================= */
+
+.secure-badge{
+  flex:none;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 13px;
+  border:1px solid var(--green-border);
+  border-radius:999px;
+  background:var(--green-soft);
+  color:var(--green-strong);
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11px;
+  white-space:nowrap;
+}
+
+.secure-dot,
+.cycle-status-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 0 4px rgba(47,191,131,.08);
+}
+
+
+/* =========================================================
+   09. TRADING HERO
+   Trading Window card removed
+========================================================= */
+
+.trading-hero{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:24px;
+  padding:30px;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  background:
+    radial-gradient(circle at 85% 20%,rgba(47,191,131,.09),transparent 32%),
+    var(--panel);
+  box-shadow:var(--shadow);
+}
+
+.hero-copy{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.hero-label,
+.balance-label,
+.meta-label,
+.performance-label{
+  color:var(--muted);
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:1.2px;
+}
+
+.hero-copy h2{
+  max-width:620px;
+  margin-top:10px;
+  font-size:31px;
+  line-height:1.18;
+}
+
+.hero-copy p{
+  max-width:700px;
+  margin:13px 0 0;
+  color:var(--text-2);
+  font-size:14px;
+  line-height:1.7;
+}
+
+.hero-meta{
+  display:flex;
+  align-items:center;
+  gap:24px;
+  margin-top:25px;
+}
+
+.meta-item{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.meta-item strong{
+  font-size:15px;
+}
+
+.meta-divider{
+  width:1px;
+  height:32px;
+  background:var(--border);
+}
+
+
+/* =========================================================
+   10. BALANCE SUMMARY STRIP
+========================================================= */
+
+.balance-strip{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  margin-top:18px;
+  border:1px solid var(--border);
+  border-radius:15px;
+  overflow:hidden;
+  background:var(--panel);
+}
+
+.balance-item{
+  min-height:95px;
+  padding:20px 22px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:8px;
+  border-right:1px solid var(--border);
+}
+
+.balance-item:last-child{
+  border-right:0;
+}
+
+.balance-item strong{
+  font-size:20px;
+  font-weight:600;
+  letter-spacing:-.3px;
+}
+
+.profit-text{
+  color:var(--green-strong)!important;
+}
+
+
+/* =========================================================
+   11. SECTION HEADERS
+========================================================= */
+
+.section-block{
+  margin-top:46px;
+}
+
+.section-header{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:25px;
+  margin-bottom:18px;
+}
+
+.section-header h2{
+  font-size:27px;
+  line-height:1.15;
+}
+
+.section-header p{
+  margin:8px 0 0;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.6;
+}
+
+.simple-header{
+  align-items:flex-start;
+}
+
+
+/* =========================================================
+   12. TRADE HISTORY SEARCH & FILTERS
+========================================================= */
+
+.history-controls{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.search-input,
+.filter-select{
+  height:40px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  outline:none;
+  background:var(--panel);
+  color:var(--text);
+  font-size:12px;
+}
+
+.search-input{
+  width:190px;
+  padding:0 12px;
+}
+
+.filter-select{
+  min-width:125px;
+  padding:0 10px;
+}
+
+.search-input::placeholder{
+  color:var(--muted);
+}
+
+.search-input:focus,
+.filter-select:focus{
+  border-color:var(--green-border);
+  box-shadow:0 0 0 3px var(--green-soft);
+}
+
+
+/* =========================================================
+   13. TRADE HISTORY TABLE
+========================================================= */
+
+.table-card{
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  background:var(--panel);
+  overflow:hidden;
+}
+
+.table-wrap{
+  width:100%;
+  overflow-x:auto;
+}
+
+.trade-table{
+  width:100%;
+  min-width:850px;
+  border-collapse:collapse;
+}
+
+.trade-table th{
+  padding:15px 18px;
+  text-align:left;
+  border-bottom:1px solid var(--border);
+  background:var(--panel-3);
+  color:var(--muted);
+  font-family:"IBM Plex Mono",monospace;
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:1px;
+  white-space:nowrap;
+}
+
+.trade-table td{
+  padding:17px 18px;
+  border-bottom:1px solid var(--border-soft);
+  color:var(--text-2);
+  font-size:12px;
+  white-space:nowrap;
+}
+
+.trade-table tbody tr:last-child td{
+  border-bottom:0;
+}
+
+.trade-table tbody tr{
+  transition:.15s ease;
+}
+
+.trade-table tbody tr:hover{
+  background:var(--green-soft);
+}
+
+.mono{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11px!important;
+}
+
+
+/* =========================================================
+   14. TRADE DIRECTIONS & CURRENCY LABELS
+========================================================= */
+
+.trade-main{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.direction-badge{
+  min-width:48px;
+  padding:5px 7px;
+  border-radius:7px;
+  text-align:center;
+  font-family:"IBM Plex Mono",monospace;
+  font-size:9px;
+  font-weight:600;
+}
+
+.direction-buy{
+  color:var(--green-strong);
+  background:var(--green-soft);
+  border:1px solid var(--green-border);
+}
+
+.direction-sell{
+  color:#8eb7ff;
+  background:rgba(59,130,246,.1);
+  border:1px solid rgba(59,130,246,.25);
+}
+
+.currency-name{
+  color:var(--text);
+  font-weight:600;
+}
+
+.result-profit{
+  color:var(--green-strong)!important;
+  font-weight:600;
+}
+
+.result-loss{
+  color:var(--loss)!important;
+  font-weight:600;
+}
+
+
+/* =========================================================
+   15. TRADE STATUS BADGES
+========================================================= */
+
+.status-pill{
+  display:inline-flex;
+  align-items:center;
+  padding:5px 9px;
+  border-radius:999px;
+  font-family:"IBM Plex Mono",monospace;
+  font-size:9px;
+  font-weight:500;
+}
+
+.status-settled{
+  color:var(--green-strong);
+  border:1px solid var(--green-border);
+  background:var(--green-soft);
+}
+
+.status-pending{
+  color:var(--warning);
+  border:1px solid rgba(229,169,60,.24);
+  background:rgba(229,169,60,.08);
+}
+
+
+/* =========================================================
+   16. EMPTY STATE
+========================================================= */
+
+.empty-state{
+  padding:60px 25px;
+  text-align:center;
+}
+
+.empty-icon{
+  width:44px;
+  height:44px;
+  margin:0 auto 13px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--border);
+  border-radius:12px;
+  color:var(--muted);
+  font-size:23px;
+}
+
+.empty-state h3{
+  margin:0;
+  font-family:"Fraunces",serif;
+  font-size:20px;
+}
+
+.empty-state p{
+  margin:7px 0 0;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.hidden{
+  display:none!important;
+}
+
+
+/* =========================================================
+   17. PERFORMANCE CARDS
+========================================================= */
+
+.performance-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+
+.performance-card{
+  min-height:180px;
+  padding:22px;
+  display:flex;
+  flex-direction:column;
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  background:var(--panel);
+}
+
+.performance-icon{
+  width:36px;
+  height:36px;
+  margin-bottom:24px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--green-border);
+  border-radius:10px;
+  background:var(--green-soft);
+  color:var(--green-strong);
+  font-family:"IBM Plex Mono",monospace;
+  font-size:15px;
+}
+
+.performance-card strong{
+  margin-top:8px;
+  color:var(--text);
+  font-size:23px;
+  font-weight:600;
+}
+
+.performance-card small{
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.5;
+}
+
+
+/* =========================================================
+   18. TRADING FLOW CARDS
+========================================================= */
+
+.flow-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+
+.flow-card{
+  min-height:155px;
+  padding:21px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  background:var(--panel);
+}
+
+.flow-number{
+  color:var(--green);
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11px;
+  font-weight:600;
+}
+
+.flow-card h3{
+  margin:20px 0 6px;
+  font-family:"Fraunces",serif;
+  font-size:19px;
+}
+
+.flow-card p{
+  margin:0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.6;
+}
+
+
+/* =========================================================
+   19. SCHEDULE NOTICE
+========================================================= */
+
+.notice-card{
+  margin-top:30px;
+  padding:20px 22px;
+  display:flex;
+  gap:15px;
+  border:1px solid rgba(229,169,60,.22);
+  border-radius:var(--radius-sm);
+  background:rgba(229,169,60,.055);
+}
+
+.notice-icon{
+  flex:none;
+  width:30px;
+  height:30px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(229,169,60,.28);
+  border-radius:9px;
+  color:var(--warning);
+  font-family:"IBM Plex Mono",monospace;
+  font-size:12px;
+}
+
+.notice-card h3{
+  margin:1px 0 6px;
+  font-family:"Fraunces",serif;
+  font-size:17px;
+}
+
+.notice-card p{
+  margin:0;
+  color:var(--text-2);
+  font-size:12px;
+  line-height:1.65;
+}
+
+
+/* =========================================================
+   20. SUPPORT CARD
+========================================================= */
+
+.support-card{
+  margin-top:24px;
+  padding:25px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:25px;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  background:var(--panel);
+}
+
+.support-card h2{
+  font-size:22px;
+}
+
+.support-card p{
+  max-width:650px;
+  margin:8px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.6;
+}
+
+.support-btn{
+  flex:none;
+  min-height:42px;
+  padding:0 17px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--green-border);
+  border-radius:10px;
+  background:var(--green-soft);
+  color:var(--green-strong);
+  font-size:12px;
+  font-weight:600;
+  transition:.2s ease;
+}
+
+.support-btn:hover{
+  background:var(--green);
+  color:#07120e;
+}
+
+
+/* =========================================================
+   21. PAGE FOOTER
+========================================================= */
+
+.page-footer{
+  position:relative;
+  z-index:1;
+  width:min(1180px,calc(100% - 48px));
+  margin:0 auto;
+  padding:20px 0 35px;
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  border-top:1px solid var(--border-soft);
+  color:var(--muted);
+  font-family:"IBM Plex Mono",monospace;
+  font-size:9px;
+  letter-spacing:.3px;
+}
+
+
+/* =========================================================
+   22. TOAST NOTIFICATIONS & ANIMATION
+========================================================= */
+
+.toast-container{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  z-index:100;
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+}
+
+.toast{
+  min-width:250px;
+  max-width:360px;
+  padding:13px 15px;
+  border:1px solid var(--green-border);
+  border-radius:11px;
+  background:var(--panel-2);
+  color:var(--text);
+  box-shadow:var(--shadow);
+  font-size:12px;
+  animation:toastIn .22s ease;
+}
+
+@keyframes toastIn{
+  from{
+    opacity:0;
+    transform:translateY(8px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+
+/* =========================================================
+   23. BALANCE SLIDER CARD
+========================================================= */
+
+.balance-slider-card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:22px;
+  margin:20px 0;
+  color:var(--text);
+  box-shadow:var(--shadow);
+}
+
+/* Balance Slider Header */
+
+.balance-slider-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:20px;
+}
+
+.balance-slider-label{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11px;
+  letter-spacing:1.5px;
+  color:var(--green);
+}
+
+.balance-slider-header h3{
+  font-family:"Fraunces",serif;
+  font-size:18px;
+  margin:7px 0 0;
+  font-weight:600;
+  color:var(--text);
+}
+
+.balance-slider-amount{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:20px;
+  color:var(--green-strong);
+  font-weight:600;
+}
+
+/* Balance Amount Input */
+
+.balance-input-wrap{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-bottom:18px;
+}
+
+.balance-input-wrap label{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.balance-input-wrap input{
+  width:100%;
+  box-sizing:border-box;
+  background:var(--panel-3);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:13px 14px;
+  color:var(--text);
+  font:inherit;
+  outline:none;
+}
+
+.balance-input-wrap input:focus{
+  border-color:var(--green);
+  box-shadow:0 0 0 3px var(--green-soft);
+}
+
+/* Balance Range Slider */
+
+#balanceSlider{
+  display:block;
+  width:100%;
+  accent-color:var(--green);
+  cursor:pointer;
+}
+
+.balance-slider-limits{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:8px;
+  font:11px "IBM Plex Mono",monospace;
+  color:var(--muted);
+}
+
+
+/* =========================================================
+   24. TRADE CODE CARD
+========================================================= */
+
+/* Trade Code Header */
+
+.trade-code-card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:22px;
+  margin:20px 0;
+  color:var(--text);
+  box-shadow:var(--shadow);
+}
+
+.trade-code-header{
+  margin-bottom:20px;
+}
+
+.trade-code-label{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11px;
+  letter-spacing:1.5px;
+  color:var(--green);
+}
+
+.trade-code-header h3{
+  font-family:"Fraunces",serif;
+  font-size:18px;
+  font-weight:600;
+  margin:7px 0;
+  color:var(--text);
+}
+
+.trade-code-header p{
+  font-size:13px;
+  color:var(--muted);
+  margin:0;
+  line-height:1.6;
+}
+
+/* Trade Code Input */
+
+.trade-code-input-wrap input{
+  display:block;
+  width:100%;
+  box-sizing:border-box;
+  background:var(--panel-3);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:14px;
+  color:var(--text);
+  font:inherit;
+  outline:none;
+  text-transform:uppercase;
+  transition:border-color .2s,box-shadow .2s;
+}
+
+.trade-code-input-wrap input:focus{
+  border-color:var(--green);
+  box-shadow:0 0 0 3px var(--green-soft);
+}
+
+.trade-code-input-wrap input::placeholder{
+  text-transform:none;
+  color:var(--muted);
+}
+
+/* BUY / SELL Buttons */
+
+.trade-direction-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:16px;
+}
+
+.trade-direction-btn{
+  min-width:0;
+  min-height:46px;
+  border:1px solid transparent;
+  border-radius:10px;
+  padding:13px;
+  font:600 14px "IBM Plex Sans",sans-serif;
+  cursor:pointer;
+  transition:background .2s,border-color .2s,filter .2s;
+}
+
+.sell-btn{
+  background:rgba(242,115,94,.09);
+  border-color:rgba(242,115,94,.3);
+  color:var(--loss);
+}
+
+.buy-btn{
+  background:var(--green-soft);
+  border-color:var(--green-border);
+  color:var(--green-strong);
+}
+
+.trade-direction-btn:hover{
+  filter:brightness(1.15);
+}
+
+
+/* =========================================================
+   25. RESPONSIVE — TABLET
+========================================================= */
+
+@media(max-width:950px){
+  .trading-hero{
+    grid-template-columns:minmax(0,1fr);
+  }
+
+  .performance-grid,
+  .flow-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .balance-strip{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .balance-item:nth-child(2){
+    border-right:0;
+  }
+
+  .balance-item:nth-child(-n+2){
+    border-bottom:1px solid var(--border);
+  }
+}
+
+
+/* =========================================================
+   26. RESPONSIVE — MOBILE NAVIGATION & LAYOUT
+========================================================= */
+
+@media(max-width:700px){
+  .topbar{
+    padding:0 18px;
+  }
+
+  .page-shell{
+    width:min(100% - 30px,1180px);
+    padding-top:38px;
+  }
+
+  .page-heading{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:15px;
+  }
+
+  .page-heading h1{
+    font-size:34px;
+  }
+
+  .section-header{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .history-controls{
+    width:100%;
+  }
+
+  .search-input{
+    flex:1;
+    width:auto;
+  }
+
+  .filter-select{
+    min-width:125px;
+  }
+
+  .support-card{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .support-btn{
+    width:100%;
+  }
+}
+
+
+/* =========================================================
+   27. RESPONSIVE — SMALL MOBILE
+========================================================= */
+
+@media(max-width:520px){
+  .brand-name{
+    font-size:20px;
+  }
+
+  .brand-mark{
+    width:35px;
+    height:35px;
+  }
+
+  .dashboard-link{
+    padding:0 11px;
+  }
+
+  .dashboard-link span:first-child{
+    font-size:17px;
+  }
+
+  .dashboard-link span:last-child{
+    display:none;
+  }
+
+  .trading-hero{
+    padding:22px;
+  }
+
+  .hero-copy h2{
+    font-size:27px;
+  }
+
+  .hero-meta{
+    align-items:flex-start;
+    gap:13px;
+    flex-wrap:wrap;
+  }
+
+  .meta-divider{
+    display:none;
+  }
+
+  .balance-item{
+    padding:17px 15px;
+  }
+
+  .balance-item strong{
+    font-size:17px;
+  }
+
+  .performance-grid,
+  .flow-grid{
+    grid-template-columns:1fr;
+  }
+
+  .history-controls{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .filter-select{
+    width:100%;
+  }
+
+  .notice-card{
+    padding:17px;
+  }
+
+  .page-footer{
+    width:min(100% - 30px,1180px);
+    flex-direction:column;
+    gap:7px;
+  }
+
+  .toast-container{
+    right:12px;
+    left:12px;
+    bottom:12px;
+  }
+
+  .toast{
+    min-width:0;
+    max-width:none;
+  }
+}
+
+
+/* =========================================================
+   28. RESPONSIVE — EXTRA SMALL MOBILE
+========================================================= */
+
+@media(max-width:380px){
+  .topbar{
+    padding:0 13px;
+  }
+
+  .topbar-actions{
+    gap:6px;
+  }
+
+  .icon-btn{
+    width:38px;
+    height:38px;
+  }
+
+  .page-shell{
+    width:calc(100% - 22px);
+  }
+
+  .page-heading h1{
+    font-size:30px;
+  }
+
+  .trading-hero{
+    padding:18px;
+  }
+
+  .balance-strip{
+    grid-template-columns:1fr;
+  }
+
+  .balance-item{
+    border-right:0;
+    border-bottom:1px solid var(--border);
+  }
+
+  .balance-item:last-child{
+    border-bottom:0;
+  }
+}
+
+
+/* =========================================================
+   29. RESPONSIVE — NEW CARDS
+========================================================= */
+
+@media(max-width:600px){
+  .balance-slider-card,
+  .trade-code-card{
+    padding:16px;
+  }
+
+  .balance-slider-amount{
+    font-size:16px;
+  }
+
+  .balance-slider-header h3,
+  .trade-code-header h3{
+    font-size:16px;
+  }
+
+  .balance-slider-header{
+    gap:10px;
+  }
+
+  .trade-direction-buttons{
+    gap:10px;
+  }
+}

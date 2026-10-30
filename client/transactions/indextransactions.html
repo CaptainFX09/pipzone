@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Transactions | PipZoNe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="../../assets/favicon/favicon.png" />
+<link rel="stylesheet" href="../../shared/layout.css">
+<link rel="stylesheet" href="./styletransactions.css">
+<script>
+(function(){
+  const savedTheme=localStorage.getItem("pipzone_theme")||"dark";
+  document.documentElement.setAttribute("data-theme",savedTheme);
+})();
+</script>
+</head>
+
+<body>
+
+<div class="page-glow page-glow-one"></div>
+<div class="page-glow page-glow-two"></div>
+
+<div id="pageContent">
+
+<main class="page-shell">
+
+  <section class="page-heading">
+    <div>
+      <div class="eyebrow">ACCOUNT ACTIVITY</div>
+      <h1>Transactions</h1>
+      <p>View your deposits, withdrawals and trading activity in one place.</p>
+    </div>
+
+    <div class="secure-badge">
+      <span class="secure-dot"></span>
+      Account Ledger
+    </div>
+  </section>
+
+  <section class="summary-grid">
+
+    <article class="summary-card">
+      <div class="summary-icon">↓</div>
+      <span class="summary-label">TOTAL DEPOSITED</span>
+      <strong id="totalDeposited">$20,000.00</strong>
+      <small>Approved capital</small>
+    </article>
+
+    <article class="summary-card">
+      <div class="summary-icon">↑</div>
+      <span class="summary-label">TOTAL WITHDRAWN</span>
+      <strong id="totalWithdrawn">$2,634.80</strong>
+      <small>Completed payouts</small>
+    </article>
+
+    <article class="summary-card">
+      <div class="summary-icon">↗</div>
+      <span class="summary-label">TRADING P/L</span>
+      <strong class="profit-text" id="tradingProfit">+$7,485.20</strong>
+      <small>Net client trading result</small>
+    </article>
+
+    <article class="summary-card">
+      <div class="summary-icon">#</div>
+      <span class="summary-label">TOTAL RECORDS</span>
+      <strong id="totalRecords">0</strong>
+      <small>Account activity records</small>
+    </article>
+
+  </section>
+
+  <section class="section-block">
+
+    <div class="section-header">
+      <div>
+        <div class="eyebrow">ACCOUNT LEDGER</div>
+        <h2>Transaction History</h2>
+        <p>Every recorded movement is shown with its current status.</p>
+      </div>
+
+      <div class="history-controls">
+        <input
+          type="search"
+          id="transactionSearch"
+          class="search-input"
+          placeholder="Search transaction..."
+          autocomplete="off"
+        >
+
+                <select id="transactionFilter" class="filter-select">
+          <option value="all">All Activity</option>
+          <option value="trade">Trade</option>
+          <option value="deposit">Deposit</option>
+          <option value="withdrawal">Withdrawal</option>
+          <option value="reinvest">Reinvest</option>
+        </select>
+
+        <select id="statusFilter" class="filter-select">
+          <option value="all">All Status</option>
+          <option value="completed">Completed</option>
+          <option value="approved">Approved</option>
+          <option value="pending">Pending</option>
+          <option value="rejected">Rejected</option>
+          <option value="failed">Failed</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="table-card">
+
+      <div class="table-wrap">
+        <table class="transaction-table">
+          <thead>
+            <tr>
+              <th>DATE / TIME</th>
+              <th>TYPE</th>
+              <th>REFERENCE</th>
+              <th>DETAIL</th>
+              <th>AMOUNT</th>
+              <th>STATUS</th>
+            </tr>
+          </thead>
+
+          <tbody id="transactionTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="empty-state hidden" id="transactionEmptyState">
+        <div class="empty-icon">⌁</div>
+        <h3>No matching transactions</h3>
+        <p>Try changing the search text or filters.</p>
+      </div>
+
+    </div>
+
+  </section>
+
+  <section class="section-block">
+
+    <div class="section-header simple-header">
+      <div>
+        <div class="eyebrow">ACTIVITY GUIDE</div>
+        <h2>Transaction Types</h2>
+        <p>Understand how each account activity record is classified.</p>
+      </div>
+    </div>
+
+    <div class="type-grid">
+
+      <article class="type-card">
+        <div class="type-icon type-deposit">↓</div>
+        <div>
+          <h3>Deposit</h3>
+          <p>
+            Capital added to your PipZoNe account after the deposit is reviewed
+            and approved.
+          </p>
+        </div>
+      </article>
+
+      <article class="type-card">
+        <div class="type-icon type-trade">↗</div>
+        <div>
+          <h3>Trade</h3>
+          <p>
+            A settled trade cycle showing the selected direction, currency and
+            resulting client P/L.
+          </p>
+        </div>
+      </article>
+
+      <article class="type-card">
+        <div class="type-icon type-withdrawal">↑</div>
+        <div>
+          <h3>Withdrawal</h3>
+          <p>
+            A payout request and its processing status, including the applicable
+            network fee.
+          </p>
+        </div>
+      </article>
+
+    </div>
+
+  </section>
+
+  <section class="notice-card">
+
+    <div class="notice-icon">i</div>
+
+    <div>
+      <h3>Transaction Records</h3>
+      <p>
+        Transaction status can change while a deposit or withdrawal is being
+        reviewed. Completed trade results are recorded after settlement.
+      </p>
+    </div>
+
+  </section>
+
+  <section class="support-card">
+
+    <div>
+      <div class="eyebrow">NEED HELP?</div>
+      <h2>Need help with a transaction?</h2>
+      <p>
+        Contact PipZoNe support if you need assistance identifying a deposit,
+        withdrawal or trade record.
+      </p>
+    </div>
+
+       <a class="support-btn" href="../settings/support/indexsupport.html">Contact Support</a>
+
+  </section>
+
+</main>
+
+<footer class="page-footer">
+  <span>© 2026 PipZoNe</span>
+  <span>Managed Forex &amp; Crypto Trading</span>
+</footer>
+
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../supabase-config.js"></script>
+<script src="../../shared/layout.js"></script>
+<script src="./scripttransactions.js"></script>
+
+</body>
+</html>

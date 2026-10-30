@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="PipZoNe — Withdraw Trading Profit">
+<title>Withdrawals | PipZoNe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="../../assets/favicon/favicon.png" />
+<link rel="stylesheet" href="../../shared/layout.css">
+<link rel="stylesheet" href="./styleWithdrawal.css">
+<script>
+(function(){
+  const savedTheme=localStorage.getItem("pipzone_theme")||"dark";
+  document.documentElement.setAttribute("data-theme",savedTheme);
+})();
+</script>
+</head>
+<body class="withdrawal-body">
+
+<div class="ambient-glow ambient-glow-one"></div>
+<div class="ambient-glow ambient-glow-two"></div>
+
+<div class="withdrawal-page" id="pageContent">
+
+<main class="withdrawal-main">
+
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">PROFIT WITHDRAWAL</p>
+    <h1>Withdrawals</h1>
+    <p class="page-description">
+      Request a withdrawal from your available balance. Until your 40-day deposit cycle ends, only your trading profit can be withdrawn. After the cycle ends, your full balance becomes available, or you can reinvest it for another 40 days.
+    </p>
+  </div>
+
+  <div class="security-badge">
+    <span class="security-dot"></span>
+    Secure Payout
+  </div>
+</section>
+
+<div id="profileGate"></div>
+
+<section class="balance-overview">
+
+  <div class="balance-card available-card">
+    <div class="balance-card-top">
+      <span>AVAILABLE WITHDRAWAL</span>
+      <span class="balance-status">AVAILABLE</span>
+    </div>
+    <strong id="availableProfit">$0.00</strong>
+    <p>Available to withdraw now</p>
+  </div>
+
+  <div class="balance-card locked-card">
+    <div class="balance-card-top">
+      <span>LOCKED PRINCIPAL</span>
+      <span class="lock-status">40 DAYS</span>
+    </div>
+    <strong id="lockedPrincipal">$0.00</strong>
+    <p>Not withdrawable until the cycle ends</p>
+  </div>
+
+  <div class="balance-card cycle-card">
+    <div class="balance-card-top">
+      <span>CYCLE STATUS</span>
+      <span>LOADING</span>
+    </div>
+    <strong>—</strong>
+    <p>Principal unlocks after the active cycle</p>
+  </div>
+
+</section>
+
+<!-- ===================== REINVEST ===================== -->
+<section class="reinvest-card" id="reinvestCard" data-state="loading">
+
+  <div class="reinvest-info">
+    <p class="card-label">REINVEST</p>
+    <h2>Reinvest your balance</h2>
+    <p id="reinvestText">Checking your reinvest status...</p>
+
+    <div class="reinvest-meta">
+      <div>
+        <span>REINVEST AMOUNT</span>
+        <strong id="reinvestAmount">$0.00</strong>
+      </div>
+      <div>
+        <span>STATUS</span>
+        <strong id="reinvestStatus">—</strong>
+      </div>
+      <div>
+        <span>TIMES REINVESTED</span>
+        <strong id="reinvestCount">0</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="reinvest-action">
+    <button type="button" class="reinvest-btn" id="reinvestBtn" disabled>
+      <span id="reinvestBtnLabel">Request Reinvest</span>
+      <span class="submit-arrow">↻</span>
+    </button>
+       <p class="reinvest-note" id="reinvestNote">
+      Reinvest requests are reviewed by the PipZoNe team. Once approved, your balance is locked for another 40 days and your referrer earns commission, just like on a deposit.
+    </p>
+  </div>
+
+</section>
+
+<section class="withdrawal-grid">
+
+<div class="withdrawal-card form-card">
+
+  <div class="card-header">
+    <div>
+      <p class="card-label">STEP 01</p>
+      <h2>Withdrawal Details</h2>
+    </div>
+    <span class="step-number">01</span>
+  </div>
+
+  <form id="withdrawalForm" novalidate>
+
+    <div class="field-group full-field">
+      <label>Withdrawal Network</label>
+
+      <div class="network-tabs" id="networkTabs">
+
+        <button type="button" class="network-tab active" data-network="TRC20" aria-pressed="true">
+          <span class="network-icon">
+            <img class="icon-main" src="../../assets/icons/usdt.svg" alt="USDT">
+            <img class="icon-badge" src="../../assets/icons/trx.svg" alt="Tron Network">
+          </span>
+          <span class="network-body">
+            <strong class="network-name">Tether (USDT TRC20)</strong>
+            <span class="network-row"><span>Network</span> <b>Tron Network</b></span>
+            <span class="network-row"><span>Fee</span> <b>$2.00 fixed</b></span>
+            <span class="network-row"><span>Processing</span> <b>5 min – 8 hours</b></span>
+          </span>
+        </button>
+
+        <button type="button" class="network-tab" data-network="BEP20" aria-pressed="false">
+          <span class="network-icon">
+            <img class="icon-main" src="../../assets/icons/usdt.svg" alt="USDT">
+            <img class="icon-badge" src="../../assets/icons/bnb.svg" alt="BNB Smart Chain">
+          </span>
+          <span class="network-body">
+            <strong class="network-name">Tether (USDT BEP20)</strong>
+            <span class="network-row"><span>Network</span> <b>BNB Smart Chain</b></span>
+            <span class="network-row"><span>Fee</span> <b>$2.00 fixed</b></span>
+            <span class="network-row"><span>Processing</span> <b>5 min – 8 hours</b></span>
+          </span>
+        </button>
+
+      </div>
+
+      <p class="field-error" id="networkError"></p>
+    </div>
+
+    <div class="field-group full-field">
+      <label for="withdrawalAmount">Withdrawal Amount</label>
+
+      <div class="input-wrap currency-input">
+        <span>$</span>
+        <input
+          type="number"
+          id="withdrawalAmount"
+          name="withdrawalAmount"
+          min="0"
+          step="0.01"
+          placeholder="0.00"
+          autocomplete="off"
+        >
+        <small>USDT</small>
+      </div>
+
+      <div class="amount-controls">
+        <span>Amount must be more than the <strong>$2.00 fee</strong></span>
+        <button type="button" id="maxAmountBtn">Use Max</button>
+      </div>
+
+      <p class="field-error" id="amountError"></p>
+    </div>
+
+    <div class="field-group full-field">
+      <label for="withdrawalWallet">Withdrawal Wallet</label>
+
+      <div class="wallet-input-box">
+        <input
+          type="text"
+          id="withdrawalWallet"
+          name="withdrawalWallet"
+          value=""
+          placeholder="Loading your saved wallet..."
+          readonly
+        >
+        <span class="verified-wallet">LOADING</span>
+      </div>
+
+      <p class="field-hint">
+        Your saved wallet is whitelisted. Wallet changes are restricted after the first wallet is saved.
+      </p>
+
+      <p class="field-error" id="walletError"></p>
+    </div>
+
+    <div class="withdrawal-summary">
+
+      <div class="summary-row">
+        <span>Withdrawal</span>
+        <strong id="summaryAmount">$0.00 USDT</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>Network</span>
+        <strong id="summaryNetwork">USDT (Tether) · TRC20</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>Network Fee</span>
+        <strong id="summaryFee">$2.00</strong>
+      </div>
+
+      <div class="summary-divider"></div>
+
+      <div class="summary-row total-row">
+        <span>You Receive</span>
+        <strong id="summaryNet">$0.00 USDT</strong>
+      </div>
+
+    </div>
+
+    <button type="submit" class="submit-withdrawal" id="submitWithdrawalBtn">
+      <span>Request Withdrawal</span>
+      <span class="submit-arrow">→</span>
+    </button>
+
+    <p class="processing-note">
+      Approved withdrawals are normally processed within 5 minutes to 8 hours.
+    </p>
+
+  </form>
+
+</div>
+
+<div class="withdrawal-side">
+
+  <div class="withdrawal-card rules-card">
+
+    <div class="card-header">
+      <div>
+        <p class="card-label">STEP 02</p>
+        <h2>Before You Withdraw</h2>
+      </div>
+      <span class="step-number">02</span>
+    </div>
+
+    <div class="rule-list">
+
+      <div class="rule-item">
+        <span>01</span>
+        <div>
+          <strong>Profit first</strong>
+          <p>During the 40-day cycle only your trading profit can be withdrawn.</p>
+        </div>
+      </div>
+
+      <div class="rule-item">
+        <span>02</span>
+        <div>
+          <strong>Principal unlocks</strong>
+          <p>After 40 days your deposited principal becomes withdrawable too, or you can reinvest it.</p>
+        </div>
+      </div>
+
+      <div class="rule-item">
+        <span>03</span>
+        <div>
+          <strong>Verified wallet</strong>
+          <p>Funds are sent to your saved and verified USDT wallet.</p>
+        </div>
+      </div>
+
+      <div class="rule-item">
+        <span>04</span>
+        <div>
+          <strong>Processing time</strong>
+          <p>Approved payouts are normally completed within 5 minutes to 8 hours.</p>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="withdrawal-card fee-card">
+
+    <div class="fee-title">
+      <span>NETWORK FEE</span>
+      <strong id="feeNetworkLabel">TRC20</strong>
+    </div>
+
+    <div class="fee-display">
+      <strong id="feeDisplay">$2.00</strong>
+      <span>fixed withdrawal fee</span>
+    </div>
+
+    <p>
+      A fixed $2.00 withdrawal fee applies to both TRC20 and BEP20 networks.
+    </p>
+
+  </div>
+
+  <div class="withdrawal-card support-card">
+
+    <span class="support-icon">?</span>
+
+    <div>
+      <strong>Need help?</strong>
+      <p>Contact PipZoNe support if you have questions about a pending withdrawal.</p>
+      <a class="support-btn" href="../settings/support/indexsupport.html">Contact Support →</a>
+    </div>
+
+  </div>
+
+</div>
+
+</section>
+
+<section class="withdrawal-notice">
+
+  <div class="notice-icon">!</div>
+
+  <div>
+    <p class="eyebrow">IMPORTANT</p>
+    <h2>Review your withdrawal carefully</h2>
+    <p>
+      Confirm the amount, blockchain network and wallet address before submitting your request.
+      Blockchain transfers cannot normally be reversed after they are sent.
+    </p>
+  </div>
+
+</section>
+
+</main>
+
+<footer class="withdrawal-footer">
+  <div>
+    <strong>Pip<span>ZoNe</span></strong>
+    <span>Managed Forex &amp; Crypto Trading</span>
+  </div>
+     <a class="support-btn" href="../settings/support/indexsupport.html">Contact Support</a>
+</footer>
+
+<div class="toast-container" id="toastContainer"></div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../supabase-config.js"></script>
+<script src="../../shared/layout.js"></script>
+<script src="../../shared/profile-gate.js"></script>
+<script src="./scriptWithdrawal.js"></script>
+</body>
+</html>

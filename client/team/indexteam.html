@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="PipZoNe — My Team">
+<title>My Team | PipZoNe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="../../assets/favicon/favicon.png" />
+<link rel="stylesheet" href="../../shared/layout.css">
+<link rel="stylesheet" href="./styleteam.css">
+<script>
+(function(){
+  const savedTheme=localStorage.getItem("pipzone_theme")||"dark";
+  document.documentElement.setAttribute("data-theme",savedTheme);
+})();
+</script>
+</head>
+<body class="team-body">
+<div class="ambient-glow ambient-glow-one"></div>
+<div class="ambient-glow ambient-glow-two"></div>
+
+<div class="team-page" >
+
+
+<main class="team-main" id="pageContent">
+
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">PARTNERSHIP NETWORK</p>
+    <h1>My Team</h1>
+    <p class="page-description">
+      Track the partners who joined PipZoNe through your referral network and monitor eligible team activity.
+    </p>
+  </div>
+
+  <div class="security-badge">
+    <span class="security-dot"></span>
+    Team Overview
+  </div>
+</section>
+
+<section class="team-hero-card">
+  <div class="team-hero-content">
+    <div class="hero-copy">
+      <p class="card-label">YOUR NETWORK</p>
+      <h2>Build your<br><span>PipZoNe team.</span></h2>
+      <p>
+        Invite genuine partners through your referral link and keep track of your growing network from one place.
+      </p>
+    </div>
+
+    <div class="team-hero-stat">
+      <span class="hero-stat-label">TOTAL TEAM MEMBERS</span>
+      <strong id="heroTotalMembers">14</strong>
+      <small>Direct referred partners</small>
+    </div>
+  </div>
+</section>
+
+<section class="stats-grid">
+
+  <div class="stat-card">
+    <div class="stat-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+    </div>
+    <span class="stat-label">TOTAL MEMBERS</span>
+    <strong class="stat-value mono" id="totalMembers">14</strong>
+    <span class="stat-note">Direct partners</span>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="m8 12 2.5 2.5L16 9"></path>
+      </svg>
+    </div>
+    <span class="stat-label">ACTIVE MEMBERS</span>
+    <strong class="stat-value mono" id="activeMembers">11</strong>
+    <span class="stat-note">Currently active</span>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+        <path d="M2 10h20"></path>
+      </svg>
+    </div>
+    <span class="stat-label">TEAM CAPITAL</span>
+    <strong class="stat-value mono" id="teamCapital">$42,500</strong>
+    <span class="stat-note">Eligible referred capital</span>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2v20"></path>
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+      </svg>
+    </div>
+    <span class="stat-label">TEAM REWARDS</span>
+    <strong class="stat-value mono text-profit" id="teamRewards">+$2,550.00</strong>
+    <span class="stat-note">Referral rewards generated</span>
+  </div>
+
+</section>
+
+<section class="team-list-card">
+
+  <div class="card-header">
+    <div>
+      <p class="card-label">DIRECT PARTNERS</p>
+      <h2>Your Team Members</h2>
+      <p class="card-description">
+        Partners directly connected to your PipZoNe referral network.
+      </p>
+    </div>
+
+    <div class="team-count-badge">
+      <span id="memberCountBadge">14</span> Members
+    </div>
+  </div>
+
+  <div class="team-toolbar">
+    <div class="search-box">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-3.5-3.5"></path>
+      </svg>
+      <input type="search" id="teamSearch" placeholder="Search by member ID..." autocomplete="off">
+    </div>
+
+    <select id="teamStatusFilter" class="status-filter">
+      <option value="all">All Members</option>
+      <option value="active">Active</option>
+      <option value="pending">Pending</option>
+      <option value="inactive">Inactive</option>
+    </select>
+  </div>
+
+  <div class="team-table-wrap">
+    <table class="team-table">
+      <thead>
+        <tr>
+          <th>MEMBER</th>
+          <th>JOINED</th>
+          <th>STATUS</th>
+          <th>CAPITAL</th>
+          <th>REWARD</th>
+        </tr>
+      </thead>
+      <tbody id="teamTableBody"></tbody>
+    </table>
+  </div>
+
+  <div class="team-empty hidden" id="teamEmptyState">
+    <div class="empty-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-3.5-3.5"></path>
+      </svg>
+    </div>
+    <strong>No team members found</strong>
+    <p>Try changing your search or status filter.</p>
+  </div>
+
+</section>
+
+<section class="team-info-grid">
+
+  <div class="info-card">
+    <div class="info-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2 4 5v6c0 5 3.5 9.5 8 11 4.5-1.5 8-6 8-11V5l-8-3z"></path>
+        <path d="m9 12 2 2 4-4"></path>
+      </svg>
+    </div>
+    <div>
+      <h3>Genuine Referrals Only</h3>
+      <p>
+        Only genuine partner referrals are eligible. Self-referrals are not permitted.
+      </p>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="info-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M12 7v5l3 2"></path>
+      </svg>
+    </div>
+    <div>
+      <h3>Approved Deposits</h3>
+      <p>
+        Team capital shown here is based on eligible approved capital deposits.
+      </p>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="info-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 12a8 8 0 1 1-2.34-5.66"></path>
+        <polyline points="20 4 20 10 14 10"></polyline>
+      </svg>
+    </div>
+    <div>
+      <h3>Reward Tiers</h3>
+      <p id="teamRewardTiers">
+        Deposits up to $499.99 qualify for 2%; deposits of $500 or more qualify for 8%.
+      </p>
+    </div>
+  </div>
+
+</section>
+
+<section class="invite-card">
+  <div class="invite-icon">
+    <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+      <circle cx="8.5" cy="7.5" r="4"></circle>
+      <polyline points="17 11 19 13 23 9"></polyline>
+    </svg>
+  </div>
+
+  <div class="invite-copy">
+    <strong>Want to grow your team?</strong>
+    <p>Share your unique PipZoNe referral link with genuine partners.</p>
+  </div>
+
+  <a href="../referral/indexReferral.html" class="invite-btn">
+    Refer &amp; Earn
+  </a>
+</section>
+
+<section class="support-card">
+  <div class="support-icon">?</div>
+  <div>
+    <strong>Need help with your team?</strong>
+    <p>Contact PipZoNe support if you have questions about team members or referral rewards.</p>
+    <a class="support-btn" href="../settings/support/indexsupport.html">Contact Support →</a>
+  </div>
+</section>
+
+</main>
+
+<footer class="team-footer">
+  <div>
+    <strong>Pip<span>ZoNe</span></strong>
+    <span>Managed Forex &amp; Crypto Trading</span>
+  </div>
+     <a class="support-btn" href="../settings/support/indexsupport.html">Contact Support</a>
+</footer>
+
+<div class="toast-container" id="toastContainer"></div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../supabase-config.js"></script>
+<script src="../../shared/layout.js"></script>
+<script src="./scriptteam.js"></script>
+</body>
+</html>
+</body>
+</html>

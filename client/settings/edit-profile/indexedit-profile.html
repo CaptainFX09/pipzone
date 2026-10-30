@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Edit Profile | PipZoNe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="../../../assets/favicon/favicon.png" />
+<link rel="stylesheet" href="../../../shared/layout.css">
+<link rel="stylesheet" href="./styleedit-profile.css">
+<script>
+(function(){
+  const savedTheme=localStorage.getItem("pipzone_theme")||"dark";
+  document.documentElement.setAttribute("data-theme",savedTheme);
+})();
+</script>
+</head>
+<body>
+
+<div class="page-shell" id="pageContent">
+
+
+  <main class="page-content" >
+
+    <section class="page-heading">
+      <div>
+        <div class="eyebrow">ACCOUNT SETTINGS</div>
+        <h1>Edit Profile</h1>
+        <p>Keep your personal and contact information up to date.</p>
+      </div>
+
+      <div class="secure-badge">
+        <span class="secure-dot"></span>
+        Profile Security
+      </div>
+    </section>
+
+    <section class="profile-layout">
+
+      <div class="form-card">
+
+        <div class="card-header">
+          <div>
+            <h2>Personal Information</h2>
+            <p>These details are used for your PipZoNe account.</p>
+          </div>
+        </div>
+
+        <form id="profileForm" novalidate>
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input
+                type="text"
+                id="firstName"
+                name="first_name"
+                placeholder="Enter first name"
+                autocomplete="given-name"
+                maxlength="50"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input
+                type="text"
+                id="lastName"
+                name="last_name"
+                placeholder="Enter last name"
+                autocomplete="family-name"
+                maxlength="50"
+              >
+            </div>
+
+            <div class="form-group full-width">
+              <label for="phone">Phone Number</label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                placeholder="Enter phone number"
+                autocomplete="tel"
+                maxlength="30"
+              >
+            </div>
+
+            <div class="form-group full-width">
+              <label for="address">Address</label>
+              <input
+                type="text"
+                id="address"
+                name="address"
+                placeholder="Enter your address"
+                autocomplete="street-address"
+                maxlength="150"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="city">City</label>
+              <input
+                type="text"
+                id="city"
+                name="city"
+                placeholder="Enter city"
+                autocomplete="address-level2"
+                maxlength="60"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="state">State / Province</label>
+              <input
+                type="text"
+                id="state"
+                name="state"
+                placeholder="Enter state or province"
+                autocomplete="address-level1"
+                maxlength="60"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="postalCode">Postal Code</label>
+              <input
+                type="text"
+                id="postalCode"
+                name="postal_code"
+                placeholder="Enter postal code"
+                autocomplete="postal-code"
+                maxlength="20"
+              >
+            </div>
+
+          </div>
+
+          <div class="wallet-section">
+
+            <div class="section-heading">
+              <div>
+                <h3>Account Wallets</h3>
+                <p>Add the wallet addresses where approved withdrawals can be sent.</p>
+              </div>
+
+              <span class="locked-badge">Wallet Lock</span>
+            </div>
+
+            <div class="wallet-notice">
+              <span class="notice-icon">✓</span>
+              <p>
+                Wallet addresses are locked after the first wallet is saved.
+                Make sure your address is correct before saving.
+              </p>
+            </div>
+
+            <div class="wallet-grid">
+
+              <div class="form-group">
+                <label for="trc20Wallet">TRC20 Wallet</label>
+                <div class="input-with-label">
+                  <span>TRC20</span>
+                  <input
+                    type="text"
+                    id="trc20Wallet"
+                    name="wallet_address"
+                    placeholder="Enter TRC20 wallet address"
+                    autocomplete="off"
+                  >
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="bep20Wallet">BEP20 Wallet</label>
+                <div class="input-with-label">
+                  <span>BEP20</span>
+                  <input
+                    type="text"
+                    id="bep20Wallet"
+                    name="wallet_address_bep20"
+                    placeholder="Enter BEP20 wallet address"
+                    autocomplete="off"
+                  >
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="form-footer">
+
+            <div class="form-feedback hidden" id="formFeedback"></div>
+
+            <div class="form-actions">
+              <a href="../profile/indexprofile.html" class="cancel-btn">
+                Cancel
+              </a>
+
+              <button type="submit" class="save-btn" id="saveProfileBtn">
+                <span id="saveButtonLabel">Save Changes</span>
+              </button>
+            </div>
+
+          </div>
+
+        </form>
+
+      </div>
+
+      <aside class="profile-sidebar">
+
+        <div class="side-card account-card">
+          <div class="side-icon">◎</div>
+          <h3>Account Information</h3>
+          <div class="account-row">
+            <span>Client ID</span>
+            <strong id="clientId">PZ13501</strong>
+          </div>
+          <div class="account-row">
+            <span>Email</span>
+            <strong id="accountEmail">—</strong>
+          </div>
+        </div>
+
+        <div class="side-card">
+          <div class="side-icon">✓</div>
+          <h3>Required Before Deposit</h3>
+          <p>
+            Complete your profile information and save at least one supported
+            withdrawal wallet before starting a new deposit.
+          </p>
+        </div>
+
+        <div class="side-card security-card">
+          <div class="side-icon">⌁</div>
+          <h3>Keep Details Accurate</h3>
+          <p>
+            Your profile information helps PipZoNe maintain accurate account
+            records and complete verification when required.
+          </p>
+        </div>
+
+        <div class="side-card support-card">
+          <div class="side-icon">?</div>
+          <h3>Need Help?</h3>
+          <p>
+            Contact support if you need assistance updating your profile.
+          </p>
+          <a href="../settings/support/indexsupport.html" class="support-link">
+            Contact Support
+          </a>
+        </div>
+
+      </aside>
+
+    </section>
+
+    <section class="notice-card">
+      <div class="notice-icon">i</div>
+      <div>
+        <h3>Profile &amp; Wallet Security</h3>
+        <p>
+          Never share your password, OTP or private wallet recovery
+          information. PipZoNe support will never ask for these credentials.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="page-footer">
+    <span>© 2026 PipZoNe</span>
+    <span>Managed Forex &amp; Crypto Trading</span>
+  </footer>
+
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../../supabase-config.js"></script>
+<script src="../../../shared/layout.js"></script>
+<script src="./scriptedit-profile.js"></script>
+</body>
+</html>

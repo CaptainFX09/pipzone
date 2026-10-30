@@ -1,0 +1,774 @@
+:root{
+  --bg:#0a0e14;
+  --bg-soft:#0e141d;
+  --card:#131b26;
+  --card-2:#101720;
+  --border:rgba(255,255,255,.08);
+  --border-strong:rgba(255,255,255,.14);
+  --text:#f2f6f4;
+  --muted:#89959f;
+  --muted-2:#65717c;
+  --green:#2fbf83;
+  --green-bright:#5eeab0;
+  --green-soft:rgba(47,191,131,.11);
+  --red:#f2735e;
+  --shadow:0 18px 55px rgba(0,0,0,.25);
+}
+[data-theme="light"]{
+  --bg:#f4f7f6;
+  --bg-soft:#ffffff;
+  --card:#ffffff;
+  --card-2:#f8faf9;
+  --border:rgba(10,14,20,.09);
+  --border-strong:rgba(10,14,20,.15);
+  --text:#111820;
+  --muted:#64707a;
+  --muted-2:#84909a;
+  --green:#159963;
+  --green-bright:#118353;
+  --green-soft:rgba(21,153,99,.09);
+  --red:#d95845;
+  --shadow:0 18px 45px rgba(20,35,30,.08);
+}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+html{
+  scroll-behavior:smooth;
+}
+body{
+  min-height:100vh;
+  background:var(--bg);
+  color:var(--text);
+  font-family:"IBM Plex Sans",sans-serif;
+}
+button,input{
+  font:inherit;
+}
+button{
+  cursor:pointer;
+}
+a{
+  color:inherit;
+  text-decoration:none;
+}
+.deposit-body{
+  position:relative;
+  overflow-x:hidden;
+}
+.ambient-glow{
+  position:fixed;
+  width:420px;
+  height:420px;
+  border-radius:50%;
+  filter:blur(100px);
+  pointer-events:none;
+  opacity:.09;
+  z-index:0;
+}
+.ambient-glow-one{
+  top:-180px;
+  right:-100px;
+  background:var(--green);
+}
+.ambient-glow-two{
+  bottom:-220px;
+  left:-160px;
+  background:#2f7fbf;
+}
+.deposit-page{
+  position:relative;
+  z-index:1;
+  width:min(1220px,calc(100% - 40px));
+  margin:0 auto;
+}
+.deposit-main{
+  padding:52px 0 70px;
+}
+.page-heading{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:30px;
+  margin-bottom:30px;
+}
+.eyebrow{
+  color:var(--green-bright);
+  font:600 10px "IBM Plex Mono",monospace;
+  letter-spacing:1.8px;
+  text-transform:uppercase;
+}
+.page-heading h1{
+  margin-top:8px;
+  font-family:"Fraunces",serif;
+  font-size:clamp(34px,4vw,52px);
+  font-weight:500;
+  letter-spacing:-1.6px;
+}
+.page-description{
+  max-width:650px;
+  margin-top:10px;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.7;
+}
+.security-badge{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 12px;
+  border:1px solid rgba(47,191,131,.2);
+  border-radius:999px;
+  background:var(--green-soft);
+  color:var(--green-bright);
+  font:600 11px "IBM Plex Mono",monospace;
+  white-space:nowrap;
+}
+.security-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 0 4px rgba(47,191,131,.08);
+}
+
+/* ---------- Main grid: ek ke neeche ek ---------- */
+.deposit-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:18px;
+}
+.deposit-card{
+  padding:25px;
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:var(--card);
+  box-shadow:var(--shadow);
+}
+.wallet-card{
+  scroll-margin-top:96px;
+}
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:24px;
+}
+.card-label{
+  margin-bottom:5px;
+  color:var(--green-bright);
+  font:600 9px "IBM Plex Mono",monospace;
+  letter-spacing:1.5px;
+}
+.card-header h2{
+  font-family:"Fraunces",serif;
+  font-size:24px;
+  font-weight:500;
+  letter-spacing:-.5px;
+}
+.step-number{
+  color:var(--muted-2);
+  font:500 12px "IBM Plex Mono",monospace;
+}
+
+/* ---------- Step 01 : Payment method cards ---------- */
+.method-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+}
+.method-card{
+  display:flex;
+  align-items:flex-start;
+  gap:18px;
+  width:100%;
+  padding:22px 24px;
+  border:1px solid var(--border);
+  border-radius:13px;
+  background:var(--card-2);
+  color:var(--text);
+  text-align:left;
+  transition:border-color .2s ease,background .2s ease,box-shadow .2s ease,transform .2s ease;
+}
+.method-card:hover{
+  border-color:rgba(47,191,131,.3);
+  transform:translateY(-1px);
+}
+.method-card.selected{
+  border-color:rgba(47,191,131,.55);
+  background:var(--green-soft);
+  box-shadow:0 0 0 2px rgba(47,191,131,.10);
+}
+.method-card:focus-visible{
+  outline:2px solid var(--green);
+  outline-offset:2px;
+}
+/* Logos: SVG files (assets/icons/) — har size par saaf */
+.method-icon{
+  position:relative;
+  width:38px;
+  height:38px;
+  flex:none;
+}
+.method-icon img{
+  display:block;
+}
+.icon-main{
+  width:38px;
+  height:38px;
+  object-fit:contain;
+}
+.icon-badge{
+  position:absolute;
+  right:-9px;
+  bottom:-9px;
+  width:25px;
+  height:25px;
+  object-fit:contain;
+  border:2px solid var(--card-2);
+  border-radius:50%;
+  background:var(--card-2);
+}
+.method-body{
+  min-width:0;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+.method-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-height:24px;
+  margin-bottom:3px;
+}
+.method-name{
+  font-size:15px;
+  font-weight:600;
+}
+.method-pill{
+  padding:4px 12px;
+  border:1px solid rgba(47,191,131,.2);
+  border-radius:999px;
+  background:var(--green-soft);
+  color:var(--green-bright);
+  font-size:11px;
+  font-weight:500;
+  white-space:nowrap;
+}
+.method-row{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.4;
+}
+.method-row b{
+  color:var(--text);
+  font-weight:500;
+}
+
+.network-note{
+  display:flex;
+  gap:9px;
+  margin-top:18px;
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:var(--card-2);
+}
+.network-note>span{
+  width:17px;
+  height:17px;
+  flex:none;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--muted-2);
+  border-radius:50%;
+  color:var(--muted);
+  font:600 10px "IBM Plex Mono",monospace;
+}
+.network-note p{
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.55;
+}
+.network-note strong{
+  color:var(--text);
+}
+
+/* ---------- Step 02 : Wallet ---------- */
+.wallet-content{
+  display:flex;
+  align-items:center;
+  gap:24px;
+}
+.qr-wrapper{
+  width:150px;
+  height:150px;
+  padding:8px;
+  flex:none;
+  border-radius:13px;
+  background:#fff;
+}
+.qr-wrapper img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:contain;
+}
+.wallet-details{
+  min-width:0;
+  flex:1;
+}
+.wallet-network{
+  margin-bottom:9px;
+  color:var(--green-bright);
+  font:600 11px "IBM Plex Mono",monospace;
+  letter-spacing:.6px;
+}
+.wallet-address-box{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-height:53px;
+  padding:7px 7px 7px 13px;
+  border:1px solid var(--border);
+  border-radius:11px;
+  background:var(--card-2);
+}
+.wallet-address-box span{
+  min-width:0;
+  flex:1;
+  overflow:hidden;
+  color:var(--text);
+  font:500 11px "IBM Plex Mono",monospace;
+  line-height:1.5;
+  word-break:break-all;
+}
+.wallet-address-box button{
+  flex:none;
+  padding:9px 10px;
+  border:0;
+  border-radius:8px;
+  background:var(--green);
+  color:#07120d;
+  font:700 9px "IBM Plex Mono",monospace;
+}
+.wallet-warning{
+  margin-top:10px;
+  color:var(--muted-2);
+  font-size:10px;
+  line-height:1.5;
+}
+.deposit-minimum{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:19px;
+  padding-top:15px;
+  border-top:1px solid var(--border);
+}
+.deposit-minimum span{
+  color:var(--muted);
+  font-size:11px;
+}
+.deposit-minimum strong{
+  color:var(--green-bright);
+  font:600 12px "IBM Plex Mono",monospace;
+}
+
+/* ---------- Step 03 : Form ---------- */
+.amount-card form{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+.field-group{
+  min-width:0;
+}
+.field-group:nth-of-type(3){
+  grid-column:1/-1;
+}
+.field-group label:not(.upload-box){
+  display:block;
+  margin-bottom:8px;
+  color:var(--text);
+  font-size:12px;
+  font-weight:600;
+}
+.input-wrap{
+  position:relative;
+}
+.input-wrap>span{
+  position:absolute;
+  left:14px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--green-bright);
+  font:600 16px "IBM Plex Mono",monospace;
+}
+.input-wrap small{
+  position:absolute;
+  right:13px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+  font:600 10px "IBM Plex Mono",monospace;
+}
+/* Sirf is form ke inputs: topbar ka search box ab is se nahi chhedta */
+.amount-card input[type="number"],
+.amount-card input[type="text"]{
+  width:100%;
+  height:48px;
+  padding:0 14px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  outline:none;
+  background:var(--card-2);
+  color:var(--text);
+  font-size:12px;
+  transition:.2s ease;
+}
+.amount-card .currency-input input{
+  padding-left:34px;
+  padding-right:55px;
+}
+.amount-card input:focus{
+  border-color:rgba(47,191,131,.5);
+  box-shadow:0 0 0 3px rgba(47,191,131,.07);
+}
+.amount-card input::placeholder{
+  color:var(--muted-2);
+}
+.field-hint{
+  margin-top:6px;
+  color:var(--muted-2);
+  font-size:10px;
+}
+.field-error{
+  min-height:15px;
+  margin-top:5px;
+  color:var(--red);
+  font-size:10px;
+}
+.upload-box{
+  min-height:92px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:4px;
+  border:1px dashed var(--border-strong);
+  border-radius:11px;
+  background:var(--card-2);
+  cursor:pointer;
+  transition:.2s ease;
+}
+.upload-box:hover,
+.upload-box.has-file{
+  border-color:rgba(47,191,131,.5);
+  background:var(--green-soft);
+}
+.upload-box input{
+  display:none;
+}
+.upload-icon{
+  width:27px;
+  height:27px;
+  display:grid;
+  place-items:center;
+  border-radius:8px;
+  background:var(--green-soft);
+  color:var(--green-bright);
+  font:600 16px "IBM Plex Mono",monospace;
+}
+.upload-title{
+  color:var(--text);
+  font-size:11px;
+  font-weight:600;
+}
+.upload-subtitle{
+  color:var(--muted-2);
+  font-size:9px;
+}
+.deposit-summary{
+  grid-column:1/-1;
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  padding:15px;
+  border:1px solid var(--border);
+  border-radius:11px;
+  background:var(--card-2);
+}
+.deposit-summary div{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+.deposit-summary span{
+  color:var(--muted-2);
+  font:500 9px "IBM Plex Mono",monospace;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+.deposit-summary strong{
+  color:var(--text);
+  font:600 13px "IBM Plex Mono",monospace;
+}
+.submit-deposit{
+  grid-column:1/-1;
+  height:52px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  border:0;
+  border-radius:11px;
+  background:var(--green);
+  color:#07120d;
+  font-size:13px;
+  font-weight:700;
+  transition:.2s ease;
+}
+.submit-deposit:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.06);
+}
+.submit-deposit:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+  transform:none;
+}
+.submit-arrow{
+  font-size:18px;
+}
+.processing-note{
+  grid-column:1/-1;
+  color:var(--muted-2);
+  text-align:center;
+  font-size:10px;
+}
+
+/* ---------- Info + rules + footer ---------- */
+.deposit-info-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+  margin-top:18px;
+}
+.info-card{
+  display:flex;
+  gap:13px;
+  padding:19px;
+  border:1px solid var(--border);
+  border-radius:15px;
+  background:var(--card);
+}
+.info-icon{
+  width:32px;
+  height:32px;
+  flex:none;
+  display:grid;
+  place-items:center;
+  border-radius:9px;
+  background:var(--green-soft);
+  color:var(--green-bright);
+  font:600 9px "IBM Plex Mono",monospace;
+}
+.info-card h3{
+  margin-bottom:5px;
+  font-size:12px;
+}
+.info-card p{
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.6;
+}
+.deposit-rules{
+  margin-top:18px;
+  padding:25px;
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:var(--card);
+}
+.rules-header{
+  margin-bottom:20px;
+}
+.rules-header h2{
+  margin-top:7px;
+  font-family:"Fraunces",serif;
+  font-size:23px;
+  font-weight:500;
+}
+.rules-list{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px 25px;
+}
+.rule-item{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+}
+.rule-item>span{
+  color:var(--green-bright);
+  font:600 12px "IBM Plex Mono",monospace;
+}
+.rule-item p{
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.55;
+}
+.rule-item strong{
+  color:var(--text);
+}
+.deposit-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  padding:25px 0 30px;
+  border-top:1px solid var(--border);
+}
+.deposit-footer>div{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.deposit-footer strong{
+  font-family:"Fraunces",serif;
+  font-size:17px;
+}
+.deposit-footer strong span{
+  color:var(--green-bright);
+}
+.deposit-footer>div>span{
+  color:var(--muted-2);
+  font-size:10px;
+}
+.deposit-footer>a{
+  color:var(--muted);
+  font:500 10px "IBM Plex Mono",monospace;
+}
+.deposit-footer>a:hover{
+  color:var(--green-bright);
+}
+
+/* ---------- Toast ---------- */
+.toast-container{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  z-index:100;
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+}
+.toast{
+  min-width:260px;
+  max-width:360px;
+  padding:13px 15px;
+  border:1px solid var(--border);
+  border-radius:11px;
+  background:var(--card);
+  box-shadow:var(--shadow);
+  color:var(--text);
+  font-size:11px;
+  animation:toastIn .25s ease;
+}
+.toast.success{
+  border-color:rgba(47,191,131,.35);
+}
+.toast.error{
+  border-color:rgba(242,115,94,.35);
+}
+@keyframes toastIn{
+  from{
+    opacity:0;
+    transform:translateY(8px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+/* ---------- Responsive ---------- */
+@media(max-width:900px){
+  .method-grid{
+    grid-template-columns:1fr;
+  }
+  .deposit-info-grid{
+    grid-template-columns:1fr;
+  }
+}
+@media(max-width:650px){
+  .deposit-page{
+    width:min(100% - 24px,1220px);
+  }
+  .deposit-main{
+    padding:35px 0 50px;
+  }
+  .page-heading{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:15px;
+  }
+  .page-heading h1{
+    font-size:37px;
+  }
+  .deposit-card{
+    padding:19px;
+    border-radius:15px;
+  }
+  .method-card{
+    padding:18px;
+    gap:14px;
+  }
+  .method-head{
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .wallet-content{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .qr-wrapper{
+    width:135px;
+    height:135px;
+  }
+  .amount-card form{
+    grid-template-columns:1fr;
+  }
+  .field-group:nth-of-type(3),
+  .deposit-summary,
+  .submit-deposit,
+  .processing-note{
+    grid-column:auto;
+  }
+  .rules-list{
+    grid-template-columns:1fr;
+  }
+  .deposit-footer{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .deposit-footer>div{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:4px;
+  }
+  .toast-container{
+    right:12px;
+    bottom:12px;
+    left:12px;
+  }
+  .toast{
+    min-width:0;
+    max-width:none;
+  }
+}

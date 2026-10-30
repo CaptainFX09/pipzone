@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+  <!-- ================================================================
+       Document Meta
+  ================================================================ -->
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Create Account | PipZoNe Trading Desk</title>
+
+  <meta
+    name="description"
+    content="Sign up for PipZoNe managed forex and crypto trading. 60/40 profit sharing, zero management fees."
+  />
+
+  <!-- ================================================================
+       Google Fonts
+  ================================================================ -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- ================================================================
+       Page Styles
+  ================================================================ -->
+	  <link rel="icon" type="image/png" href="../assets/favicon/favicon.png" />
+  <link rel="stylesheet" href="./style.css" />
+
+  <!-- ================================================================
+       Restore Saved Theme Before Page Render
+  ================================================================ -->
+
+  <script>
+    (function(){
+      const savedTheme=
+        localStorage.getItem('pipzone_theme')||'dark';
+
+      document.documentElement.setAttribute(
+        'data-theme',
+        savedTheme
+      );
+    })();
+  </script>
+
+</head>
+
+<body>
+
+  <!-- ================================================================
+       Background Ambience
+  ================================================================ -->
+
+  <div
+    class="bg-glow bg-glow-1"
+    aria-hidden="true"
+  ></div>
+
+  <div
+    class="bg-glow bg-glow-2"
+    aria-hidden="true"
+  ></div>
+
+
+  <!-- ================================================================
+       Main Authentication Page Wrapper
+  ================================================================ -->
+
+  <div class="auth-page-wrapper">
+
+
+    <!-- ==============================================================
+         Top Floating Navigation
+    ============================================================== -->
+
+    <header class="auth-header">
+
+      <!-- PipZoNe Brand -->
+      <a
+        href="../signin/index.html"
+        class="brand-logo"
+        aria-label="PipZoNe signin"
+      >
+        <img
+          src="../assets/logo/Logo.png"
+          alt="PipZoNe logo"
+          class="logo-img"
+        />
+
+        <span class="brand-name">
+          Pip<span class="brand-accent">ZoNe</span>
+        </span>
+      </a>
+
+
+      <!-- Header Actions -->
+      <div class="header-actions">
+
+        <!-- Theme Toggle -->
+        <button
+          id="themeToggleBtn"
+          class="icon-btn"
+          aria-label="Toggle light or dark theme"
+          title="Toggle theme"
+        >
+
+          <svg
+            class="theme-icon-sun"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+
+          <svg
+            class="theme-icon-moon"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+
+        </button>
+
+
+        <!-- Back to Home -->
+        <a
+          href="../index.html"
+          class="nav-back-link"
+        >
+
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+
+          Back to Home
+
+        </a>
+
+      </div>
+
+    </header>
+
+
+    <!-- ==============================================================
+         Centered Authentication Container
+    ============================================================== -->
+
+    <main class="auth-container">
+
+      <div class="auth-card">
+
+
+        <!-- ==========================================================
+             Authentication Navigation Tabs
+        ========================================================== -->
+
+        <nav
+          class="auth-tabs"
+          aria-label="Account access options"
+        >
+
+          <!-- Sign In Tab -->
+          <a
+            href="../signin/index.html"
+            class="auth-tab"
+            id="tabSignIn"
+          >
+            Sign in
+          </a>
+
+          <!-- Create Account Tab -->
+          <button
+            type="button"
+            class="auth-tab active"
+            id="tabCreateAccount"
+            aria-current="page"
+          >
+            Create account
+          </button>
+
+        </nav>
+
+
+        <!-- ==========================================================
+             Authentication Card Header
+        ========================================================== -->
+
+        <div class="auth-card-header">
+
+          <h1 class="auth-title">
+            Join the Trading Desk
+          </h1>
+
+          <p class="auth-subtitle">
+            Minimal onboarding. Capital managed with institutional
+            60/40 performance split.
+          </p>
+
+        </div>
+
+
+        <!-- ==========================================================
+             Global Status Alert
+        ========================================================== -->
+
+        <div
+          id="statusAlert"
+          class="alert-box hidden"
+          role="alert"
+        >
+          <span class="alert-icon"></span>
+          <span class="alert-text"></span>
+        </div>
+
+
+        <!-- ==========================================================
+             Signup Form
+        ========================================================== -->
+
+        <form
+          id="signupForm"
+          class="auth-form"
+          novalidate
+        >
+
+
+          <!-- ========================================================
+               Email Address
+          ======================================================== -->
+
+          <div class="form-group">
+
+            <label
+              for="emailInput"
+              class="form-label"
+            >
+              <span>Email address</span>
+              <span class="required-star">*</span>
+            </label>
+
+            <div class="input-wrapper">
+
+              <input
+                type="email"
+                id="emailInput"
+                name="email"
+                class="form-input"
+                placeholder="name@example.com"
+                autocomplete="email"
+                required
+              />
+
+              <span class="input-icon">
+
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+
+              </span>
+
+            </div>
+
+            <span
+              class="field-error"
+              id="emailError"
+            ></span>
+
+          </div>
+
+
+          <!-- ========================================================
+               Create Password
+          ======================================================== -->
+
+          <div class="form-group">
+
+            <div class="label-row">
+
+              <label
+                for="passwordInput"
+                class="form-label"
+              >
+                <span>Create password</span>
+                <span class="required-star">*</span>
+              </label>
+
+              <span
+                class="char-counter"
+                id="charCounter"
+              >
+                8 / 15 chars
+              </span>
+
+            </div>
+
+            <div class="input-wrapper">
+
+              <input
+                type="password"
+                id="passwordInput"
+                name="password"
+                class="form-input"
+                placeholder="Enter strong password"
+                autocomplete="new-password"
+                maxlength="25"
+                required
+              />
+
+              <!-- Password Visibility Toggle -->
+              <button
+                type="button"
+                class="password-toggle-btn"
+                id="togglePasswordBtn"
+                aria-label="Toggle password visibility"
+              >
+
+                <svg
+                  class="eye-open"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+
+                <svg
+                  class="eye-closed hidden"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+
+              </button>
+
+            </div>
+
+
+            <!-- Password Strength Checklist -->
+            <div
+              class="strength-checklist"
+              aria-live="polite"
+            >
+
+              <div
+                class="checklist-item"
+                id="ruleLength"
+              >
+                <span class="check-dot"></span>
+                <span class="check-text">
+                  Between 8–15 characters
+                </span>
+              </div>
+
+              <div
+                class="checklist-item"
+                id="ruleCase"
+              >
+                <span class="check-dot"></span>
+                <span class="check-text">
+                  At least one uppercase & lowercase letter
+                </span>
+              </div>
+
+              <div
+                class="checklist-item"
+                id="ruleNumber"
+              >
+                <span class="check-dot"></span>
+                <span class="check-text">
+                  At least one number (0–9)
+                </span>
+              </div>
+
+              <div
+                class="checklist-item"
+                id="ruleSpecial"
+              >
+                <span class="check-dot"></span>
+                <span class="check-text">
+                  At least one special character (!@#$%^&*)
+                </span>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- ========================================================
+               Confirm Password
+          ======================================================== -->
+
+          <div class="form-group">
+
+            <label
+              for="confirmPasswordInput"
+              class="form-label"
+            >
+              <span>Confirm password</span>
+              <span class="required-star">*</span>
+            </label>
+
+            <div class="input-wrapper">
+
+              <input
+                type="password"
+                id="confirmPasswordInput"
+                name="confirmPassword"
+                class="form-input"
+                placeholder="Repeat your password"
+                autocomplete="new-password"
+                required
+              />
+
+              <!-- Confirm Password Visibility Toggle -->
+              <button
+                type="button"
+                class="password-toggle-btn"
+                id="toggleConfirmPasswordBtn"
+                aria-label="Toggle confirm password visibility"
+              >
+
+                <svg
+                  class="eye-open"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+
+                <svg
+                  class="eye-closed hidden"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+
+              </button>
+
+            </div>
+
+            <span
+              class="field-error"
+              id="confirmPasswordError"
+            ></span>
+
+          </div>
+
+
+          <!-- ========================================================
+               Optional Partner Referral Code
+          ======================================================== -->
+
+          <div class="form-group">
+
+            <div class="label-row">
+
+              <label
+                for="partnerCodeInput"
+                class="form-label"
+              >
+                <span>Partner referral code</span>
+                <span class="optional-tag">
+                  Optional
+                </span>
+              </label>
+
+              <!-- Referral Link Applied Badge -->
+              <span
+                class="partner-applied-pill hidden"
+                id="partnerAppliedBadge"
+              >
+
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+
+                Link applied
+
+              </span>
+
+            </div>
+
+            <div class="input-wrapper">
+
+              <input
+                type="text"
+                id="partnerCodeInput"
+                name="partnerCode"
+                class="form-input mono"
+                placeholder="PZ-"
+                autocomplete="off"
+              />
+
+              <span class="input-icon">
+
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="8.5" cy="7.5" r="4"></circle>
+                  <line x1="20" y1="8" x2="20" y2="14"></line>
+                  <line x1="23" y1="11" x2="17" y2="11"></line>
+                </svg>
+
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- ========================================================
+               Terms / Risk Disclosure
+          ======================================================== -->
+
+          <div class="terms-note">
+            By clicking "Create account", you acknowledge that trading
+            foreign exchange and crypto entails capital risk. Capital
+            split operates on a 60% client / 40% desk net settled basis.
+          </div>
+
+
+          <!-- ========================================================
+               Create Account Submit Button
+          ======================================================== -->
+
+          <button
+            type="submit"
+            class="submit-btn"
+            id="createAccountBtn"
+          >
+
+            <span class="btn-text">
+              Create account
+            </span>
+
+            <span
+              class="btn-spinner hidden"
+              aria-hidden="true"
+            >
+
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke-dasharray="32"
+                  stroke-dashoffset="12"
+                ></circle>
+              </svg>
+
+            </span>
+
+          </button>
+
+        </form>
+
+
+        <!-- ==========================================================
+             Email OTP Verification Modal
+        ========================================================== -->
+
+        <div
+          id="otpModal"
+          class="otp-modal hidden"
+          aria-hidden="true"
+        >
+
+          <!-- OTP Modal Backdrop -->
+          <div class="otp-modal-backdrop"></div>
+
+
+          <!-- OTP Modal Card -->
+          <div
+            class="otp-modal-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="otpTitle"
+          >
+
+            <!-- Close OTP Modal -->
+            <button
+              type="button"
+              class="otp-close-btn"
+              id="otpCloseBtn"
+              aria-label="Close verification"
+            >
+              ×
+            </button>
+
+
+            <!-- OTP Email Icon -->
+            <div class="otp-icon">
+
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect
+                  x="3"
+                  y="5"
+                  width="18"
+                  height="14"
+                  rx="2"
+                ></rect>
+
+                <polyline
+                  points="3 7 12 13 21 7"
+                ></polyline>
+              </svg>
+
+            </div>
+
+
+            <!-- OTP Modal Heading -->
+            <h2 id="otpTitle">
+              Verify Your Email
+            </h2>
+
+
+            <!-- OTP Description -->
+            <p class="otp-description">
+              We sent a 6-digit verification code to
+            </p>
+
+            <p
+              class="otp-email"
+              id="otpEmailDisplay"
+            ></p>
+
+
+            <!-- ======================================================
+                 Six-Digit OTP Inputs
+            ======================================================= -->
+
+            <div
+              class="otp-inputs"
+              id="otpInputs"
+            >
+
+              <input
+                type="text"
+                maxlength="1"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+              />
+
+              <input
+                type="text"
+                maxlength="1"
+                inputmode="numeric"
+              />
+
+              <input
+                type="text"
+                maxlength="1"
+                inputmode="numeric"
+              />
+
+              <input
+                type="text"
+                maxlength="1"
+                inputmode="numeric"
+              />
+
+              <input
+                type="text"
+                maxlength="1"
+                inputmode="numeric"
+              />
+
+              <input
+                type="text"
+                maxlength="1"
+                inputmode="numeric"
+              />
+
+            </div>
+
+
+            <!-- ======================================================
+                 Verify OTP Button
+            ======================================================= -->
+
+            <button
+              type="button"
+              class="submit-btn otp-verify-btn"
+              id="verifyOtpBtn"
+            >
+
+              <span class="btn-text">
+                Verify Code
+              </span>
+
+              <span
+                class="btn-spinner hidden"
+                aria-hidden="true"
+              >
+
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke-dasharray="32"
+                    stroke-dashoffset="12"
+                  ></circle>
+                </svg>
+
+              </span>
+
+            </button>
+
+
+            <!-- ======================================================
+                 OTP Resend
+            ======================================================= -->
+
+            <p class="otp-resend-text">
+
+              Didn't receive the code?
+
+              <button
+                type="button"
+                id="resendOtpBtn"
+                class="otp-resend-btn"
+              >
+                Resend Code
+              </button>
+
+            </p>
+
+
+            <!-- OTP Status -->
+            <div
+              id="otpStatus"
+              class="otp-status hidden"
+            ></div>
+
+          </div>
+
+        </div>
+
+
+        <!-- ==========================================================
+             Authentication Card Footer
+        ========================================================== -->
+
+        <footer class="auth-card-footer">
+
+          <p>
+            Already have an account?
+            <a
+              href="../signin/index.html"
+              class="auth-link"
+            >
+              Sign in
+            </a>
+          </p>
+
+        </footer>
+
+      </div>
+
+    </main>
+
+
+    <!-- ==============================================================
+         Bottom Mini Footer
+    ============================================================== -->
+
+    <footer class="auth-bottom-footer">
+
+      <p>
+        © 2026 PipZoNe Capital Partners.
+        Managed Execution Desk.
+        All rights reserved.
+      </p>
+
+    </footer>
+
+  </div>
+
+
+  <!-- ================================================================
+       Supabase JavaScript Library
+  ================================================================ -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+  <!-- ================================================================
+       Shared Supabase Configuration
+       Root file used by Signup + Signin
+  ================================================================ -->
+
+  <script src="../supabase-config.js"></script>
+
+
+  <!-- ================================================================
+       Signup Supabase Authentication
+       Contains signup / OTP / resend functions
+  ================================================================ -->
+
+  <script src="./supabase-auth.js"></script>
+
+
+  <!-- ================================================================
+       Signup Page UI Logic
+  ================================================================ -->
+
+  <script src="./script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Profile | PipZoNe</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="../../../assets/favicon/favicon.png" />
+<link rel="stylesheet" href="../../../shared/layout.css">
+<link rel="stylesheet" href="./styleprofile.css">
+
+<script>
+(function(){
+  const savedTheme=localStorage.getItem("pipzone_theme")||"dark";
+  document.documentElement.setAttribute("data-theme",savedTheme);
+})();
+</script>
+</head>
+
+<body>
+
+<main class="main-content" id="pageContent">
+  <div class="page-shell">
+
+    <section class="page-heading">
+
+      <div class="heading-copy">
+        <div class="eyebrow">Account Profile</div>
+
+        <h1 class="page-title">Your Profile</h1>
+
+        <p class="page-description">
+          View your personal information, account details, and saved wallet
+          addresses associated with your PipZoNe client account.
+        </p>
+      </div>
+
+      <div class="heading-actions">
+        <div class="secure-badge">
+          <span>Secure Account</span>
+        </div>
+
+        <a href="../edit-profile/indexedit-profile.html" class="edit-profile-btn">
+          <span>✎</span>
+          <span>Edit Profile</span>
+        </a>
+      </div>
+
+    </section>
+
+    <section class="profile-layout">
+
+      <div class="main-column">
+
+        <!-- ACCOUNT IDENTITY -->
+        <div class="card profile-card">
+
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Account Information</h2>
+              <p class="card-description">
+                Your PipZoNe client identity and registered account details.
+              </p>
+            </div>
+          </div>
+
+          <div class="identity-banner">
+
+            <div class="avatar" id="profileAvatar">
+              PZ
+            </div>
+
+            <div class="identity-copy">
+              <h3 id="profileFullName">Pip Zone</h3>
+              <p id="profileEmail">exmple.pipzone@mail.com</p>
+
+              <div class="identity-meta">
+                <span class="status-pill">
+                  <span class="status-dot"></span>
+                  Active Client
+                </span>
+
+                <span class="client-number" id="clientId">
+                  PZ0000
+                </span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="details-grid">
+
+            <div class="detail-item">
+              <div class="detail-label">First Name</div>
+              <div class="detail-value" id="firstNameValue">Pip</div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-label">Last Name</div>
+              <div class="detail-value" id="lastNameValue">Zone</div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-label">Phone</div>
+              <div class="detail-value" id="phoneValue">Not added</div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-label">Email</div>
+              <div class="detail-value" id="emailValue">
+                exmple.pipzone@mail.com
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ADDRESS -->
+        <div class="card profile-card">
+
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Address Information</h2>
+              <p class="card-description">
+                Your registered residential or contact address.
+              </p>
+            </div>
+          </div>
+
+          <div class="details-grid address-grid">
+
+            <div class="detail-item full">
+              <div class="detail-label">Address</div>
+              <div class="detail-value" id="addressValue">
+                Not added
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-label">City</div>
+              <div class="detail-value" id="cityValue">
+                Not added
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-label">State / Province</div>
+              <div class="detail-value" id="stateValue">
+                Not added
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-label">Postal Code</div>
+              <div class="detail-value" id="postalCodeValue">
+                Not added
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- WALLETS -->
+        <div class="card profile-card">
+
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Account Wallets</h2>
+              <p class="card-description">
+                Saved payout wallets used for your PipZoNe account.
+              </p>
+            </div>
+
+            <div class="locked-badge">
+              🔒 Locked
+            </div>
+          </div>
+
+          <div class="wallet-list">
+
+            <div class="wallet-card">
+
+              <div class="wallet-card-top">
+                <div>
+                  <div class="wallet-network">TRC20</div>
+                  <div class="wallet-name">USDT · TRC20</div>
+                </div>
+
+                <span class="wallet-status" id="trc20Status">
+                  Not Added
+                </span>
+              </div>
+
+              <div class="wallet-address" id="trc20Wallet">
+                Not added
+              </div>
+
+            </div>
+
+            <div class="wallet-card">
+
+              <div class="wallet-card-top">
+                <div>
+                  <div class="wallet-network">BEP20</div>
+                  <div class="wallet-name">USDT · BEP20</div>
+                </div>
+
+                <span class="wallet-status" id="bep20Status">
+                  Not Added
+                </span>
+              </div>
+
+              <div class="wallet-address" id="bep20Wallet">
+                Not added
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="wallet-note">
+            <div class="wallet-note-icon">🔒</div>
+
+            <div>
+              <strong>Wallet addresses are locked after first save.</strong>
+              <p>
+                Always verify your wallet address before making a deposit or
+                requesting a withdrawal. Contact support if a correction is
+                required.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- SIDEBAR -->
+      <aside class="sidebar-stack">
+
+        <div class="side-card account-summary">
+
+          <div class="side-card-title">Client Account</div>
+
+          <div class="summary-id">
+            <span>Client ID</span>
+            <strong id="sideClientId">PZ0000</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>Account Status</span>
+            <strong class="positive-text">Active</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>Profit Share</span>
+            <strong>60% Client</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>Principal Lock</span>
+            <strong>40 Days</strong>
+          </div>
+
+        </div>
+
+        <div class="side-card">
+
+          <div class="side-card-title">
+            Profile Completion
+          </div>
+
+          <p class="side-card-description">
+            Keep your account information complete before starting a new
+            deposit or payout request.
+          </p>
+
+          <div class="completion-wrap">
+
+            <div class="completion-top">
+              <span>Account Details</span>
+              <strong id="completionPercent">0%</strong>
+            </div>
+
+            <div class="progress-track">
+              <div
+                class="progress-fill"
+                id="completionBar"
+                style="width:0%"
+              ></div>
+            </div>
+
+          </div>
+
+          <div class="completion-list">
+
+            <div class="completion-item" id="checkPersonal">
+              <span class="check-icon">✓</span>
+              <span>Personal information</span>
+            </div>
+
+            <div class="completion-item" id="checkAddress">
+              <span class="check-icon">✓</span>
+              <span>Address information</span>
+            </div>
+
+            <div class="completion-item" id="checkWallet">
+              <span class="check-icon">✓</span>
+              <span>At least one wallet</span>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="side-card">
+
+          <div class="side-card-title">
+            Need Help?
+          </div>
+
+          <p class="side-card-description">
+            If any profile information needs correction or you need help
+            with your account, contact PipZoNe Support.
+          </p>
+
+          <a
+            href="../settings/support/indexsupport.html"
+            class="support-link"
+          >
+            Contact Support
+          </a>
+
+        </div>
+
+      </aside>
+
+    </section>
+
+    <!-- SECURITY NOTICE -->
+    <section class="security-notice">
+
+      <div class="security-icon">✓</div>
+
+      <div class="security-copy">
+        <h3 class="security-title">
+          Profile & Wallet Security
+        </h3>
+
+        <p class="security-text">
+          Keep your personal information accurate and never share your
+          PipZoNe login credentials, OTP codes, or wallet recovery details
+          with anyone. PipZoNe support will never ask for your password or
+          private wallet keys.
+        </p>
+      </div>
+
+    </section>
+
+    <footer class="page-footer">
+
+      <span>
+        © 2026 PipZoNe · Managed Forex &amp; Crypto Trading
+      </span>
+
+      <div class="footer-links">
+        <a href="../../index.html">Dashboard</a>
+        <a href="../edit-profile/indexedit-profile.html">
+          Edit Profile
+        </a>
+        <a href="mailto:support.pipzone@gmail.com">
+          Support
+        </a>
+      </div>
+
+    </footer>
+
+  </div>
+</main>
+
+<div id="toastContainer"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../../supabase-config.js"></script>
+<script src="../../../shared/layout.js"></script>
+<script src="./scriptprofile.js"></script>
+
+</body>
+</html>
