@@ -1,0 +1,49 @@
+/* PipZoNe landing — mobile header fix (link after style.css) */
+@media (max-width: 900px) {
+  .header-inner { gap:10px; flex-wrap:nowrap; }
+  .brand-logo { min-width:0; gap:8px; }
+  .brand-name { white-space:nowrap; font-size:1.25rem; }
+  .header-actions { gap:8px; flex:0 0 auto; margin-left:auto; }
+  /* Sign in / Create account are already inside the mobile menu drawer */
+  .header-actions > .btn-ghost, .header-actions > .btn-primary { display:none !important; }
+  .mobile-menu-btn { display:inline-flex !important; }
+  .btn-large { white-space:nowrap; }
+}
+@media (max-width: 480px) {
+  .btn-large { padding-left:18px; padding-right:18px; }
+}
+
+/* ---- Overflow fix: grid/flex children were forcing the page wider than the screen ---- */
+html { overflow-x: hidden; }
+@media (max-width: 1024px) {
+  .hero-grid { grid-template-columns: minmax(0, 1fr); }
+  .hero-grid > *, .contact-grid > *, .calc-card > *, .footer-grid > * { min-width: 0; }
+  .stats-summary-grid, .steps-grid, .risk-cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .calc-card, .contact-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 768px) {
+  .stats-summary-grid, .steps-grid, .risk-cards-grid, .footer-grid, .form-row-2 { grid-template-columns: minmax(0, 1fr); }
+  .hero-section { padding: 36px 0 40px; }
+  .hero-cta-group { flex-wrap: wrap; }
+  .hero-cta-group > a { flex: 1 1 auto; }
+  .hero-desk-notes { gap: 10px; }
+  .section-container { padding: 56px 0; }
+  .section-title { font-size: 1.8rem; }
+  .calc-card { padding: 20px; }
+  .calc-results-col { padding: 18px; }
+  .contact-form { padding: 20px; }
+  .range-marks { gap: 6px; font-size: .68rem; }
+  .calc-label-row { flex-wrap: wrap; gap: 6px; }
+  .terminal-footer { flex-wrap: wrap; }
+}
+@media (max-width: 400px) {
+  .container { padding: 0 16px; }
+  .hero-heading { font-size: 1.9rem; }
+  .terminal-micro-stats { gap: 6px; }
+}
+@media (max-width: 768px) {
+  .ambient-glow { display: none; }
+  .contact-card > div:not(.contact-card-icon) { min-width: 0; }
+  .contact-val, .contact-label, .contact-sub { overflow-wrap: anywhere; word-break: break-word; }
+  .contact-card { padding: 18px; gap: 14px; }
+}

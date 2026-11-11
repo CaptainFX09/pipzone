@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Trading Activity | PipZoNe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="../../assets/favicon/favicon.png" />
+<link rel="stylesheet" href="../../shared/layout.css">
+<link rel="stylesheet" href="./styletrading.css">
+<script>
+(function(){
+  const savedTheme=localStorage.getItem("pipzone_theme")||"dark";
+  document.documentElement.setAttribute("data-theme",savedTheme);
+})();
+</script>
+</head>
+
+<body>
+
+<div class="page-glow page-glow-one"></div>
+<div class="page-glow page-glow-two"></div>
+
+<div id="pageContent">
+
+<main class="page-shell">
+
+  <section class="page-heading">
+    <div>
+      <div class="eyebrow">TRADING ACTIVITY</div>
+      <h1>Trading Activity</h1>
+      <p>Review your completed trade cycles, directions, signals and settlement results.</p>
+    </div>
+
+    <div class="secure-badge">
+      <span class="secure-dot"></span>
+      Managed Desk
+    </div>
+  </section>
+
+  <section class="trading-hero">
+
+    <div class="hero-copy">
+      <div class="hero-label">CURRENT TRADING CYCLE</div>
+      <h2>Trade with your available balance.</h2>
+      <p>
+        PipZoNe trade cycles use the active desk signal. Select the available
+        direction during the active window and wait for settlement.
+      </p>
+
+      <div class="hero-meta">
+        <div class="meta-item">
+          <span class="meta-label">CLIENT SHARE</span>
+          <strong>60%</strong>
+        </div>
+        <div class="meta-divider"></div>
+        <div class="meta-item">
+          <span class="meta-label">DESK SHARE</span>
+          <strong>40%</strong>
+        </div>
+        <div class="meta-divider"></div>
+        <div class="meta-item">
+          <span class="meta-label">SETTLEMENT</span>
+          <strong>Daily</strong>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="balance-strip">
+
+    <div class="balance-item">
+      <span class="balance-label">AVAILABLE BALANCE</span>
+      <strong id="availableBalance">—</strong>
+    </div>
+
+    <div class="balance-item">
+      <span class="balance-label">TODAY'S P/L</span>
+      <strong class="profit-text" id="todayPnl">—</strong>
+    </div>
+
+    <div class="balance-item">
+      <span class="balance-label">WIN RATE</span>
+      <strong id="winRate">—</strong>
+    </div>
+
+    <div class="balance-item">
+      <span class="balance-label">TOTAL CYCLES</span>
+      <strong id="totalCycles">—</strong>
+    </div>
+
+  </section>
+
+  <!-- Balance Slider Card -->
+  <section class="balance-slider-card">
+    <div class="balance-slider-header">
+      <div>
+        <span class="balance-slider-label">BALANCE SLIDER</span>
+        <h3>Select Trade Balance</h3>
+      </div>
+      <span class="balance-slider-amount" id="selectedBalanceDisplay">$0.00</span>
+    </div>
+    <div class="balance-input-wrap">
+      <label for="balanceInput">Balance Amount (USD)</label>
+      <input type="number" id="balanceInput" min="0" step="0.01" value="0" placeholder="Enter amount">
+    </div>
+    <input type="range" id="balanceSlider" min="0" max="0" step="0.01" value="0" aria-label="Select balance">
+    <div class="balance-slider-limits">
+      <span>$0.00</span>
+      <span id="maxBalanceDisplay">Max: $0.00</span>
+    </div>
+  </section>
+
+  <!-- Trade Code Card -->
+  <section class="trade-code-card">
+    <div class="trade-code-header">
+      <span class="trade-code-label">TRADE CODE</span>
+      <h3>Trade Code</h3>
+      <p>Enter your valid trade code</p>
+    </div>
+    <div class="trade-code-input-wrap">
+      <input type="text" id="tradeCodeInput" placeholder="Enter trade code" autocomplete="off">
+    </div>
+    <div class="trade-direction-buttons">
+      <button type="button" id="sellTradeBtn" class="trade-direction-btn sell-btn">Sell</button>
+      <button type="button" id="buyTradeBtn" class="trade-direction-btn buy-btn">Buy</button>
+    </div>
+  </section>
+
+  <section class="section-block">
+
+    <div class="section-header">
+      <div>
+        <div class="eyebrow">TRADE HISTORY</div>
+        <h2>Recent Trade Cycles</h2>
+        <p>Latest settled trading activity on your account.</p>
+      </div>
+
+      <div class="history-controls">
+        <input
+          type="search"
+          id="tradeSearch"
+          class="search-input"
+          placeholder="Search trade..."
+          autocomplete="off"
+        >
+
+        <select id="tradeFilter" class="filter-select">
+          <option value="all">All Trades</option>
+          <option value="profit">Profit</option>
+          <option value="loss">Loss</option>
+          <option value="buy">BUY</option>
+          <option value="sell">SELL</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="table-card">
+
+      <div class="table-wrap">
+        <table class="trade-table">
+          <thead>
+            <tr>
+              <th>DATE / TIME</th>
+              <th>TRADE</th>
+              <th>CURRENCY</th>
+              <th>AMOUNT</th>
+              <th>RESULT</th>
+              <th>CLIENT P/L</th>
+              <th>STATUS</th>
+            </tr>
+          </thead>
+
+          <tbody id="tradeTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="empty-state hidden" id="tradeEmptyState">
+        <div class="empty-icon">⌁</div>
+        <h3>No matching trades</h3>
+        <p>Try changing the search text or trade filter.</p>
+      </div>
+
+    </div>
+
+  </section>
+
+  <section class="section-block">
+
+    <div class="section-header simple-header">
+      <div>
+        <div class="eyebrow">PERFORMANCE</div>
+        <h2>Trading Performance</h2>
+        <p>A quick overview of your settled trading results.</p>
+      </div>
+    </div>
+
+    <div class="performance-grid">
+
+      <article class="performance-card">
+        <div class="performance-icon">↗</div>
+        <span class="performance-label">TOTAL PROFIT</span>
+        <strong class="profit-text" id="totalProfit">—</strong>
+        <small>Client share from settled cycles</small>
+      </article>
+
+      <article class="performance-card">
+        <div class="performance-icon">✓</div>
+        <span class="performance-label">WINNING CYCLES</span>
+        <strong id="winningCycles">—</strong>
+        <small>Profitable settled trades</small>
+      </article>
+
+      <article class="performance-card">
+        <div class="performance-icon">−</div>
+        <span class="performance-label">LOSING CYCLES</span>
+        <strong id="losingCycles">—</strong>
+        <small>Losses are reflected in net P/L</small>
+      </article>
+
+      <article class="performance-card">
+        <div class="performance-icon">◷</div>
+        <span class="performance-label">AVG. CYCLE</span>
+        <strong id="averageCycle">—</strong>
+        <small>Average client result per cycle</small>
+      </article>
+
+    </div>
+
+  </section>
+
+  <section class="section-block">
+
+    <div class="section-header simple-header">
+      <div>
+        <div class="eyebrow">HOW IT WORKS</div>
+        <h2>Trade Cycle Flow</h2>
+        <p>Your trade cycle follows a simple managed process.</p>
+      </div>
+    </div>
+
+    <div class="flow-grid">
+
+      <article class="flow-card">
+        <span class="flow-number">01</span>
+        <div>
+          <h3>Signal</h3>
+          <p>A trade signal is issued for the active trading window.</p>
+        </div>
+      </article>
+
+      <article class="flow-card">
+        <span class="flow-number">02</span>
+        <div>
+          <h3>Direction</h3>
+          <p>Select BUY or SELL according to the available signal.</p>
+        </div>
+      </article>
+
+      <article class="flow-card">
+        <span class="flow-number">03</span>
+        <div>
+          <h3>Settlement</h3>
+          <p>The cycle is settled by the trading desk after the active window.</p>
+        </div>
+      </article>
+
+      <article class="flow-card">
+        <span class="flow-number">04</span>
+        <div>
+          <h3>Result</h3>
+          <p>Your client share is reflected in the settled account balance.</p>
+        </div>
+      </article>
+
+    </div>
+
+  </section>
+
+  <section class="notice-card">
+
+    <div class="notice-icon">i</div>
+
+    <div>
+      <h3>Trading Schedule</h3>
+      <p>
+        Forex trading is closed on Saturday and Sunday. No forex trading result
+        is generated on weekends. Daily settlement is processed at midnight
+        Thailand Time.
+      </p>
+    </div>
+
+  </section>
+
+  <section class="support-card">
+
+    <div>
+      <div class="eyebrow">NEED HELP?</div>
+      <h2>Questions about your trading activity?</h2>
+      <p>Contact PipZoNe support if you need help reviewing a trade cycle or settlement.</p>
+    </div>
+
+       <a class="support-btn" href="../settings/support/indexsupport.html">Contact Support</a>
+
+  </section>
+
+</main>
+
+<footer class="page-footer">
+  <span>© 2026 PipZoNe</span>
+  <span>Managed Forex &amp; Crypto Trading</span>
+</footer>
+
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../supabase-config.js"></script>
+<script src="../../shared/layout.js"></script>
+<script src="./scripttrading.js"></script>
+
+</body>
+</html>

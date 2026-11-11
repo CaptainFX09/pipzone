@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="PipZoNe — Refer & Earn Program">
+<title>Refer & Earn | PipZoNe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="../../assets/favicon/favicon.png" />
+<link rel="stylesheet" href="../../shared/layout.css">
+<link rel="stylesheet" href="./styleReferral.css">
+<script>
+(function(){
+  const savedTheme=localStorage.getItem("pipzone_theme")||"dark";
+  document.documentElement.setAttribute("data-theme",savedTheme);
+})();
+</script>
+</head>
+<body class="referral-body">
+
+<div class="ambient-glow ambient-glow-one"></div>
+<div class="ambient-glow ambient-glow-two"></div>
+
+<div class="referral-page" id="pageContent">
+
+<main class="referral-main">
+
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">PARTNERSHIP PROGRAM</p>
+    <h1>Refer &amp; Earn</h1>
+    <p class="page-description">
+      Invite new partners to PipZoNe and earn referral rewards when their eligible capital deposits are approved.
+    </p>
+  </div>
+
+  <div class="security-badge">
+    <span class="security-dot"></span>
+    Partner Program
+  </div>
+</section>
+
+<section class="referral-hero-card">
+
+  <div class="referral-hero-content">
+
+    <div class="hero-copy">
+      <p class="card-label">YOUR PARTNER PROGRAM</p>
+      <h2>Share PipZoNe.<br><span>Earn with your network.</span></h2>
+      <p>
+        Your unique referral link lets new partners join PipZoNe through your invitation.
+        Once your first approved capital deposit is completed, your referral link becomes active.
+      </p>
+    </div>
+
+    <div class="reward-preview">
+
+      <div class="reward-preview-label">REFERRAL REWARD</div>
+
+      <div class="reward-tier">
+        <div>
+          <span>Deposits below $500</span>
+          <small>Eligible approved deposit</small>
+        </div>
+        <strong>2%</strong>
+      </div>
+
+      <div class="reward-tier featured-tier">
+        <div>
+          <span>Deposits $500 or more</span>
+          <small>Eligible approved deposit</small>
+        </div>
+        <strong>8%</strong>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<section class="referral-program-card">
+
+  <div class="card-header">
+    <div>
+      <p class="card-label">YOUR REFERRAL LINK</p>
+      <h2>Invite Partners</h2>
+    </div>
+
+    <span class="program-status" id="programStatus">
+      ACTIVE
+    </span>
+  </div>
+
+  <div class="referral-content" id="referralUnlockedView">
+
+    <div class="referral-link-box">
+
+      <div class="referral-link-content">
+        <span class="link-label">YOUR UNIQUE LINK</span>
+        <span class="referral-url mono" id="referralLinkText">
+          https://pipzone.trade/signup/?ref=PZ13501
+        </span>
+      </div>
+
+      <button type="button" class="copy-btn" id="copyRefLinkBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span id="copyRefBtnLabel">Copy</span>
+      </button>
+
+    </div>
+
+    <div class="ref-stats-grid">
+
+      <div class="ref-stat-box">
+        <div class="ref-stat-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <div class="ref-stat-num mono" id="totalReferrals">14</div>
+        <div class="ref-stat-name">Total Referrals</div>
+      </div>
+
+      <div class="ref-stat-box">
+        <div class="ref-stat-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v20"></path>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+        </div>
+        <div class="ref-stat-num mono">$42,500</div>
+        <div class="ref-stat-name">Referred Capital</div>
+      </div>
+
+      <div class="ref-stat-box">
+        <div class="ref-stat-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v20"></path>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+        </div>
+        <div class="ref-stat-num mono text-profit">+$2,550.00</div>
+        <div class="ref-stat-name">Referral Rewards</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div id="referralLockedView" class="referral-content hidden">
+
+    <div class="locked-state-banner">
+
+      <div class="lock-icon-wrap">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+
+      <strong>Referral Link Locked</strong>
+
+      <p>
+        Make your first capital deposit ($100 minimum) to activate your unique affiliate partner link and begin earning referral rewards.
+      </p>
+
+      <a href="../deposit/indexDeposit.html" class="dash-btn btn-deposit">
+        Make First Deposit
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+<section class="reward-section">
+
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">HOW IT WORKS</p>
+      <h2>Referral Reward Structure</h2>
+    </div>
+  </div>
+
+  <div class="reward-grid">
+
+    <div class="reward-card">
+      <div class="reward-card-top">
+        <span class="tier-number">01</span>
+        <span class="reward-percent">2%</span>
+      </div>
+
+      <h3>Deposits below $500</h3>
+
+      <p>
+        When an invited partner makes an approved capital deposit of $499.99 or less, the eligible referral reward is 2%.
+      </p>
+
+      <div class="reward-example">
+        <span>Example</span>
+        <strong>$400 deposit → $8 reward</strong>
+      </div>
+    </div>
+
+    <div class="reward-card featured-reward-card">
+      <div class="reward-card-top">
+        <span class="tier-number">02</span>
+        <span class="reward-percent">8%</span>
+      </div>
+
+      <h3>Deposits of $500+</h3>
+
+      <p>
+        When an invited partner makes an approved capital deposit of $500 or more, the eligible referral reward is 8%.
+      </p>
+
+      <div class="reward-example">
+        <span>Example</span>
+        <strong>$1,000 deposit → $80 reward</strong>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<section class="steps-section">
+
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">GET STARTED</p>
+      <h2>Three Simple Steps</h2>
+    </div>
+  </div>
+
+  <div class="steps-grid">
+
+    <div class="step-card">
+      <span class="step-number">01</span>
+      <div class="step-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+          <path d="M7 9h10"></path>
+          <path d="M7 13h6"></path>
+        </svg>
+      </div>
+      <h3>Activate</h3>
+      <p>
+        Complete your first approved capital deposit of at least $100 to unlock your referral link.
+      </p>
+    </div>
+
+    <div class="step-card">
+      <span class="step-number">02</span>
+      <div class="step-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="8.5" cy="7" r="4"></circle>
+          <path d="M20 8v6"></path>
+          <path d="M23 11h-6"></path>
+        </svg>
+      </div>
+      <h3>Invite</h3>
+      <p>
+        Share your unique PipZoNe referral link with people you want to invite to the platform.
+      </p>
+    </div>
+
+    <div class="step-card">
+      <span class="step-number">03</span>
+      <div class="step-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2v20"></path>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+      </div>
+      <h3>Earn</h3>
+      <p>
+        Eligible approved deposits from your invited partners generate referral rewards according to the applicable tier.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+<section class="referral-rules">
+
+  <div class="rules-icon">
+    !
+  </div>
+
+  <div>
+    <p class="eyebrow">IMPORTANT</p>
+    <h2>Referral Program Rules</h2>
+
+    <ul>
+      <li>Referral rewards are based on eligible approved capital deposits.</li>
+      <li>Deposits of $499.99 or less qualify for a 2% referral reward.</li>
+      <li>Deposits of $500 or more qualify for an 8% referral reward.</li>
+      <li>Your referral link unlocks after your first approved capital deposit.</li>
+      <li>Self-referrals are not permitted.</li>
+      <li>Only genuine partner referrals are eligible for the program.</li>
+    </ul>
+  </div>
+
+</section>
+
+<section class="support-card">
+
+  <div class="support-icon">?</div>
+
+  <div>
+    <strong>Need help with referrals?</strong>
+    <p>
+      Contact PipZoNe support if you have questions about your referral link or reward eligibility.
+    </p>
+    <a class="support-btn" href="../settings/support/indexsupport.html">Contact Support →</a>
+  </div>
+
+</section>
+
+</main>
+
+<footer class="referral-footer">
+  <div>
+    <strong>Pip<span>ZoNe</span></strong>
+    <span>Managed Forex &amp; Crypto Trading</span>
+  </div>
+
+     <a class="support-btn" href="../settings/support/indexsupport.html">Contact Support</a>
+</footer>
+
+<div class="toast-container" id="toastContainer"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../supabase-config.js"></script>
+<script src="../../shared/layout.js"></script>
+<script src="./scriptReferral.js"></script>
+</body>
+</html>

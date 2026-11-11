@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Messages | PipZoNe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="../../assets/favicon/favicon.png" />
+<link rel="stylesheet" href="../../shared/layout.css">
+<link rel="stylesheet" href="./stylemessages.css">
+<script>
+(function(){
+  const savedTheme=localStorage.getItem("pipzone_theme")||"dark";
+  document.documentElement.setAttribute("data-theme",savedTheme);
+})();
+</script>
+</head>
+<body>
+
+<div class="page-shell">
+
+  <main class="page-content" id="pageContent">
+
+    <section class="page-heading">
+      <div>
+        <div class="eyebrow">CLIENT COMMUNICATION</div>
+        <h1>Messages</h1>
+        <p>Stay connected with the PipZoNe support and execution desk.</p>
+      </div>
+
+      <div class="secure-badge">
+        <span class="secure-dot"></span>
+        Secure Messaging
+      </div>
+    </section>
+
+    <section class="messages-layout">
+
+      <div class="messages-card">
+
+        <div class="messages-header">
+          <div>
+            <h2>Inbox</h2>
+            <p id="messageCountLabel">Your latest PipZoNe messages.</p>
+          </div>
+
+          <div class="message-header-actions">
+            <button class="secondary-btn" id="markAllReadBtn" type="button">
+              Mark all as read
+            </button>
+          </div>
+        </div>
+
+        <div class="message-toolbar">
+          <div class="message-tabs" role="tablist">
+            <button class="message-tab active" data-filter="all" type="button">
+              All
+              <span id="allCount">0</span>
+            </button>
+            <button class="message-tab" data-filter="unread" type="button">
+              Unread
+              <span id="unreadCount">0</span>
+            </button>
+            <button class="message-tab" data-filter="support" type="button">
+              Support
+            </button>
+            <button class="message-tab" data-filter="trading" type="button">
+              Trading
+            </button>
+          </div>
+
+          <label class="search-box">
+            <span class="search-icon">⌕</span>
+            <input
+              type="search"
+              id="messageSearch"
+              placeholder="Search messages..."
+              autocomplete="off"
+            >
+          </label>
+        </div>
+
+        <div class="message-list" id="messageList"></div>
+
+        <div class="empty-state hidden" id="messageEmptyState">
+          <div class="empty-icon">✉</div>
+          <h3>No messages found</h3>
+          <p>There are no messages matching your current search or filter.</p>
+        </div>
+
+      </div>
+
+      <aside class="messages-sidebar">
+
+        <div class="side-card">
+          <div class="side-icon">✓</div>
+          <h3>Official Communication</h3>
+          <p>
+            Important account, trading, deposit and withdrawal information
+            may appear here.
+          </p>
+        </div>
+
+        <div class="side-card">
+          <div class="side-icon">↗</div>
+          <h3>Trading Desk</h3>
+          <p>
+            Trading-related updates can include cycle activity, settlement
+            information and execution notices.
+          </p>
+        </div>
+
+        <div class="side-card support-card">
+          <div class="side-icon">?</div>
+          <h3>Need Help?</h3>
+          <p>
+            Contact the PipZoNe support team if you need assistance with
+            your account.
+          </p>
+          <a href="../settings/support/indexsupport.html"" class="support-link">
+            Contact Support
+          </a>
+        </div>
+
+      </aside>
+
+    </section>
+
+    <section class="notice-card">
+      <div class="notice-icon">i</div>
+      <div>
+        <h3>Message Security</h3>
+        <p>
+          PipZoNe will never ask you to share your password, OTP or private
+          wallet recovery information through a message.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="page-footer">
+    <span>© 2026 PipZoNe</span>
+    <span>Managed Forex &amp; Crypto Trading</span>
+  </footer>
+
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../supabase-config.js"></script>
+<script src="../../shared/layout.js"></script>
+<script src="./scriptmessages.js"></script>
+</body>
+</html>

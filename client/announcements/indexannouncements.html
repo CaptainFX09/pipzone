@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Announcements | PipZoNe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<link rel="icon" type="image/png" href="../../assets/favicon/favicon.png" />
+<link rel="stylesheet" href="../../shared/layout.css">
+<link rel="stylesheet" href="../notifications.css">
+<link rel="stylesheet" href="./styleannouncements.css">
+<script>
+(function(){
+  const savedTheme=localStorage.getItem("pipzone_theme")||"dark";
+  document.documentElement.setAttribute("data-theme",savedTheme);
+})();
+</script>
+</head>
+<body class="dashboard-body">
+<div class="dash-glow glow-top" aria-hidden="true"></div>
+<div class="dash-glow glow-bottom" aria-hidden="true"></div>
+
+<div class="app-layout" id="pageContent">
+
+  <!-- Main Workspace -->
+  <div class="dash-main-area">
+    <!-- Existing Announcements Page -->
+    <div class="page-shell">
+      <main class="main-content">
+        <section class="page-heading">
+          <div>
+            <div class="eyebrow">PIPZONE UPDATES</div>
+            <h1>Announcements</h1>
+            <p>Stay informed about platform updates, trading activity, settlements, and important notices from the PipZoNe desk.</p>
+          </div>
+          <div class="secure-badge"><span class="secure-dot"></span>Official Updates</div>
+        </section>
+
+        <section class="announcement-hero">
+          <div class="hero-copy">
+            <span class="hero-kicker">LATEST FROM THE DESK</span>
+            <h2>Important updates, all in one place.</h2>
+            <p>Check here regularly for PipZoNe platform announcements, trading schedule notices, maintenance updates, and client information.</p>
+          </div>
+          <div class="hero-symbol"><span>↗</span></div>
+        </section>
+
+        <section class="announcement-layout">
+          <div class="announcement-main">
+            <div class="section-toolbar">
+              <div>
+                <h2>Latest Announcements</h2>
+                <p>Official notices published by PipZoNe.</p>
+              </div>
+              <div class="announcement-count" id="announcementCount">0 Updates</div>
+            </div>
+
+            <div class="announcement-list" id="announcementList"></div>
+
+            <div class="empty-state hidden" id="announcementEmptyState">
+              <div class="empty-icon">◌</div>
+              <h3>No announcements found</h3>
+              <p>No announcements have been published yet. Official notices will appear here.</p>
+            </div>
+          </div>
+
+          <aside class="announcement-sidebar">
+            <div class="side-card">
+              <div class="side-card-icon">◷</div>
+              <h3>Daily Settlement</h3>
+              <p>Trading results are settled daily at midnight Thailand Time.</p>
+              <div class="side-meta">Settlement cycle · 00:00 ICT</div>
+            </div>
+
+            <div class="side-card">
+              <div class="side-card-icon">◎</div>
+              <h3>Forex Schedule</h3>
+              <p>Forex trading is closed on Saturday and Sunday. No forex result is generated during the weekend.</p>
+              <div class="side-meta">Weekend schedule</div>
+            </div>
+
+            <div class="side-card">
+              <div class="side-card-icon">!</div>
+              <h3>Need Help?</h3>
+              <p>For account or transaction-related questions, contact PipZoNe support.</p>
+              <a href="../settings/support/indexsupport.html" class="side-link">Contact Support</a>
+            </div>
+          </aside>
+        </section>
+
+        <section class="notice-card">
+          <div class="notice-icon">i</div>
+          <div>
+            <h3>Important</h3>
+            <p>Always rely on announcements published inside your PipZoNe client portal for official platform notices. Never share your password, OTP, or account credentials with anyone.</p>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span>© 2026 PipZoNe</span>
+        <span>Managed Forex &amp; Crypto Trading</span>
+      </footer>
+      <div class="toast-container" id="toastContainer"></div>
+    </div>
+  </div>
+</div>
+
+<div id="notificationsModalMount"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../supabase-config.js"></script>
+<script src="../../shared/layout.js"></script>
+<script src="./scriptannouncements.js"></script>
+<script>
+</script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Updates | PipZoNe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="../../assets/favicon/favicon.png" />
+<link rel="stylesheet" href="../../shared/layout.css">
+<link rel="stylesheet" href="./styleupdates.css">
+<script>
+(function(){
+  const savedTheme=localStorage.getItem("pipzone_theme")||"dark";
+  document.documentElement.setAttribute("data-theme",savedTheme);
+})();
+</script>
+</head>
+
+<body>
+
+<div class="page-shell">
+
+
+<main class="main-content" id="pageContent">
+
+  <section class="page-heading">
+    <div>
+      <div class="eyebrow">PIPZONE CHANGELOG</div>
+      <h1>Updates</h1>
+      <p>Follow platform improvements, new client features, interface changes, and service updates released across PipZoNe.</p>
+    </div>
+
+    <div class="secure-badge">
+      <span class="secure-dot"></span>
+      Platform Changelog
+    </div>
+  </section>
+
+  <section class="update-hero">
+    <div class="hero-copy">
+      <span class="hero-kicker">PLATFORM EVOLUTION</span>
+      <h2>Built better, one update at a time.</h2>
+      <p>Review the latest PipZoNe improvements and see what has changed across your client experience.</p>
+    </div>
+
+    <div class="version-card">
+      <span class="version-label">CURRENT VERSION</span>
+      <strong>1.0</strong>
+      <span class="version-status">Stable release</span>
+    </div>
+  </section>
+
+  <section class="updates-layout">
+
+    <div class="updates-main">
+
+      <div class="section-toolbar">
+        <div>
+          <h2>Release History</h2>
+          <p>Recent PipZoNe platform changes.</p>
+        </div>
+
+        <div class="update-count" id="updateCount">
+          0 Updates
+        </div>
+      </div>
+
+      <div class="update-list" id="updateList"></div>
+
+      <div class="empty-state hidden" id="updateEmptyState">
+        <div class="empty-icon">◌</div>
+        <h3>No updates found</h3>
+        <p>No platform updates have been published yet. New releases will appear here.</p>
+      </div>
+
+    </div>
+
+    <aside class="updates-sidebar">
+
+      <div class="side-card">
+        <div class="side-card-icon">✓</div>
+        <h3>Stable Platform</h3>
+        <p>PipZoNe updates are introduced carefully to keep the client experience stable and reliable.</p>
+        <div class="side-meta">Release channel · Stable</div>
+      </div>
+
+      <div class="side-card">
+        <div class="side-card-icon">↗</div>
+        <h3>Client Experience</h3>
+        <p>New dashboard sections and tools are being separated into dedicated pages for a cleaner experience.</p>
+        <div class="side-meta">Interface improvements</div>
+      </div>
+
+      <div class="side-card">
+        <div class="side-card-icon">i</div>
+        <h3>Stay Informed</h3>
+        <p>For important operational notices, always check the Announcements section as well.</p>
+        <a href="../announcements/indexannouncements.html" class="side-link">
+          View Announcements →
+        </a>
+      </div>
+
+    </aside>
+
+  </section>
+
+  <section class="release-notes">
+
+    <div class="release-notes-heading">
+      <div>
+        <div class="eyebrow">UPDATE CATEGORIES</div>
+        <h2>What these updates cover</h2>
+      </div>
+    </div>
+
+    <div class="category-grid">
+
+      <div class="category-card">
+        <div class="category-icon">◎</div>
+        <h3>Client Portal</h3>
+        <p>Dashboard, profile, account, wallet, and navigation improvements.</p>
+      </div>
+
+      <div class="category-card">
+        <div class="category-icon">↗</div>
+        <h3>Trading</h3>
+        <p>Trading activity, trade-cycle, result, and settlement experience improvements.</p>
+      </div>
+
+      <div class="category-card">
+        <div class="category-icon">↓</div>
+        <h3>Transactions</h3>
+        <p>Deposit, withdrawal, and transaction history improvements.</p>
+      </div>
+
+      <div class="category-card">
+        <div class="category-icon">◈</div>
+        <h3>Security</h3>
+        <p>Account protection, verification, and security-related improvements.</p>
+      </div>
+
+    </div>
+
+  </section>
+
+  <section class="notice-card">
+    <div class="notice-icon">i</div>
+    <div>
+      <h3>Important</h3>
+      <p>
+        Platform updates describe product and interface changes. For operational notices, trading schedules, settlement information, or urgent client communications, refer to the Announcements section.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span>© 2026 PipZoNe</span>
+  <span>Managed Forex &amp; Crypto Trading</span>
+</footer>
+
+<div class="toast-container" id="toastContainer"></div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../supabase-config.js"></script>
+<script src="../../shared/layout.js"></script>
+<script src="./scriptupdates.js"></script>
+</body>
+</html>

@@ -1,0 +1,1511 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+
+    <!-- ============================================================
+         Document Metadata
+    ============================================================= -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>PipZoNe | Managed Forex & Crypto Trading</title>
+
+    <meta
+      name="description"
+      content="PipZoNe managed forex and crypto trading with a 60% client / 40% desk profit split, $100 minimum deposit, and USDT settlement."
+    />
+
+    <!-- ============================================================
+         Site Favicon
+    ============================================================= -->
+    <link rel="icon" type="image/png" href="assets/favicon/favicon.png" />
+
+    <!-- ============================================================
+         Google Fonts
+    ============================================================= -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- ============================================================
+         External JavaScript Libraries
+    ============================================================= -->
+
+    <!-- Lightweight Charts -->
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+
+    <!-- Supabase JavaScript Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- PipZoNe Root Supabase Configuration -->
+    <script src="supabase-config.js"></script>
+
+    <!-- ============================================================
+         Main Stylesheet
+    ============================================================= -->
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./mobile.css?v=1" />
+	<link rel="icon" type="image/svg+xml" href="assets/favicon/favicon.png" />
+    <!-- ============================================================
+         Theme Restore
+         Restores the saved PipZoNe theme before page render.
+    ============================================================= -->
+    <script>
+      (function() {
+        const savedTheme = localStorage.getItem('pipzone_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      })();
+    </script>
+
+  </head>
+
+  <body>
+
+    <!-- ============================================================
+         Ambient Background Effects
+    ============================================================= -->
+    <div class="ambient-glow glow-top" aria-hidden="true"></div>
+    <div class="ambient-glow glow-center" aria-hidden="true"></div>
+
+    <!-- ============================================================
+         1. Sticky Header
+    ============================================================= -->
+    <header class="site-header" id="mainHeader">
+
+      <div class="header-inner container">
+
+        <!-- Brand Logo -->
+        <a href="#hero" class="brand-logo" aria-label="PipZoNe Home">
+          <img src="assets/logo/Logo.png" alt="PipZoNe logo" class="logo-img" />
+          <span class="brand-name">Pip<span class="brand-accent">ZoNe</span></span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="desktop-nav" aria-label="Main Navigation">
+          <a href="#howItWorks" class="nav-link">How it works</a>
+          <a href="#calculator" class="nav-link">Calculator</a>
+          <a href="#performance" class="nav-link">Performance</a>
+          <a href="#faq" class="nav-link">FAQ</a>
+          <a href="#contact" class="nav-link">Contact</a>
+        </nav>
+
+        <!-- Right Header Actions -->
+        <div class="header-actions">
+
+          <!-- Theme Toggle -->
+          <button
+            id="themeToggleBtn"
+            class="icon-btn"
+            aria-label="Toggle light or dark theme"
+            title="Toggle theme"
+          >
+            <svg
+              class="theme-icon-sun"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+
+            <svg
+              class="theme-icon-moon"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+
+          <!-- Authentication Links -->
+          <a href="signin/index.html" class="btn-ghost">Sign in</a>
+          <a href="signup/index.html" class="btn-primary">Create account</a>
+
+          <!-- Mobile Hamburger Toggle -->
+          <button
+            class="mobile-menu-btn"
+            id="mobileMenuBtn"
+            aria-label="Open navigation menu"
+          >
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- ==========================================================
+           Mobile Navigation Drawer
+      =========================================================== -->
+      <div class="mobile-drawer hidden" id="mobileDrawer">
+
+        <nav class="mobile-nav-links">
+          <a href="#howItWorks" class="mobile-nav-link">How it works</a>
+          <a href="#calculator" class="mobile-nav-link">Calculator</a>
+          <a href="#performance" class="mobile-nav-link">Performance</a>
+          <a href="#faq" class="mobile-nav-link">FAQ</a>
+          <a href="#contact" class="mobile-nav-link">Contact</a>
+        </nav>
+
+        <div class="mobile-drawer-actions">
+          <a href="signin/index.html" class="btn-ghost full-width">Sign in</a>
+          <a href="signup/index.html" class="btn-primary full-width">Create account</a>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- ============================================================
+         Main Page Content
+    ============================================================= -->
+    <main id="mainContent">
+
+      <!-- ==========================================================
+           2. Hero Section
+      =========================================================== -->
+      <section class="hero-section" id="hero">
+
+        <div class="container hero-grid">
+
+          <!-- Left Hero Column -->
+          <div class="hero-text-col">
+
+            <!-- Hero Badge -->
+            <div class="hero-pill-badge">
+              <span class="pill-dot"></span>
+              <span>Managed Forex & Crypto Trading</span>
+            </div>
+
+            <!-- Hero Heading -->
+            <h1 class="hero-heading">
+              Your capital,<br />
+              our desk, <span class="highlight-serif">one shared</span> outcome.
+            </h1>
+
+            <!-- Hero Description -->
+            <p class="hero-description">
+              PipZoNe manages forex and crypto trading with a simple
+              <strong class="text-white">60% client / 40% desk</strong>
+              profit split. There is no flat management fee, and daily results
+              are settled at midnight Thailand Time.
+            </p>
+
+            <!-- Hero Desk Notes -->
+            <div class="hero-desk-notes">
+
+              <div class="desk-note-item">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>No Flat Management Fee</span>
+              </div>
+
+              <div class="desk-note-item">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Settled in Tether (USDT TRC20) / Tether (USDT BEP20)</span>
+              </div>
+
+              <div class="desk-note-item">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Forex desks closed weekends</span>
+              </div>
+
+            </div>
+
+            <!-- Hero CTA Buttons -->
+            <div class="hero-cta-group">
+
+              <a href="signup/index.html" class="btn-primary btn-large">
+                <span>Create account</span>
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+
+              <a href="#howItWorks" class="btn-secondary btn-large">
+                See how it works
+              </a>
+
+            </div>
+          </div>
+
+          <!-- ========================================================
+               Right Hero Column
+               Animated Market Overview Card
+          ========================================================= -->
+          <div class="hero-card-col">
+
+            <div class="hero-terminal">
+
+              <!-- Terminal Visual Effects -->
+              <div class="terminal-scanline"></div>
+              <div class="terminal-corner terminal-corner-tl"></div>
+              <div class="terminal-corner terminal-corner-tr"></div>
+              <div class="terminal-corner terminal-corner-bl"></div>
+              <div class="terminal-corner terminal-corner-br"></div>
+
+              <!-- Terminal Header -->
+              <div class="terminal-head">
+
+                <div class="terminal-brand">
+                  <span class="terminal-live-dot"></span>
+                  <span>LIVE MARKET TERMINAL</span>
+                </div>
+
+                <div class="terminal-status">
+                  <span class="terminal-status-dot"></span>
+                  REAL-TIME FEED
+                </div>
+
+              </div>
+
+              <!-- Market Selection Bar -->
+              <div class="terminal-market-bar">
+
+                <div class="market-tabs" id="heroAssetTabs">
+                  <button
+                    type="button"
+                    class="market-tab active"
+                    data-asset="BTC"
+                    onclick="switchHeroAsset('BTC')"
+                  >
+                    ₿ BTC/USDT
+                  </button>
+
+                  <button
+                    type="button"
+                    class="market-tab"
+                    data-asset="ETH"
+                    onclick="switchHeroAsset('ETH')"
+                  >
+                    Ξ ETH/USDT
+                  </button>
+                </div>
+
+                <div class="terminal-pair">BINANCE · SPOT</div>
+
+              </div>
+
+              <!-- Current Market Price -->
+              <div class="terminal-price-row">
+
+                <div>
+                  <div class="terminal-price-label">CURRENT MARKET PRICE</div>
+                  <div class="market-price" id="heroPrice">—</div>
+                </div>
+
+                <div class="terminal-change-box">
+                  <div class="terminal-price-label">SESSION MOVE</div>
+                  <div class="market-change" id="heroChange">—</div>
+                </div>
+
+              </div>
+
+              <!-- Chart Header -->
+              <div class="terminal-chart-head">
+
+                <div class="terminal-chart-label">
+                  <span class="chart-pulse"></span>
+                  CANDLESTICK / LIVE
+                </div>
+
+                <div class="market-tf-row terminal-tf-row" id="heroTfRow">
+                  <button type="button" class="tf-chip active" data-tf="1m">1m</button>
+                  <button type="button" class="tf-chip" data-tf="5m">5m</button>
+                  <button type="button" class="tf-chip" data-tf="15m">15m</button>
+                  <button type="button" class="tf-chip" data-tf="1h">1h</button>
+                  <button type="button" class="tf-chip" data-tf="4h">4h</button>
+                </div>
+
+              </div>
+
+              <!-- Live Market Chart -->
+              <div class="market-chart terminal-chart" id="heroChart"></div>
+
+              <!-- Terminal Bottom -->
+              <div class="terminal-bottom">
+
+                <div class="terminal-micro-stats">
+
+                  <div>
+                    <span>MARKET</span>
+                    <b id="heroMarketLabel">BTC/USDT</b>
+                  </div>
+
+                  <div>
+                    <span>STATUS</span>
+                    <b class="terminal-online">ONLINE</b>
+                  </div>
+
+                  <div>
+                    <span>DATA</span>
+                    <b>LIVE</b>
+                  </div>
+
+                </div>
+
+                <!-- Buy / Sell Actions -->
+                <div class="hero-trade-actions">
+                  <a href="signup/index.html" class="btn hero-sell-btn">Sell</a>
+                  <a href="signup/index.html" class="btn btn-gold hero-buy-btn">Buy</a>
+                </div>
+
+              </div>
+
+              <!-- Terminal Footer -->
+              <div class="terminal-footer">
+                <span>● LIVE MARKET DATA</span>
+                <span>BTC / ETH</span>
+                <span>1m — 4h</span>
+              </div>
+
+              <!-- Market Data Disclaimer -->
+              <div class="note">
+                Live market data — for information only, not trading advice or a signal to invest.
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============================================================
+           3. Core Platform Parameters Strip
+      ============================================================= -->
+      <section class="params-strip">
+
+        <div class="container params-grid">
+
+          <div class="param-box">
+            <span class="param-number mono">$100</span>
+            <span class="param-label">Minimum Deposit Capital</span>
+          </div>
+
+          <div class="param-divider" aria-hidden="true"></div>
+
+          <div class="param-box">
+            <span class="param-number mono highlight-green">60%</span>
+            <span class="param-label">Client Profit Share</span>
+          </div>
+
+          <div class="param-divider" aria-hidden="true"></div>
+
+          <div class="param-box">
+            <span class="param-number mono">Daily</span>
+            <span class="param-label">Daily Settlement at Midnight Thailand Time</span>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============================================================
+           4. Live Performance Stats Strip
+           Count-Up Numbers
+      ============================================================= -->
+      <section class="live-stats-strip">
+
+        <div class="container stats-summary-grid">
+
+          <!-- Total Deposits -->
+          <div class="stat-card-clean">
+
+            <div class="stat-icon-wrapper">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+            </div>
+
+            <div class="stat-content">
+              <div class="stat-data mono">
+                $<span id="liveDeposits" data-target="0">0</span>
+              </div>
+              <div class="stat-title">Total Verified Capital Deposited</div>
+            </div>
+
+          </div>
+
+          <!-- Total Withdrawals -->
+          <div class="stat-card-clean">
+
+            <div class="stat-icon-wrapper">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                <polyline points="17 6 23 6 23 12"></polyline>
+              </svg>
+            </div>
+
+            <div class="stat-content">
+              <div class="stat-data mono highlight-green">
+                $<span id="liveWithdrawals" data-target="0">0</span>
+              </div>
+              <div class="stat-title">Client Profit Withdrawals Paid</div>
+            </div>
+
+          </div>
+
+          <!-- Market Categories -->
+          <div class="stat-card-clean">
+
+            <div class="stat-icon-wrapper">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 14 14"></polyline>
+              </svg>
+            </div>
+
+            <div class="stat-content">
+              <div class="stat-data mono">
+                <span class="counter-num" data-target="3">0</span> Market Categories
+              </div>
+              <div class="stat-title">FX Majors · Gold (XAU) · Top Cryptos</div>
+            </div>
+
+          </div>
+
+          <!-- Net Alpha -->
+          <div class="stat-card-clean">
+
+            <div class="stat-icon-wrapper">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+            </div>
+
+            <div class="stat-content">
+              <div class="stat-data mono highlight-green">
+                +<span class="counter-num" data-target="14.2" data-decimals="1">0.0</span>%
+              </div>
+              <div class="stat-title">30-Day Moving Average Net Alpha</div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============================================================
+           5. How It Works
+           4 Clear Steps
+      ============================================================= -->
+      <section class="section-container" id="howItWorks">
+
+        <div class="container">
+
+          <div class="section-header text-center">
+            <span class="section-tag">Execution Pipeline</span>
+            <h2 class="section-title">How PipZoNe Operates</h2>
+            <p class="section-subtitle">
+              PipZoNe manages trading activity with a transparent 60% client / 40% desk profit-sharing structure.
+            </p>
+          </div>
+
+          <div class="steps-grid">
+
+            <!-- Step 1 -->
+            <div class="step-card">
+              <div class="step-badge mono">01</div>
+
+              <div class="step-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+
+              <h3 class="step-heading">Create Account</h3>
+              <p class="step-body">
+                Register with an email and secure password in under 60 seconds. No bloated questionnaires or cold phone calls.
+              </p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step-card">
+              <div class="step-badge mono">02</div>
+
+              <div class="step-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                  <line x1="2" y1="10" x2="22" y2="10"></line>
+                </svg>
+              </div>
+
+              <h3 class="step-heading">Deposit Capital</h3>
+              <p class="step-body">
+                Fund from $100 using Tether (USDT TRC20) or Tether (USDT BEP20). Your funds are confirmed on-chain and allocated into trading liquidity.
+              </p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-card">
+              <div class="step-badge mono">03</div>
+
+              <div class="step-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                  <polyline points="16 7 22 7 22 13"></polyline>
+                </svg>
+              </div>
+
+              <h3 class="step-heading">Capital is Traded</h3>
+              <p class="step-body">
+                Our desk trades forex, Spot Gold (XAUUSD), and selected crypto markets. Trading results can vary depending on market conditions.
+              </p>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="step-card highlight-step">
+              <div class="step-badge mono">04</div>
+
+              <div class="step-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="8.5" cy="7.5" r="4"></circle>
+                  <polyline points="17 11 19 13 23 9"></polyline>
+                </svg>
+              </div>
+
+              <h3 class="step-heading">Daily Settlement (60/40)</h3>
+              <p class="step-body">
+                Profits settle daily. You keep 60%, the desk retains 40%. Profit share is withdrawable anytime to your personal wallet.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           6. Interactive Profit-Split Calculator
+      ============================================================= -->
+      <section class="section-container bg-surface" id="calculator">
+
+        <div class="container">
+
+          <div class="section-header text-center">
+            <span class="section-tag">Interactive Simulation</span>
+            <h2 class="section-title">Transparent 60 / 40 Split Calculator</h2>
+            <p class="section-subtitle">
+              Adjust the modeled capital result to observe exact client proceeds versus desk remuneration in real time.
+            </p>
+          </div>
+
+          <div class="calc-card">
+
+            <!-- Calculator Controls -->
+            <div class="calc-controls">
+
+              <!-- Deposit Amount -->
+              <div class="calc-input-group">
+
+                <div class="calc-label-row">
+                  <label for="depositAmountSlider">Your Deposited Principal</label>
+                  <span class="calc-display-val mono" id="depositAmountDisplay">$5,000</span>
+                </div>
+
+                <input
+                  type="range"
+                  id="depositAmountSlider"
+                  min="100"
+                  max="50000"
+                  step="100"
+                  value="5000"
+                  class="range-slider"
+                />
+
+                <div class="range-marks">
+                  <span>$100 min</span>
+                  <span>$25,000</span>
+                  <span>$50,000</span>
+                </div>
+
+              </div>
+
+              <!-- Modeled Trading Gain -->
+              <div class="calc-input-group">
+
+                <div class="calc-label-row">
+                  <label for="modelResultSlider">Modeled Monthly Trading Gain</label>
+                  <span class="calc-display-val mono" id="modelResultDisplay">+8.5% (+$425.00)</span>
+                </div>
+
+                <input
+                  type="range"
+                  id="modelResultSlider"
+                  min="-2"
+                  max="25"
+                  step="0.5"
+                  value="8.5"
+                  class="range-slider"
+                />
+
+                <div class="range-marks">
+                  <span class="text-loss">-2.0% (Risk floor)</span>
+                  <span>+10.0%</span>
+                  <span class="text-profit">+25.0% (Bull desk)</span>
+                </div>
+
+              </div>
+
+              <!-- Calculator Rule -->
+              <div class="calc-rule-box">
+                <strong>No-Loss Management Rule:</strong>
+                <p>
+                  If a settlement cycle yields a net loss or zero profit, the desk receives
+                  <strong>$0.00</strong>. Desk compensation is 100% contingent on producing profitable results.
+                </p>
+              </div>
+
+            </div>
+
+            <!-- Calculator Results -->
+            <div class="calc-results-col">
+
+              <!-- Visual Split -->
+              <div class="split-visualizer">
+                <div class="split-bar-wrapper">
+
+                  <div
+                    class="split-segment client-bar"
+                    id="calcClientBar"
+                    style="width: 60%;"
+                  >
+                    <span>Client (60%)</span>
+                  </div>
+
+                  <div
+                    class="split-segment desk-bar"
+                    id="calcDeskBar"
+                    style="width: 40%;"
+                  >
+                    <span>Desk (40%)</span>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Output Cards -->
+              <div class="split-breakdown-cards">
+
+                <!-- Client Share -->
+                <div class="split-result-card client-result">
+
+                  <div class="split-result-title">
+                    <span class="avatar-dot client"></span>
+                    <span>Your 60% Share</span>
+                  </div>
+
+                  <div class="split-result-amount mono" id="calcClientPayout">
+                    +$255.00
+                  </div>
+
+                  <div class="split-result-note">
+                    Eligible profits can be requested for withdrawal
+                  </div>
+
+                </div>
+
+                <!-- Desk Share -->
+                <div class="split-result-card desk-result">
+
+                  <div class="split-result-title">
+                    <span class="avatar-dot desk"></span>
+                    <span>Desk 40% Share</span>
+                  </div>
+
+                  <div class="split-result-amount mono" id="calcDeskPayout">
+                    +$170.00
+                  </div>
+
+                  <div class="split-result-note">
+                    Retained by trading operations
+                  </div>
+
+                </div>
+
+              </div>
+
+              <!-- New Balance -->
+              <div class="calc-total-pill">
+                <span>New Total Portfolio Balance:</span>
+                <strong class="mono" id="calcNewBalance">$5,255.00</strong>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+		  <!-- ============================================================
+     7. Mobile App
+============================================================= -->
+<section class="section-container" id="app">
+  <div class="container">
+    <div class="app-promo-card">
+
+      <div class="app-promo-media">
+        <img
+          src="assets/app_banner/app_launch_banner.png"
+          alt="PipZoNe mobile app"
+          width="640" height="640"
+          loading="lazy"
+        />
+      </div>
+
+      <div class="app-promo-copy">
+        <span class="section-tag">PipZoNe Mobile App</span>
+        <h2 class="section-title">Your Account. Your Dashboard. One App.</h2>
+        <p>
+          The official PipZoNe Android app gives you convenient access to your
+          account, personal dashboard, balance updates, profit records,
+          deposits, withdrawals and transaction history, all in one place.
+        </p>
+
+        <div class="app-promo-actions">
+          <!-- APK ready hone par ye button on karein:
+          <a href="assets/app_banner/PipZoNe.apk" class="btn-primary btn-large" download>
+            <span>Download Android App</span>
+          </a>
+          -->
+          <a href="signin/index.html" class="btn-secondary btn-large">
+            Login to Dashboard
+          </a>
+        </div>
+		<p class="app-promo-note">Download the App • Stay Connected </p>
+        <p class="app-promo-note">Android only. Allow installs from this source when prompted.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+      <!-- ============================================================
+           8. Risk / Before You Deposit Section
+      ============================================================= -->
+      <section class="section-container bg-surface" id="riskSection">
+
+        <div class="container">
+
+          <div class="section-header text-center">
+            <span class="section-tag">Capital Protection Policy</span>
+            <h2 class="section-title">Before You Deposit</h2>
+            <p class="section-subtitle">
+              We believe full transparency builds long-term trader alignment. Understand our liquidity covenants before joining.
+            </p>
+          </div>
+
+          <div class="risk-cards-grid">
+
+            <!-- Trading Risk -->
+            <div class="risk-card">
+
+              <div class="risk-card-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                  <line x1="12" y1="9" x2="12" y2="13"></line>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+              </div>
+
+              <h3>Trading Involves Real Risk</h3>
+
+              <p>
+                Past returns do not guarantee future performance. Foreign exchange and digital assets fluctuate. The desk deploys automated stop-loss thresholds on every trade.
+              </p>
+
+            </div>
+
+            <!-- Principal Lock -->
+            <div class="risk-card">
+
+              <div class="risk-card-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+
+              <h3>40-Day Principal Lock</h3>
+
+              <p>
+                To avoid fire-sales and maintain liquidity depth during open swing positions, deposited principal is committed for a 40-day cycle before capital withdrawal.
+              </p>
+
+            </div>
+
+            <!-- Profit Withdrawals -->
+            <div class="risk-card">
+
+              <div class="risk-card-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+
+              <h3>Profits Withdrawable Anytime</h3>
+
+              <p>
+                Even while your principal capital is active in the 40-day cycle, all accrued 60% client profits can be withdrawn on demand without penalty. Withdrawals are processed within 5 minutes to 8 hours after approval.
+              </p>
+
+            </div>
+
+            <!-- On-Chain Verification -->
+            <div class="risk-card">
+
+              <div class="risk-card-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+
+              <h3>On-Chain USDT Verification</h3>
+
+              <p>
+                All deposits and withdrawals are processed via transparent blockchain rails (Tether (USDT TRC20) or Tether (USDT BEP20)) with verifiable transaction hashes and immutable timestamps.
+              </p>
+
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           9. FAQ Accordion
+      ============================================================= -->
+      <section class="section-container" id="faq">
+
+        <div class="container max-w-narrow">
+
+          <div class="section-header text-center">
+            <span class="section-tag">Frequently Asked Questions</span>
+            <h2 class="section-title">Everything You Need to Know</h2>
+            <p class="section-subtitle">
+              Direct answers regarding settlements, withdrawals, and risk management.
+            </p>
+          </div>
+
+          <div class="faq-accordion" id="faqAccordion">
+
+            <!-- FAQ 1 -->
+            <div class="faq-item">
+
+              <button class="faq-question-btn" aria-expanded="false">
+                <span>What is the minimum deposit required to start?</span>
+                <span class="faq-icon-chevron"></span>
+              </button>
+
+              <div class="faq-answer-panel">
+                <div class="faq-answer-content">
+                  The minimum deposit is <strong>$100</strong> in USDT (available via Tether (USDT TRC20) or Tether (USDT BEP20) networks). There is no upper limit. Larger allocations are managed across segmented liquidity sub-accounts for minimal market slippage.
+                </div>
+              </div>
+
+            </div>
+
+            <!-- FAQ 2 -->
+            <div class="faq-item">
+
+              <button class="faq-question-btn" aria-expanded="false">
+                <span>How does the 60% client / 40% desk split work?</span>
+                <span class="faq-icon-chevron"></span>
+              </button>
+
+              <div class="faq-answer-panel">
+                <div class="faq-answer-content">
+                  At the end of each daily settlement cycle, realized net profits generated by our desk trading are calculated. <strong>60% of the net profit</strong> is credited directly to your client balance, and <strong>40%</strong> is retained by the desk. If there is a flat or negative day, the desk takes <strong>$0</strong>.
+                </div>
+              </div>
+
+            </div>
+
+            <!-- FAQ 3 -->
+            <div class="faq-item">
+
+              <button class="faq-question-btn" aria-expanded="false">
+                <span>When can I withdraw my funds?</span>
+                <span class="faq-icon-chevron"></span>
+              </button>
+
+              <div class="faq-answer-panel">
+                <div class="faq-answer-content">
+                  Your <strong>profit earnings can be withdrawn anytime</strong>, 24/7, subject to withdrawal processing. You will receive your payout within <strong>5 minutes to 8 hours</strong>. Your initial deposited principal has a <strong>40-day lock period</strong> to allow our execution algorithms to run full strategic cycles without disrupting open margin allocations. After 40 days, principal can be withdrawn or rolled over.
+                </div>
+              </div>
+
+            </div>
+
+            <!-- FAQ 4 -->
+            <div class="faq-item">
+
+              <button class="faq-question-btn" aria-expanded="false">
+                <span>Is my capital guaranteed against loss?</span>
+                <span class="faq-icon-chevron"></span>
+              </button>
+
+              <div class="faq-answer-panel">
+                <div class="faq-answer-content">
+                  No legitimate financial market trading can guarantee capital. However, PipZoNe operates strict risk controls: hard position stop-losses, a 2% max daily portfolio risk cap, and algorithmic hedging between gold, major currency pairs, and stable crypto pairings.
+                </div>
+              </div>
+
+            </div>
+
+            <!-- FAQ 5 -->
+            <div class="faq-item">
+
+              <button class="faq-question-btn" aria-expanded="false">
+                <span>What is the trading schedule? Are markets traded on weekends?</span>
+                <span class="faq-icon-chevron"></span>
+              </button>
+
+              <div class="faq-answer-panel">
+                <div class="faq-answer-content">
+                  Forex currency and precious metal markets operate Monday through Friday. Our trading desk is closed on Saturdays and Sundays, and no trading results are generated during the weekend. Trading activity resumes with the Monday market session.
+                </div>
+              </div>
+
+            </div>
+
+            <!-- FAQ 6 -->
+            <div class="faq-item">
+
+              <button class="faq-question-btn" aria-expanded="false">
+                <span>Are there deposit fees or withdrawal fees?</span>
+                <span class="faq-icon-chevron"></span>
+              </button>
+
+              <div class="faq-answer-panel">
+                <div class="faq-answer-content">
+                  PipZoNe charges <strong>$0 deposit fees</strong> and <strong>a fixed $2 withdrawal fee applies.</strong> The same $2 fee applies to withdrawals via Tether (USDT TRC20) and Tether (USDT BEP20).
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           10. Contact Section
+      ============================================================= -->
+      <section class="section-container bg-surface" id="contact">
+
+        <div class="container">
+
+          <div class="section-header text-center">
+            <span class="section-tag">Direct Desk Communication</span>
+            <h2 class="section-title">Get in Touch With Our Desk</h2>
+            <p class="section-subtitle">
+              Inquire about institutional allocation limits, institutional API access, or verify your deposit.
+            </p>
+          </div>
+
+          <div class="contact-grid">
+
+            <!-- Contact Information -->
+            <div class="contact-info-col">
+
+              <!-- Email Contact -->
+              <div class="contact-card">
+
+                <div class="contact-card-icon">
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                </div>
+
+                <div>
+                  <div class="contact-label">Desk Inquiries & Audits</div>
+                  <a href="mailto:support.pipzone@gmail.com" class="contact-val">
+                    support.pipzone@gmail.com
+                  </a>
+                  <div class="contact-sub">Response time &lt; 2 business hours</div>
+                </div>
+
+              </div>
+
+              <!-- Execution Hubs -->
+              <div class="contact-card">
+
+                <div class="contact-card-icon">
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                </div>
+
+                <div>
+                  <div class="contact-label">Execution Hubs</div>
+                  <div class="contact-val text-white">London · Singapore · Zurich</div>
+                  <div class="contact-sub">Managed Trading Operations</div>
+                </div>
+
+              </div>
+
+              <!--
+              ==========================================================
+                   Institutional Direct Line
+                   Currently disabled
+              ===========================================================
+              <div class="contact-card">
+
+                <div class="contact-card-icon">
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                  </svg>
+                </div>
+
+                <div>
+                  <div class="contact-label">Institutional Direct Line</div>
+                  <div class="contact-val mono">+44 20 8942 6601</div>
+                  <div class="contact-sub">Available Mon–Fri 07:00–22:00 GMT</div>
+                </div>
+
+              </div>
+              -->
+
+            </div>
+
+            <!-- Contact Form -->
+            <div class="contact-form-col">
+
+              <form id="landingContactForm" class="contact-form" novalidate>
+
+                <!-- Name & Email -->
+                <div class="form-row-2">
+
+                  <div class="form-group">
+                    <label for="contactName" class="form-label">Your Name</label>
+                    <input
+                      type="text"
+                      id="contactName"
+                      name="name"
+                      class="form-input"
+                      placeholder="Name"
+                      required
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="contactEmail" class="form-label">Email Address</label>
+                    <input
+                      type="email"
+                      id="contactEmail"
+                      name="email"
+                      class="form-input"
+                      placeholder="@example.com"
+                      required
+                    />
+                  </div>
+
+                </div>
+
+                <!-- Subject -->
+                <div class="form-group">
+
+                  <label for="contactSubject" class="form-label">Subject</label>
+
+                  <select
+                    id="contactSubject"
+                    name="subject"
+                    class="form-input form-select"
+                  >
+                    <option value="Deposit / Capital Inquiry">
+                      Deposit / Capital Allocation
+                    </option>
+                    <option value="Performance Verification">
+                      Performance & Audits
+                    </option>
+                    <option value="Partner / Referral Desk">
+                      Affiliate / Partner Desk
+                    </option>
+                    <option value="General Support">
+                      General Support
+                    </option>
+                  </select>
+
+                </div>
+
+                <!-- Message -->
+                <div class="form-group">
+
+                  <label for="contactMessage" class="form-label">Message</label>
+
+                  <textarea
+                    id="contactMessage"
+                    name="message"
+                    rows="4"
+                    class="form-input form-textarea"
+                    placeholder="Detail your question or desired allocation..."
+                    required
+                  ></textarea>
+
+                </div>
+
+                <!-- Optional Attachment -->
+                <div class="form-group">
+
+                  <label class="form-label">
+                    Optional Attachment (Proof/Statement)
+                  </label>
+
+                  <div class="file-upload-box" id="fileUploadDropzone">
+
+                    <input
+                      type="file"
+                      id="contactFile"
+                      class="file-input-hidden"
+                      accept="image/*,.pdf"
+                    />
+
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="17 8 12 3 7 8"></polyline>
+                      <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+
+                    <span id="fileUploadLabel">
+                      Drag & drop receipt/file or
+                      <span class="file-browse-link">browse</span>
+                    </span>
+
+                  </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button
+                  type="submit"
+                  class="submit-btn"
+                  id="contactSubmitBtn"
+                >
+                  <span class="btn-text">Send Message to Desk</span>
+
+                  <span class="btn-spinner hidden" aria-hidden="true">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                    >
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke-dasharray="32"
+                        stroke-dashoffset="12"
+                      ></circle>
+                    </svg>
+                  </span>
+                </button>
+
+                <!-- Contact Feedback -->
+                <div
+                  id="contactFeedback"
+                  class="contact-feedback hidden"
+                ></div>
+
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ============================================================
+         11. Footer
+         Legal & Risk Disclosures
+    ============================================================= -->
+    <footer class="site-footer">
+
+      <div class="container footer-grid">
+
+        <!-- Footer Brand -->
+        <div class="footer-brand-col">
+
+          <div class="brand-logo">
+            <img src="assets/logo/Logo.png" alt="PipZoNe logo" class="logo-img" />
+            <span class="brand-name">Pip<span class="brand-accent">ZoNe</span></span>
+          </div>
+
+          <p class="footer-brand-desc">
+            Algorithmic forex and digital currency liquidity desk. Capital trading conducted via proprietary risk algorithms with net 60% client / 40% desk profit distribution.
+          </p>
+
+        </div>
+
+        <!-- Platform Links -->
+        <div class="footer-links-col">
+
+          <div class="footer-heading">Platform</div>
+
+          <a href="#howItWorks">How It Works</a>
+          <a href="#calculator">Split Calculator</a>
+          <a href="#performance">Desk Performance</a>
+          <a href="#riskSection">Risk Disclosure</a>
+
+        </div>
+
+        <!-- Portal Links -->
+        <div class="footer-links-col">
+
+          <div class="footer-heading">Portals</div>
+
+          <a href="signin/index.html">Client Sign In</a>
+          <a href="signup/index.html">Create Account</a>
+          <a href="client/index.html">Client Dashboard</a>
+          <a href="#contact">Support Desk</a>
+
+        </div>
+
+        <!-- Legal & Compliance Links -->
+        <div class="footer-links-col">
+
+          <div class="footer-heading">Legal & Compliance</div>
+
+          <a href="#riskSection">Risk Disclosure Notice</a>
+          <a href="#faq">Terms of Management</a>
+          <a href="#faq">AML & On-Chain Policy</a>
+          <a href="#contact">Regulatory Inquiries</a>
+
+        </div>
+
+      </div>
+
+      <!-- ==========================================================
+           Footer Bottom
+      =========================================================== -->
+      <div class="container footer-bottom">
+
+        <!-- Risk Disclaimer -->
+        <div class="risk-disclaimer-box">
+
+          <p>
+            <strong>Risk Warning:</strong>
+            Trading Foreign Exchange (Forex) and Crypto Contracts for Difference (CFDs) carries a high level of risk and may not be suitable for all investors. High leverage can work against you as well as for you. Past results are not indicative of future performance. You should never deposit money that you cannot afford to lose. All profit-sharing covenants are subject to standard daily desk settlement parameters.
+          </p>
+
+        </div>
+
+        <!-- Copyright & System Status -->
+        <div class="footer-copyright-row">
+
+          <span>
+            © 2026 PipZoNe Capital Management. All rights reserved.
+          </span>
+
+          <span class="footer-status-pill">
+            <span class="pulse-indicator"></span>
+            Desk Execution: Systems Operational
+          </span>
+
+        </div>
+
+      </div>
+    </footer>
+
+    <!-- ============================================================
+         Page JavaScript
+    ============================================================= -->
+
+    <!-- Main Landing Page Logic -->
+    <script src="./script.js?v=4"></script>
+
+    <!-- Live Supabase Statistics -->
+    <script src="./supabase-stats.js?v=4"></script>
+
+  </body>
+</html>

@@ -1,0 +1,1191 @@
+/* ====================================================================
+   PipZoNe — Sign In Page Styles
+   Page Group 2: /signin/
+   Purpose: Client authentication, password recovery & OTP verification
+==================================================================== */
+
+
+/* ====================================================================
+   0. Global Variables & Typography
+==================================================================== */
+:root {
+  /* ===== Dark Obsidian Background ===== */
+  --bg-primary: #0a0e14;
+  --bg-secondary: #0f151e;
+  --bg-card: #131b26;
+  --bg-card-hover: #182332;
+  --bg-elevated: #1d293b;
+  --bg-input: #0b1118;
+
+  /* ===== Borders ===== */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.14);
+  --border-accent: rgba(47, 191, 131, 0.35);
+
+  /* ===== Brand Accents ===== */
+  --accent-primary: #2FBF83;
+  --accent-primary-hover: #26a570;
+  --accent-primary-glow: rgba(47, 191, 131, 0.22);
+  --accent-profit: #5EEAB0;
+  --accent-profit-glow: rgba(94, 234, 176, 0.25);
+  --accent-loss: #F2735E;
+  --accent-loss-glow: rgba(242, 115, 94, 0.2);
+
+  /* ===== Text ===== */
+  --text-primary: #F1F6F3;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+
+  /* ===== Typography ===== */
+  --font-serif: "Fraunces", Georgia, serif;
+  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+
+  /* ===== Shadows ===== */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-card: 0 16px 40px -10px rgba(0, 0, 0, 0.45);
+  --shadow-hover: 0 24px 50px -10px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 25px rgba(47, 191, 131, 0.35);
+
+  /* ===== Radii ===== */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-card: 18px;
+  --radius-pill: 9999px;
+
+  /* ===== Theme Transition ===== */
+  --transition-theme: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+/* ====================================================================
+   0.1 Light Theme Variables
+==================================================================== */
+[data-theme="light"] {
+  --bg-primary: #F4F7F5;
+  --bg-secondary: #E8EFEA;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F9FBFA;
+  --bg-elevated: #EFF4F1;
+  --bg-input: #FFFFFF;
+
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-medium: rgba(0, 0, 0, 0.16);
+  --border-accent: rgba(30, 158, 105, 0.4);
+
+  --accent-primary: #1E9E69;
+  --accent-primary-hover: #167f53;
+  --accent-primary-glow: rgba(30, 158, 105, 0.18);
+  --accent-profit: #10B981;
+  --accent-profit-glow: rgba(16, 185, 129, 0.18);
+  --accent-loss: #E0533D;
+  --accent-loss-glow: rgba(224, 83, 61, 0.18);
+
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 16px 36px -8px rgba(15, 23, 42, 0.08);
+  --shadow-hover: 0 24px 48px -8px rgba(15, 23, 42, 0.14);
+  --shadow-glow: 0 0 25px rgba(30, 158, 105, 0.2);
+}
+
+
+/* ====================================================================
+   1. Base & Reset
+==================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  min-height: 100%;
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: var(--transition-theme);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  color: inherit;
+}
+
+
+/* ====================================================================
+   2. Background Ambience
+==================================================================== */
+.bg-glow {
+  position: fixed;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: 0;
+  opacity: 0.18;
+}
+
+.bg-glow-1 {
+  width: 500px;
+  height: 500px;
+  top: -100px;
+  left: -80px;
+  background: var(--accent-primary);
+}
+
+.bg-glow-2 {
+  width: 450px;
+  height: 450px;
+  bottom: -80px;
+  right: -80px;
+  background: #195e40;
+}
+
+
+/* ====================================================================
+   3. Page Layout & Header
+==================================================================== */
+.auth-page-wrapper {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px 20px;
+}
+
+.auth-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.logo-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent-primary), #1a6b4b);
+  color: #ffffff;
+  box-shadow: 0 4px 12px var(--accent-primary-glow);
+}
+
+.brand-name {
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.brand-accent {
+  color: var(--accent-primary);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+  color: var(--accent-primary);
+  border-color: var(--border-accent);
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .theme-icon-sun {
+  display: block;
+}
+
+[data-theme="dark"] .theme-icon-moon {
+  display: none;
+}
+
+[data-theme="light"] .theme-icon-sun {
+  display: none;
+}
+
+[data-theme="light"] .theme-icon-moon {
+  display: block;
+}
+
+.nav-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+
+.nav-back-link:hover {
+  color: var(--accent-primary);
+  background: var(--bg-card);
+}
+
+
+/* ====================================================================
+   4. Centered Auth Card
+==================================================================== */
+.auth-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 10px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 36px 32px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: var(--transition-theme);
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ====================================================================
+   4.1 Auth Tabs
+==================================================================== */
+.auth-tabs {
+  display: flex;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  margin-bottom: 28px;
+}
+
+.auth-tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px 16px;
+  border-radius: calc(var(--radius-md) - 3px);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.auth-tab:hover {
+  color: var(--text-primary);
+}
+
+.auth-tab.active {
+  background: var(--bg-card);
+  color: var(--accent-primary);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+
+/* ====================================================================
+   4.2 Card Header
+==================================================================== */
+.auth-card-header {
+  margin-bottom: 24px;
+}
+
+.auth-title {
+  font-family: var(--font-serif);
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.25;
+  margin-bottom: 8px;
+}
+
+.auth-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+
+/* ====================================================================
+   4.3 Alert Box
+==================================================================== */
+.alert-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  margin-bottom: 20px;
+  animation: fadeUp 0.3s ease;
+}
+
+.alert-box.success {
+  background: rgba(47, 191, 131, 0.12);
+  border: 1px solid var(--border-accent);
+  color: var(--accent-profit);
+}
+
+.alert-box.error {
+  background: rgba(242, 115, 94, 0.12);
+  border: 1px solid rgba(242, 115, 94, 0.3);
+  color: var(--accent-loss);
+}
+
+.hidden {
+  display: none !important;
+}
+
+
+/* ====================================================================
+   5. Form Controls
+==================================================================== */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.87rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.forgot-link-btn {
+  background: transparent;
+  border: none;
+  color: var(--accent-primary);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s;
+}
+
+.forgot-link-btn:hover {
+  text-decoration: underline;
+}
+
+.required-star {
+  color: var(--accent-loss);
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-input {
+  width: 100%;
+  height: 46px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 0 42px 0 14px;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.form-input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-primary-glow);
+}
+
+.input-icon {
+  position: absolute;
+  right: 14px;
+  color: var(--text-muted);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: color 0.2s ease;
+}
+
+.password-toggle-btn:hover {
+  color: var(--text-primary);
+}
+
+.field-error {
+  font-size: 0.8rem;
+  color: var(--accent-loss);
+  min-height: 16px;
+}
+
+
+/* ====================================================================
+   6. Inline Password Recovery Box
+==================================================================== */
+.inline-reset-box {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: fadeUp 0.3s ease;
+}
+
+.reset-box-header strong {
+  display: block;
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.reset-box-header p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.reset-box-action {
+  display: flex;
+  gap: 8px;
+}
+
+.reset-input {
+  height: 40px;
+  padding: 0 12px;
+  font-size: 0.88rem;
+}
+
+.secondary-btn {
+  height: 40px;
+  padding: 0 16px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border-accent);
+  color: var(--accent-profit);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.secondary-btn:hover {
+  background: var(--accent-primary);
+  color: #ffffff;
+}
+
+.reset-feedback {
+  font-size: 0.82rem;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(47, 191, 131, 0.15);
+  color: var(--accent-profit);
+}
+
+
+/* ====================================================================
+   7. Remember Me & Security Badge
+==================================================================== */
+.login-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkbox-custom {
+  width: 18px;
+  height: 18px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-medium);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.checkbox-container input:checked ~ .checkbox-custom {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.checkbox-container input:checked ~ .checkbox-custom::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.security-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+
+/* ====================================================================
+   8. Submit Button & Demo Box
+==================================================================== */
+.submit-btn {
+  position: relative;
+  width: 100%;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--accent-primary), #239464);
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 6px 20px var(--accent-primary-glow);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: 4px;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px var(--accent-primary-glow);
+  background: linear-gradient(135deg, #35ce8f, #239464);
+}
+
+.submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submit-btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.btn-spinner svg {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ====================================================================
+   8.1 Demo Credentials
+==================================================================== */
+.demo-box {
+  background: var(--bg-secondary);
+  border: 1px dashed var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-top: 4px;
+}
+
+.demo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.demo-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent-profit);
+}
+
+.demo-btn {
+  background: rgba(47, 191, 131, 0.15);
+  border: 1px solid var(--border-accent);
+  color: var(--accent-profit);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.demo-btn:hover {
+  background: var(--accent-primary);
+  color: #ffffff;
+}
+
+.demo-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+
+/* ====================================================================
+   8.2 Card Footer
+==================================================================== */
+.auth-card-footer {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-subtle);
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.auth-link {
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+
+/* ====================================================================
+   8.3 Bottom Footer
+==================================================================== */
+.auth-bottom-footer {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  padding: 12px 0;
+}
+
+
+/* ====================================================================
+   9. Website Logo
+==================================================================== */
+.logo-img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: 8px;
+  display: block;
+  flex-shrink: 0;
+}
+
+.site-footer .logo-img {
+  width: 32px;
+  height: 32px;
+}
+
+
+/* ====================================================================
+   10. Password Reset OTP Modal
+==================================================================== */
+
+/* ===== Full Screen OTP Overlay ===== */
+.otp-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: otpModalFadeIn 0.22s ease;
+}
+
+@keyframes otpModalFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+
+/* ===== Modal Background / Backdrop ===== */
+.otp-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 7, 10, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+
+/* ===== Modal Card ===== */
+.otp-modal-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 430px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border-medium);
+  border-radius: 20px;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.55),
+    0 0 35px var(--accent-primary-glow);
+  padding: 34px 30px 30px;
+  text-align: center;
+  animation: otpCardUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes otpCardUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+/* ===== OTP Close Button ===== */
+.otp-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.otp-close-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--border-accent);
+  background: var(--bg-card-hover);
+  transform: rotate(90deg);
+}
+
+
+/* ===== OTP Security Icon ===== */
+.otp-icon {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(47, 191, 131, 0.12);
+  border: 1px solid var(--border-accent);
+  color: var(--accent-primary);
+  box-shadow: 0 0 24px var(--accent-primary-glow);
+}
+
+.otp-icon svg {
+  display: block;
+}
+
+
+/* ===== OTP Heading ===== */
+.otp-modal-card h2 {
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+
+/* ===== OTP Description ===== */
+.otp-description {
+  max-width: 320px;
+  margin: 0 auto;
+  color: var(--text-secondary);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+
+/* ===== Recovery Email ===== */
+.otp-email {
+  margin-top: 5px;
+  color: var(--accent-profit);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+
+/* ====================================================================
+   11. Six Digit OTP Inputs
+==================================================================== */
+.otp-inputs {
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+  margin: 24px 0 20px;
+}
+
+.otp-inputs input {
+  width: 48px;
+  height: 54px;
+  padding: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--bg-input);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  outline: none;
+  caret-color: var(--accent-primary);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.otp-inputs input:hover {
+  border-color: var(--border-accent);
+}
+
+.otp-inputs input:focus {
+  border-color: var(--accent-primary);
+  background: var(--bg-card-hover);
+  box-shadow: 0 0 0 3px var(--accent-primary-glow);
+  transform: translateY(-1px);
+}
+
+
+/* ====================================================================
+   12. OTP Verify Button
+==================================================================== */
+.otp-verify-btn {
+  margin-top: 0;
+}
+
+
+/* ====================================================================
+   13. OTP Resend Area
+==================================================================== */
+.otp-resend-text {
+  margin-top: 16px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.otp-resend-btn {
+  border: none;
+  padding: 0;
+  margin-left: 4px;
+  background: transparent;
+  color: var(--accent-primary);
+  font-size: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.otp-resend-btn:hover {
+  text-decoration: underline;
+}
+
+.otp-resend-btn:disabled {
+  color: var(--text-muted);
+  cursor: not-allowed;
+  text-decoration: none;
+  opacity: 0.7;
+}
+
+
+/* ====================================================================
+   14. OTP Status Message
+==================================================================== */
+.otp-status {
+  margin-top: 14px;
+  padding: 9px 11px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  text-align: center;
+  border: 1px solid transparent;
+}
+
+.otp-status.success {
+  color: var(--accent-profit);
+  background: rgba(47, 191, 131, 0.1);
+  border-color: var(--border-accent);
+}
+
+.otp-status.error {
+  color: var(--accent-loss);
+  background: rgba(242, 115, 94, 0.1);
+  border-color: rgba(242, 115, 94, 0.3);
+}
+
+
+/* ====================================================================
+   15. New Password Section
+==================================================================== */
+.new-password-box {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-subtle);
+  text-align: left;
+  animation: fadeUp 0.3s ease;
+}
+
+.new-password-box .form-group {
+  margin-bottom: 16px;
+}
+
+.new-password-box .form-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.new-password-box .submit-btn {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.new-password-box .field-error {
+  display: block;
+  margin-top: 5px;
+  color: var(--accent-loss);
+  font-size: 0.78rem;
+}
+
+
+/* ====================================================================
+   16. OTP Modal Scrollbar
+==================================================================== */
+.otp-modal-card::-webkit-scrollbar {
+  width: 5px;
+}
+
+.otp-modal-card::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.otp-modal-card::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: var(--radius-pill);
+}
+
+
+/* ====================================================================
+   17. Responsive Design
+==================================================================== */
+@media (max-width: 520px) {
+
+  /* ===== Page ===== */
+  .auth-page-wrapper {
+    padding: 16px 12px;
+  }
+
+  /* ===== Auth Card ===== */
+  .auth-card {
+    padding: 26px 20px;
+    border-radius: var(--radius-md);
+  }
+
+  .auth-title {
+    font-size: 1.45rem;
+  }
+
+  /* ===== Header ===== */
+  .header-actions {
+    gap: 6px;
+  }
+
+  .nav-back-link {
+    padding: 8px 6px;
+    font-size: 0.82rem;
+  }
+
+  /* ===== OTP Modal ===== */
+  .otp-modal {
+    padding: 12px;
+  }
+
+  .otp-modal-card {
+    max-height: calc(100vh - 24px);
+    padding: 30px 18px 24px;
+    border-radius: 18px;
+  }
+
+  .otp-icon {
+    width: 52px;
+    height: 52px;
+    margin-bottom: 13px;
+  }
+
+  .otp-modal-card h2 {
+    font-size: 1.3rem;
+  }
+
+  .otp-description {
+    font-size: 0.82rem;
+  }
+
+  .otp-inputs {
+    gap: 6px;
+    margin-top: 20px;
+  }
+
+  .otp-inputs input {
+    width: 43px;
+    height: 50px;
+    font-size: 1.1rem;
+  }
+
+  .otp-close-btn {
+    top: 9px;
+    right: 9px;
+  }
+}
+
+
+/* ====================================================================
+   18. Very Small Mobile Screens
+==================================================================== */
+@media (max-width: 360px) {
+
+  .otp-modal-card {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .otp-inputs {
+    gap: 4px;
+  }
+
+  .otp-inputs input {
+    width: 39px;
+    height: 47px;
+  }
+
+  .reset-box-action {
+    flex-direction: column;
+  }
+
+  .secondary-btn {
+    width: 100%;
+  }
+}

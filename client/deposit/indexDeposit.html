@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="PipZoNe — Deposit Capital">
+<title>Deposit Capital | PipZoNe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="../../assets/favicon/favicon.png" />
+<link rel="stylesheet" href="../../shared/layout.css">
+<link rel="stylesheet" href="./styleDeposit.css">
+<script>
+(function(){
+  const savedTheme=localStorage.getItem('pipzone_theme')||'dark';
+  document.documentElement.setAttribute('data-theme',savedTheme);
+})();
+</script>
+</head>
+<body class="deposit-body">
+
+<div class="ambient-glow ambient-glow-one"></div>
+<div class="ambient-glow ambient-glow-two"></div>
+
+<div class="deposit-page" id="pageContent">
+
+<main class="deposit-main">
+
+  <section class="page-heading">
+    <div>
+      <p class="eyebrow">CAPITAL MANAGEMENT</p>
+      <h1>Deposit Capital</h1>
+      <p class="page-description">
+        Fund your PipZoNe managed trading account using USDT through TRC20 or BEP20.
+      </p>
+    </div>
+
+    <div class="security-badge">
+      <span class="security-dot"></span>
+      Secure Deposit
+    </div>
+  </section>
+	<div id="profileGate"></div>
+  <section class="deposit-grid">
+
+    <!-- ===================== STEP 01 : PAYMENT METHODS ===================== -->
+    <div class="deposit-card methods-card">
+
+      <div class="card-header">
+        <div>
+          <p class="card-label">STEP 01</p>
+          <h2>All payment methods</h2>
+        </div>
+        <span class="step-number">01</span>
+      </div>
+
+      <div class="method-grid" id="methodGrid">
+
+        <!-- Tether BEP20 (Recommended) -->
+        <button type="button" class="method-card selected" data-network="BEP20" aria-pressed="true">
+          <span class="method-icon">
+            <img class="icon-main" src="../../assets/icons/usdt.svg" alt="USDT">
+            <img class="icon-badge" src="../../assets/icons/bnb.svg" alt="BNB Smart Chain">
+          </span>
+          <span class="method-body">
+            <span class="method-head">
+              <strong class="method-name">Tether (USDT BEP20)</strong>
+              <span class="method-pill">Recommended</span>
+            </span>
+            <span class="method-row"><span>Processing time</span> <b>After desk review</b></span>
+            <span class="method-row"><span>Fee</span> <b>0% platform fee</b></span>
+            <span class="method-row"><span>Limits</span> <b>From 100 USD</b></span>
+          </span>
+        </button>
+
+        <!-- Tether TRC20 -->
+        <button type="button" class="method-card" data-network="TRC20" aria-pressed="false">
+          <span class="method-icon">
+            <img class="icon-main" src="../../assets/icons/usdt.svg" alt="USDT">
+            <img class="icon-badge" src="../../assets/icons/trx.svg" alt="Tron">
+          </span>
+          <span class="method-body">
+            <span class="method-head">
+              <strong class="method-name">Tether (USDT TRC20)</strong>
+            </span>
+            <span class="method-row"><span>Processing time</span> <b>After desk review</b></span>
+            <span class="method-row"><span>Fee</span> <b>0% platform fee</b></span>
+            <span class="method-row"><span>Limits</span> <b>From 100 USD</b></span>
+          </span>
+        </button>
+
+      </div>
+
+      <div class="network-note">
+        <span>i</span>
+        <p>Send <strong>USDT only</strong> through the selected network. Sending another asset may result in permanent loss.</p>
+      </div>
+
+    </div>
+
+    <!-- ===================== STEP 02 : SEND USDT ===================== -->
+    <div class="deposit-card wallet-card">
+
+      <div class="card-header">
+        <div>
+          <p class="card-label">STEP 02</p>
+          <h2>Send USDT</h2>
+        </div>
+        <span class="step-number">02</span>
+      </div>
+
+      <div class="wallet-content">
+
+        <div class="qr-wrapper">
+          <img id="walletQr" src="../../assets/qr/qr-bep20.png" alt="USDT BEP20 Deposit QR">
+        </div>
+
+        <div class="wallet-details">
+          <p class="wallet-network" id="walletNetwork">USDT (Tether) · BEP20</p>
+
+          <div class="wallet-address-box">
+            <span id="walletAddress">0xf4a61fbfc905b5b66077878e12ffa4566374d54d</span>
+            <button type="button" id="copyWalletBtn">COPY</button>
+          </div>
+
+          <p class="wallet-warning">
+            Verify the network and wallet address before sending.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="deposit-minimum">
+        <span>Minimum Deposit</span>
+        <strong>$100 USDT</strong>
+      </div>
+
+    </div>
+
+    <!-- ===================== STEP 03 : DEPOSIT DETAILS ===================== -->
+    <div class="deposit-card amount-card">
+
+      <div class="card-header">
+        <div>
+          <p class="card-label">STEP 03</p>
+          <h2>Deposit Details</h2>
+        </div>
+        <span class="step-number">03</span>
+      </div>
+
+      <form id="depositForm" novalidate>
+
+        <div class="field-group">
+          <label for="depositAmount">Deposit Amount</label>
+          <div class="input-wrap currency-input">
+            <span>$</span>
+            <input
+              type="number"
+              id="depositAmount"
+              name="depositAmount"
+              min="100"
+              step="0.01"
+              placeholder="100.00"
+              autocomplete="off"
+            >
+            <small>USDT</small>
+          </div>
+          <p class="field-hint">Minimum deposit is $100 USDT.</p>
+          <p class="field-error" id="amountError"></p>
+        </div>
+
+        <div class="field-group">
+          <label for="txHash">Transaction Hash</label>
+          <input
+            type="text"
+            id="txHash"
+            name="txHash"
+            placeholder="Enter blockchain transaction hash"
+            autocomplete="off"
+          >
+          <p class="field-hint">Paste the TXID/hash from your wallet.</p>
+          <p class="field-error" id="txHashError"></p>
+        </div>
+
+        <div class="field-group">
+          <label for="depositScreenshot">Payment Screenshot</label>
+
+          <label class="upload-box" for="depositScreenshot">
+            <input type="file" id="depositScreenshot" name="depositScreenshot" accept="image/*,.pdf">
+            <span class="upload-icon">↑</span>
+            <span class="upload-title" id="uploadTitle">Upload screenshot</span>
+            <span class="upload-subtitle" id="uploadSubtitle">PNG, JPG or PDF · Max 5 MB</span>
+          </label>
+
+          <p class="field-error" id="screenshotError"></p>
+        </div>
+
+        <div class="deposit-summary">
+          <div>
+            <span>Network</span>
+            <strong id="summaryNetwork">USDT (Tether) · BEP20</strong>
+          </div>
+          <div>
+            <span>Amount</span>
+            <strong id="summaryAmount">$0.00</strong>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-deposit" id="submitDepositBtn">
+          <span>Submit Deposit</span>
+          <span class="submit-arrow">→</span>
+        </button>
+
+        <p class="processing-note">
+          Deposits are reviewed before being credited to your managed account.
+        </p>
+
+      </form>
+
+    </div>
+
+  </section>
+
+  <section class="deposit-info-grid">
+
+    <div class="info-card">
+      <span class="info-icon">01</span>
+      <div>
+        <h3>Send the exact network</h3>
+        <p>Choose TRC20 or BEP20 and send USDT only to the displayed wallet address.</p>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <span class="info-icon">02</span>
+      <div>
+        <h3>Keep your transaction hash</h3>
+        <p>Your blockchain TX hash is required so the deposit can be identified and reviewed.</p>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <span class="info-icon">03</span>
+      <div>
+        <h3>Deposit review</h3>
+        <p>Once approved, your capital becomes available according to the PipZoNe managed desk cycle.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="deposit-rules">
+
+    <div class="rules-header">
+      <p class="eyebrow">BEFORE YOU DEPOSIT</p>
+      <h2>Important Deposit Rules</h2>
+    </div>
+
+    <div class="rules-list">
+      <div class="rule-item">
+        <span>✓</span>
+        <p>Minimum deposit is <strong>$100 USDT</strong>.</p>
+      </div>
+
+      <div class="rule-item">
+        <span>✓</span>
+        <p>Only <strong>USDT</strong> is accepted for deposits.</p>
+      </div>
+
+      <div class="rule-item">
+        <span>✓</span>
+        <p>Make sure the selected blockchain network matches the network used for sending.</p>
+      </div>
+
+      <div class="rule-item">
+        <span>✓</span>
+        <p>Keep your TX hash and payment screenshot available until the deposit is approved.</p>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="deposit-footer">
+  <div>
+    <strong>Pip<span>ZoNe</span></strong>
+    <span>Managed Forex &amp; Crypto Trading</span>
+  </div>
+     <a class="support-btn" href="../settings/support/indexsupport.html">Contact Support</a>
+</footer>
+
+<div class="toast-container" id="toastContainer"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../supabase-config.js"></script>
+<script src="../../shared/layout.js"></script>
+<script src="../../shared/profile-gate.js"></script>
+<script src="./scriptDeposit.js"></script>
+</body>
+</html>

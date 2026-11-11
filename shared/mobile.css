@@ -1,0 +1,39 @@
+/* PipZoNe — mobile fixes for the client area (loaded by layout.js and client/index.html) */
+@media (max-width: 900px) {
+  .dash-topbar { height:auto !important; min-height:64px; padding:10px 14px !important; gap:10px; }
+  .topbar-left { gap:10px; min-width:0; flex:1 1 auto; }
+  .greeting-wrap { min-width:0; }
+  .client-greeting { font-size:1rem !important; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .client-subline { display:none !important; }
+  .topbar-right { gap:8px !important; flex:0 0 auto; }
+  .search-box-wrap, .profile-info-text { display:none !important; }
+
+  .dash-content-body, #pageContent { max-width:100%; overflow-x:hidden; }
+  #pageContent img, #pageContent canvas, #pageContent svg { max-width:100%; }
+  #pageContent table { display:block; max-width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+
+  /* page header rows (title + buttons) wrap instead of squeezing the text */
+  #pageContent [class*="page-header"], #pageContent [class*="page-head"],
+  #pageContent [class*="hero"], #pageContent [class*="header-row"],
+  #pageContent [class*="title-row"], #pageContent [class*="head-row"] {
+    flex-wrap:wrap !important; gap:12px;
+  }
+  #pageContent [class*="page-header"] > *, #pageContent [class*="page-head"] > *,
+  #pageContent [class*="header-row"] > *, #pageContent [class*="title-row"] > *,
+  #pageContent [class*="head-row"] > * { min-width:0; }
+  #pageContent [class*="page-header"] > :first-child, #pageContent [class*="page-head"] > :first-child { flex:1 1 100%; }
+
+  /* two-column grids become one column */
+  #pageContent [class*="grid"] { grid-template-columns:1fr !important; }
+}
+
+@media (max-width: 640px) {
+  /* transaction rows: info on top, amount + status below */
+  .tx-row { flex-direction:column; align-items:stretch; gap:10px; padding:12px 14px; }
+  .tx-left { gap:12px; min-width:0; }
+  .tx-info { min-width:0; flex:1; }
+  .tx-title, .tx-date { overflow-wrap:anywhere; }
+  .tx-right { justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .tx-amount { white-space:nowrap; }
+  .tx-pill { white-space:nowrap; }
+}
