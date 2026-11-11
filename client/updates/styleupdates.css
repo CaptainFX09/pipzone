@@ -863,8 +863,17 @@ a{
     border-radius:19px;
   }
 
+  .update-hero{
+    flex-direction:column;
+    align-items:stretch;
+    gap:20px;
+  }
+
   .version-card{
-    display:none;
+    width:100%;
+    min-height:0;
+    flex:none;
+    padding:18px 20px;
   }
 
   .hero-copy h2{
