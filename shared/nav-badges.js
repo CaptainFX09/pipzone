@@ -10,6 +10,10 @@
     notices: { table: 'client_notices', match: 'announcements/indexannouncements.html' }
   };
 
+  // Messages: unread ginti server se (messages.is_read = false)
+  var MSG_MATCH = 'messages/indexmessages.html';
+  var msgUnread = 0;
+
   var uid = 'anon';
   var primed = { updates: false, notices: false };
   var ids = { updates: [], notices: [] };
@@ -36,7 +40,7 @@
   }
 
   function hostFor(kind) {
-    var m = KINDS[kind].match.toLowerCase();
+    var m = (kind === 'messages' ? MSG_MATCH : KINDS[kind].match).toLowerCase();
     var links = document.querySelectorAll('.dash-sidebar a.nav-item, a.nav-item');
     for (var i = 0; i < links.length; i++) {
       var h = (links[i].getAttribute('href') || '').toLowerCase();
@@ -48,8 +52,13 @@
   function paint(kind) {
     var host = hostFor(kind);
     if (!host) return;
-    var seen = getSeen(kind);
-    var count = ids[kind].filter(function (id) { return seen.indexOf(id) === -1; }).length;
+    var count;
+    if (kind === 'messages') {
+      count = msgUnread;
+    } else {
+      var seen = getSeen(kind);
+      count = ids[kind].filter(function (id) { return seen.indexOf(id) === -1; }).length;
+    }
     var badge = host.querySelector('.pz-badge');
     if (!badge) {
       badge = document.createElement('i');
@@ -61,7 +70,21 @@
     badge.hidden = count === 0;
   }
 
-  function paintAll() { paint('updates'); paint('notices'); }
+  function paintAll() { paint('updates'); paint('notices'); paint('messages'); }
+
+  // Unread messages ki ginti (get_user_messages RPC wahi hai jo Messages page use karta hai)
+  async function refetchMessages() {
+    var c = window.supabaseClient;
+    if (!c || uid === 'anon') return;
+    try {
+      var res = await c.rpc('get_user_messages');
+      if (res.error || !Array.isArray(res.data)) return;
+      msgUnread = res.data.filter(function (r) {
+        return r.is_read === false || String(r.is_read).toLowerCase() === 'false';
+      }).length;
+      paint('messages');
+    } catch (e) { /* silent */ }
+  }
 
   async function refetch(kind) {
     var c = window.supabaseClient;
@@ -95,6 +118,19 @@
           }
         });
     });
+
+    // Messages badge: sirf is client ke apne messages par
+    if (uid !== 'anon') {
+      c.channel('pz-badge-messages-' + uid)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'messages', filter: 'user_id=eq.' + uid }, function () {
+          refetchMessages();
+        })
+        .subscribe(function (status) {
+          if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+            console.warn('nav-badges: realtime ' + status + ' (messages) — polling fallback active');
+          }
+        });
+    }
   }
 
   // Pages yahan se "dekha hua" mark karte hain
@@ -106,7 +142,7 @@
       setSeen(kind, seen);
       paint(kind);
     },
-    refresh: function () { refetch('updates'); refetch('notices'); }
+    refresh: function () { refetch('updates'); refetch('notices'); refetchMessages(); }
   };
 
 
@@ -189,7 +225,7 @@
     } catch (e) { return; }
 
     // layout.js sidebar thori der baad bana sakta hai — ek baar dono fetch karo
-    await Promise.all([refetch('updates'), refetch('notices')]);
+    await Promise.all([refetch('updates'), refetch('notices'), refetchMessages()]);
     paintAll();
     subscribe();
     window.addEventListener('storage', paintAll);
