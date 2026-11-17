@@ -940,3 +940,199 @@ a{
     display:none;
   }
 }
+
+/* ===== Message popup ===== */
+.message-item{
+  cursor:pointer;
+}
+
+.message-item:focus-visible{
+  outline:2px solid var(--green-border);
+  outline-offset:-2px;
+}
+
+.message-text{
+  overflow-wrap:anywhere;
+}
+
+.msg-inline-code{
+  color:var(--text);
+  font-weight:700;
+  font-family:"IBM Plex Mono",monospace;
+  letter-spacing:.2px;
+}
+
+html.msg-modal-open,
+html.msg-modal-open body{
+  overflow:hidden;
+}
+
+.msg-modal-overlay{
+  position:fixed;
+  inset:0;
+  z-index:100000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(4,8,12,.62);
+  backdrop-filter:blur(3px);
+  animation:msgFade .18s ease;
+}
+
+.msg-modal-overlay[hidden]{
+  display:none;
+}
+
+.msg-modal{
+  position:relative;
+  width:min(520px,100%);
+  max-height:min(86vh,720px);
+  overflow-y:auto;
+  padding:26px 24px 20px;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  background:var(--panel);
+  color:var(--text);
+  box-shadow:var(--shadow);
+  animation:msgPop .2s ease;
+  -webkit-overflow-scrolling:touch;
+}
+
+.msg-modal-x{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--border);
+  border-radius:50%;
+  background:var(--panel-2);
+  color:var(--text-2);
+  font-size:20px;
+  line-height:1;
+}
+
+.msg-modal-x:hover{
+  color:var(--green-strong);
+  border-color:var(--green-border);
+}
+
+.msg-modal-meta{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+  padding-right:42px;
+}
+
+.msg-modal-time{
+  color:var(--muted);
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10px;
+}
+
+.msg-modal-title{
+  margin:12px 0 0;
+  padding-right:30px;
+  font-size:18px;
+  font-weight:600;
+  line-height:1.35;
+  overflow-wrap:anywhere;
+}
+
+.msg-modal-text{
+  margin-top:12px;
+  color:var(--text-2);
+  font-size:14px;
+  line-height:1.7;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+
+.msg-modal-code{
+  margin-top:18px;
+  padding:14px 16px;
+  border:1px solid var(--green-border);
+  border-radius:var(--radius-sm);
+  background:var(--green-soft);
+  text-align:center;
+}
+
+.msg-modal-code-label{
+  color:var(--green-strong);
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:1.5px;
+}
+
+.msg-modal-code-value{
+  margin:8px 0 6px;
+  padding:10px 8px;
+  border-radius:9px;
+  background:var(--panel);
+  color:var(--text);
+  font-family:"IBM Plex Mono",monospace;
+  font-size:clamp(18px,5.4vw,24px);
+  font-weight:700;
+  letter-spacing:.5px;
+  overflow-wrap:anywhere;
+  user-select:all;
+  -webkit-user-select:all;
+  cursor:pointer;
+  outline:0;
+}
+
+.msg-modal-code-value:focus-visible{
+  box-shadow:0 0 0 3px var(--green-soft);
+}
+
+.msg-modal-code-hint{
+  color:var(--muted);
+  font-size:11px;
+}
+
+.msg-modal-footer{
+  margin-top:18px;
+  display:flex;
+  justify-content:flex-end;
+}
+
+@keyframes msgFade{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+@keyframes msgPop{
+  from{opacity:0;transform:translateY(10px) scale(.98)}
+  to{opacity:1;transform:none}
+}
+
+@media(max-width:680px){
+  .msg-modal-overlay{
+    align-items:flex-end;
+    padding:0;
+  }
+
+  .msg-modal{
+    width:100%;
+    max-height:88vh;
+    padding:22px 18px calc(18px + env(safe-area-inset-bottom));
+    border-radius:20px 20px 0 0;
+    border-bottom:0;
+    animation:msgSheet .22s ease;
+  }
+
+  .msg-modal-footer .secondary-btn{
+    width:100%;
+  }
+}
+
+@keyframes msgSheet{
+  from{transform:translateY(40px);opacity:.6}
+  to{transform:none;opacity:1}
+}
