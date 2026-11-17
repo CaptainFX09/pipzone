@@ -145,6 +145,125 @@ function getMessageIcon(category){
   return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8A2.5 2.5 0 0 1 17.5 16H11l-4.5 4v-4.5A2.5 2.5 0 0 1 4 13V5.5Z"></path><path d="M8 7h8"></path><path d="M8 11h5"></path></svg>`;
 }
 
+/* ===== 08B. MESSAGE POPUP (click par poora message + bold trade code) ===== */
+let msgModalEl=null;
+let msgModalLastFocus=null;
+
+function findTradeCode(message){
+  if(message.tradeCode&&message.tradeCode.trim())return message.tradeCode.trim();
+  const match=getText(message.message).match(/\b[A-Z]{2,}-[A-Z0-9]+-[A-Z0-9]+\b/);
+  return match?match[0]:"";
+}
+
+function messageTextHtml(text,code){
+  let html=escapeHtml(text);
+  if(code){
+    const safe=escapeHtml(code).replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+    html=html.replace(new RegExp(safe,"g"),`<strong class="msg-inline-code">${escapeHtml(code)}</strong>`);
+  }
+  return html;
+}
+
+function selectNodeText(node){
+  try{
+    const selection=window.getSelection();
+    const range=document.createRange();
+    range.selectNodeContents(node);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }catch(error){
+    console.warn("Select text failed:",error);
+  }
+}
+
+function ensureMessageModal(){
+  if(msgModalEl)return msgModalEl;
+
+  const overlay=document.createElement("div");
+  overlay.className="msg-modal-overlay";
+  overlay.id="msgModal";
+  overlay.hidden=true;
+  overlay.innerHTML=`
+    <div class="msg-modal" role="dialog" aria-modal="true" aria-labelledby="msgModalTitle">
+      <button class="msg-modal-x" type="button" aria-label="Close message">&times;</button>
+      <div class="msg-modal-meta">
+        <span class="message-category" id="msgModalCategory"></span>
+        <span class="msg-modal-time" id="msgModalTime"></span>
+      </div>
+      <h3 class="msg-modal-title" id="msgModalTitle"></h3>
+      <div class="msg-modal-text" id="msgModalText"></div>
+      <div class="msg-modal-code hidden" id="msgModalCodeBox">
+        <div class="msg-modal-code-label">TRADE CODE</div>
+        <div class="msg-modal-code-value" id="msgModalCode" tabindex="0" title="Tap to select"></div>
+        <div class="msg-modal-code-hint">Tap the code to select it, then copy.</div>
+      </div>
+      <div class="msg-modal-footer">
+        <button class="secondary-btn" type="button" data-close-msg>Close</button>
+      </div>
+    </div>`;
+
+  overlay.addEventListener("click",event=>{
+    if(event.target===overlay||event.target.closest("[data-close-msg]")||event.target.closest(".msg-modal-x")){
+      closeMessageModal();
+    }
+  });
+
+  const codeValue=overlay.querySelector("#msgModalCode");
+  codeValue.addEventListener("click",()=>selectNodeText(codeValue));
+  codeValue.addEventListener("focus",()=>selectNodeText(codeValue));
+
+  document.body.appendChild(overlay);
+
+  document.addEventListener("keydown",event=>{
+    if(event.key==="Escape"&&msgModalEl&&!msgModalEl.hidden)closeMessageModal();
+  });
+
+  msgModalEl=overlay;
+  return overlay;
+}
+
+function openMessageModal(message){
+  const overlay=ensureMessageModal();
+  const code=findTradeCode(message);
+
+  overlay.querySelector("#msgModalTitle").textContent=message.title;
+  overlay.querySelector("#msgModalTime").textContent=message.time;
+
+  const category=overlay.querySelector("#msgModalCategory");
+  category.textContent=message.categoryLabel;
+  category.className=`message-category ${message.category}`;
+
+  overlay.querySelector("#msgModalText").innerHTML=messageTextHtml(message.message,code);
+
+  const codeBox=overlay.querySelector("#msgModalCodeBox");
+  if(code){
+    overlay.querySelector("#msgModalCode").textContent=code;
+    codeBox.classList.remove("hidden");
+  }else{
+    codeBox.classList.add("hidden");
+  }
+
+  msgModalLastFocus=document.activeElement;
+  overlay.hidden=false;
+  document.documentElement.classList.add("msg-modal-open");
+  overlay.querySelector(".msg-modal-x").focus({preventScroll:true});
+}
+
+function closeMessageModal(){
+  if(!msgModalEl)return;
+  msgModalEl.hidden=true;
+  document.documentElement.classList.remove("msg-modal-open");
+  if(msgModalLastFocus&&typeof msgModalLastFocus.focus==="function"){
+    msgModalLastFocus.focus({preventScroll:true});
+  }
+  msgModalLastFocus=null;
+}
+
+// Sidebar ke Messages badge ko foran update karo
+function refreshNavBadge(){
+  try{window.PZNavBadges&&window.PZNavBadges.refresh&&window.PZNavBadges.refresh();}catch(error){}
+}
+
 function renderMessages(){
   if(!messageList)return;
 
@@ -159,6 +278,9 @@ function renderMessages(){
     filteredMessages.forEach(message=>{
       const item=document.createElement("article");
       item.className=`message-item${message.unread?" unread":""}`;
+      item.tabIndex=0;
+      item.setAttribute("role","button");
+      item.setAttribute("aria-label",`Open message: ${message.title}`);
 
       item.innerHTML=`
         <div class="message-icon">${getMessageIcon(message.category)}</div>
@@ -168,7 +290,7 @@ function renderMessages(){
             <div class="message-time">${escapeHtml(message.time)}</div>
           </div>
           <div class="message-text">${escapeHtml(message.message)}</div>
-          ${message.tradeCode?`<div class="message-text">Trade Code: ${escapeHtml(message.tradeCode)}</div>`:""}
+          ${message.tradeCode?`<div class="message-text">Trade Code: <strong class="msg-inline-code">${escapeHtml(message.tradeCode)}</strong></div>`:""}
           <div class="message-meta">
             <span class="message-category ${escapeHtml(message.category)}">${escapeHtml(message.categoryLabel)}</span>
             ${message.unread?`<span class="unread-label">Unread</span>`:""}
@@ -185,7 +307,17 @@ function renderMessages(){
 
       item.addEventListener("click",event=>{
         if(event.target.closest("button"))return;
+        openMessageModal(message);
         if(message.unread)markMessageRead(message.id);
+      });
+
+      item.addEventListener("keydown",event=>{
+        if(event.target!==item)return;
+        if(event.key==="Enter"||event.key===" "){
+          event.preventDefault();
+          openMessageModal(message);
+          if(message.unread)markMessageRead(message.id);
+        }
       });
 
       messageList.appendChild(item);
@@ -330,6 +462,7 @@ async function markMessageRead(id){
 
     message.unread=false;
     renderMessages();
+    refreshNavBadge();
     showToast("Message marked as read.");
   }catch(error){
     console.error("PipZoNe mark message read failed:",error);
@@ -362,6 +495,7 @@ async function markAllAsRead(){
 
     MESSAGES=MESSAGES.map(message=>({...message,unread:false}));
     renderMessages();
+    refreshNavBadge();
     showToast("All messages marked as read.");
   }catch(error){
     console.error("PipZoNe mark all read failed:",error);
